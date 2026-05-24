@@ -1,653 +1,1137 @@
-<!--
-  파일 목적: woo-hoo.kr 메인 싱글 페이지 — 1인 실험실 쇼케이스
-  (대표 프로덕트 셀프체크 스터디 히어로 + 실험실 그리드 + 지금 만드는 중 + 개발로그 + 다운로드/구독)
--->
+<!-- woo-hoo.kr 리디자인 v2 시안 : Stash 디자인 시스템 기반 인디 해커 / 1인 앱 스튜디오 -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>woo-hoo.lab — 작은 앱을 계속 만듭니다</title>
-  <meta name="description" content="혼자 운영하는 1인 실험실 woo-hoo. 셀프체크 스터디, make-money, googsky 등 완성작부터 만드는 중인 실험까지 공개합니다." />
-  <meta property="og:title" content="woo-hoo.lab — 작은 앱을 계속 만듭니다" />
-  <meta property="og:description" content="혼자 운영하는 1인 실험실. 완성작부터 실험까지 building in public." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://woo-hoo.kr/" />
-  <!-- TODO: 실제 OG 이미지(1200x630 png) 추가 후 경로 교체 -->
-  <meta property="og:image" content="https://woo-hoo.kr/og.png" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="theme-color" content="#0a84ff" />
-  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="./styles.css" />
-  <style>
-    /* ── 페이지 전용 스타일 ── */
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>woo-hoo.kr — dev lab & app studio</title>
+<meta name="description" content="살아있는 개발자 사이트. 작은 앱을 계속 만들고, 만드는 과정을 그대로 보여주는 1인 실험실." />
 
-    /* 히어로 — 배경은 styles.css의 .mesh 클래스가 담당 */
-    .hero {
-      color: var(--white);
-      border-bottom: var(--bd);
-      position: relative;
-      overflow: hidden;
-    }
-    .hero__inner {
-      max-width: var(--maxw);
-      margin: 0 auto;
-      padding: 72px 24px 80px;
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 32px;
-      align-items: center;
-      position: relative;
-      z-index: 2;
-    }
-    .hero .badge { background: rgba(255, 255, 255, 0.12); color: var(--white); border-color: var(--white); }
-    .hero .badge .dot { background: var(--yellow); }
-    .hero__title {
-      font-family: var(--font-display-kr); /* Black Han Sans — 헤비 컨덴스드 한글 */
-      font-weight: 400;
-      font-size: 96px;
-      line-height: 0.95;
-      letter-spacing: -1.5px;
-      margin: 14px 0 18px;
-    }
-    .hero__title .y { color: var(--yellow); }
-    .hero__title em {
-      font-family: var(--font-display-en); /* 영문 강조 — Fraunces 이탤릭 */
-      font-style: italic;
-      font-weight: 700;
-      letter-spacing: -1px;
-      color: var(--pink);
-    }
-    .hero__sub { font-size: 17px; font-weight: 500; max-width: 380px; opacity: 0.95; }
-    .hero__cta { margin-top: 26px; display: flex; gap: 12px; flex-wrap: wrap; }
+<!-- ─── 폰트 : Stash 디자인 시스템 + 한글 본문용 Pretendard ─────────────── -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
 
-    /* 히어로 폰 목업 */
-    .phone {
-      justify-self: center;
-      width: 248px;
-      height: 504px;
-      background: var(--white);
-      color: var(--ink); /* 히어로의 흰색 글자색을 상속받지 않도록 폰 내부는 잉크로 고정 */
-      border: 3px solid var(--ink);
-      border-radius: 38px;
-      /* 다층 컬러 섀도우 — 마젠타 오프셋 + 짙은 그림자 (편집 디자인 강조) */
-      box-shadow:
-        10px 10px 0 rgba(255, 77, 166, 0.55),
-        20px 20px 0 rgba(0, 0, 0, 0.28);
-      padding: 10px 10px 0;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    /* 상태바 (시간 + 신호/배터리) */
-    .phone__statusbar {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 2px 12px 6px; font-size: 12px; font-weight: 800;
-    }
-    .phone__icons { display: flex; align-items: center; gap: 5px; }
-    /* 앱바 (뒤로 + 타이틀 + 메뉴) */
-    .phone__appbar {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 8px 12px; border-bottom: 2px solid var(--ink);
-      margin: 0 -10px;
-    }
-    .phone__back { font-size: 22px; font-weight: 900; line-height: 1; width: 22px; }
-    .phone__apptitle { font-size: 15px; font-weight: 900; letter-spacing: -0.4px; }
-    .phone__menu { font-size: 18px; font-weight: 900; width: 22px; text-align: right; }
-    .phone__screen { font-size: 12px; color: var(--ink); padding: 14px 4px 0; flex: 1; }
-    .phone__date { color: var(--muted); font-weight: 700; font-size: 11px; margin-bottom: 10px; }
-    /* 화면 내 진행도 바 */
-    .phone__bar {
-      height: 7px; background: #ececec; border: 1.5px solid var(--ink);
-      border-radius: 999px; overflow: hidden; margin-bottom: 14px;
-    }
-    .phone__bar span { display: block; height: 100%; background: var(--green); }
-    /* 홈 인디케이터 */
-    .phone__home {
-      width: 96px; height: 5px; background: var(--ink);
-      border-radius: 999px; margin: 8px auto 10px;
-    }
-    .todo {
-      display: flex; align-items: center; gap: 10px;
-      border: 2px solid var(--ink); border-radius: 10px;
-      padding: 10px 12px; margin-bottom: 8px; font-weight: 700;
-    }
-    .todo .chk {
-      width: 18px; height: 18px; border: 2px solid var(--ink);
-      border-radius: 5px; flex: none; display: grid; place-items: center;
-      font-size: 12px; color: var(--white);
-    }
-    .todo.done { background: var(--green); }
-    .todo.done .chk { background: var(--ink); }
-    .todo.done span { text-decoration: line-through; opacity: 0.6; }
+<style>
+  /* ═══════════════════════════════════════════════════════════════════════
+   * Stash 토큰 - 색상, 타입, 간격, 라디우스, 그림자, 모션
+   * (원본 colors_and_type.css 인라인 사본 + woo-hoo 추가 변수)
+   * ═══════════════════════════════════════════════════════════════════════ */
+  :root {
+    /* 브랜드 보라 */
+    --accent:        #7C3AED;
+    --accent-hover:  #6929D4;
+    --accent-soft:   #F1EAFD;
+    --accent-tint:   rgba(124,58,237,0.12);
 
-    /* 히어로 낙서 액센트 */
-    .doodle { position: absolute; z-index: 1; }
-    .doodle--owl { top: 36px; right: 38%; }
-    .doodle--star { bottom: 40px; left: 30px; }
-    .doodle--woohoo {
-      position: absolute; top: 30px; left: 46%;
-      font-size: 22px; font-weight: 900; color: var(--yellow);
-      transform: rotate(-10deg); z-index: 3; text-shadow: 2px 2px 0 var(--ink);
-    }
+    /* 잉크 & 크림 */
+    --ink:           #1A1230;
+    --ink-2:         #2A2347;
+    --cream:         #F4F0FC;
+    --cream-2:       #FFFFFF;
+    --cream-warm:    #F9F5EE;  /* woo-hoo 추가 : 따뜻한 메모지 톤 */
 
-    /* 실험실 그리드 */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-    .pcard__status { font-size: 12px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
-    .pcard__status .dot { width: 9px; height: 9px; border-radius: 50%; }
-    .pcard__name { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; margin: 10px 0 6px; }
-    .pcard__desc { font-size: 14px; color: var(--muted); min-height: 60px; }
-    .pcard__link { margin-top: 14px; font-weight: 800; font-size: 14px; }
-    .pcard__link:hover { color: var(--pink); }
-    .card--featured { background: var(--yellow); }
+    /* 포그라운드 단계 */
+    --fg-1:          var(--ink);
+    --fg-2:          rgba(26,18,48,0.72);
+    --fg-3:          rgba(26,18,48,0.55);
+    --fg-4:          rgba(26,18,48,0.40);
+    --fg-5:          rgba(26,18,48,0.22);
 
-    /* 지금 만드는 중 */
-    .building { background: var(--ink); color: var(--white); border-bottom: var(--bd); position: relative; overflow: hidden; }
-    .building__inner { max-width: var(--maxw); margin: 0 auto; padding: 64px 24px; }
-    .building .label { color: var(--yellow); }
-    .building__name { font-family: var(--font-display-kr); font-weight: 400; font-size: 66px; letter-spacing: -1px; line-height: 1; margin: 14px 0 10px; }
-    .building__name small { font-family: var(--font-display-en); font-style: italic; font-size: 22px; color: var(--green); font-weight: 500; letter-spacing: -0.5px; }
-    .building__desc { max-width: 540px; opacity: 0.85; font-size: 16px; }
-    .progress {
-      margin-top: 22px; max-width: 540px;
-      height: 12px; background: #333; border-radius: 999px; overflow: hidden;
-      border: 2px solid var(--white);
-    }
-    .progress__bar { height: 100%; background: var(--green); border-radius: 999px; }
-    .building__meta { margin-top: 8px; font-size: 13px; opacity: 0.7; }
+    /* 보더 */
+    --border-1:      rgba(26,18,48,0.08);
+    --border-2:      rgba(26,18,48,0.14);
 
-    /* 개발로그 미리보기 */
-    .logrow {
-      display: flex; align-items: baseline; gap: 18px;
-      border: var(--bd); border-radius: var(--r-md);
-      background: var(--white); padding: 16px 20px; margin-bottom: 12px;
-      transition: transform 0.12s, box-shadow 0.12s;
-    }
-    .logrow:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow-hard); }
-    .logrow__date { font-size: 13px; font-weight: 800; color: var(--muted); flex: none; width: 92px; }
-    .logrow__title { font-weight: 800; font-size: 16px; }
-    .logrow__tag {
-      margin-left: auto; font-size: 11px; font-weight: 800;
-      border: var(--bd); border-radius: 999px; padding: 2px 10px; flex: none;
-    }
+    /* 의미 색상 */
+    --success:       #1F8A5B;
+    --warning:       #D9A95C;
+    --danger:        #C8553D;
+    --status-live:   #1F8A5B;
+    --status-dev:    #D9A95C;
+    --status-soon:   rgba(26,18,48,0.40);
 
-    /* 다운로드 & 구독 */
-    .ds { background: var(--sky); border-bottom: var(--bd); }
-    .ds__inner {
-      max-width: var(--maxw); margin: 0 auto; padding: 64px 24px;
-      display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
-    }
-    .store { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
-    .store__btn {
-      display: flex; flex-direction: column; gap: 2px;
-      background: var(--ink); color: var(--white);
-      border: var(--bd); border-radius: var(--r-md);
-      padding: 12px 20px; min-width: 150px;
-    }
-    .store__btn small { font-size: 11px; opacity: 0.8; font-weight: 600; }
-    .store__btn b { font-size: 17px; font-weight: 800; }
-    .store__btn[aria-disabled="true"] { opacity: 0.55; cursor: default; }
-    .subscribe__form { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
-    .subscribe__form input {
-      flex: 1; min-width: 200px;
-      border: var(--bd); border-radius: var(--r-md);
-      padding: 13px 16px; font-size: 15px; font-family: var(--font);
-      background: var(--white);
-    }
-    .subscribe__note { margin-top: 10px; font-size: 13px; font-weight: 600; color: #0a5a2f; }
+    /* 타이포 */
+    --font-display:  "Instrument Serif", "Times New Roman", Georgia, serif;
+    --font-ui:       "Pretendard Variable", "Poppins", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --font-eng:      "Poppins", ui-sans-serif, system-ui, sans-serif;
+    --font-mono:     "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
-    @media (max-width: 860px) {
-      .hero__inner { grid-template-columns: 1fr; }
-      .phone { display: none; }
-      .doodle--owl, .doodle--woohoo { display: none; }
-      .hero__title { font-size: 52px; }
-      .grid { grid-template-columns: 1fr; }
-      .ds__inner { grid-template-columns: 1fr; gap: 32px; }
-      .building__name { font-size: 34px; }
+    --text-xs: 12px; --text-sm: 14px; --text-base: 16px; --text-md: 18px;
+    --text-lg: 22px; --text-xl: 28px; --text-2xl: 36px; --text-3xl: 48px;
+    --text-4xl: 64px; --text-5xl: 88px; --text-6xl: 144px;
+
+    --track-tight: -0.04em; --track-snug: -0.02em; --track-eyebrow: 0.14em;
+
+    /* 간격 (4px 기반) */
+    --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+    --space-6: 24px; --space-8: 32px; --space-10: 40px; --space-12: 48px;
+    --space-16: 64px; --space-20: 80px; --space-24: 96px; --space-32: 128px;
+
+    /* 라디우스 */
+    --r-xs: 4px; --r-sm: 6px; --r-md: 10px; --r-lg: 14px; --r-xl: 18px;
+    --r-2xl: 24px; --r-pill: 999px;
+
+    /* 그림자 (보라 틴티드) */
+    --shadow-1: 0 1px 0 rgba(26,18,48,0.04);
+    --shadow-2: 0 1px 2px rgba(26,18,48,0.06), 0 4px 12px rgba(26,18,48,0.06);
+    --shadow-3: 0 1px 0 rgba(26,18,48,0.04), 0 8px 24px rgba(26,18,48,0.08), 0 24px 48px rgba(26,18,48,0.06);
+    --shadow-4: 0 6px 18px rgba(26,18,48,0.06), 0 30px 80px rgba(26,18,48,0.14);
+    --shadow-cta: 0 10px 28px rgba(26,18,48,0.25);
+    --glow: 0 8px 20px rgba(124,58,237,0.22);
+
+    /* 모션 */
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --dur-fast: 150ms; --dur-base: 250ms; --dur-slow: 450ms;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+   * 베이스 리셋
+   * ═══════════════════════════════════════════════════════════════════════ */
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--cream);
+    color: var(--fg-1);
+    font-family: var(--font-ui);
+    font-size: var(--text-base);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+  ::selection { background: var(--accent); color: #fff; }
+
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+  button { font: inherit; cursor: pointer; }
+
+  /* 모눈 격자 + 미세 노이즈 — 인디 해커 노트 분위기 */
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(26,18,48,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26,18,48,0.025) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  body::after {
+    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background-image:
+      radial-gradient(ellipse 800px 400px at 15% -5%, rgba(124,58,237,0.12), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 110% 30%, rgba(217,169,92,0.10), transparent 55%);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+   * 레이아웃 컨테이너
+   * ═══════════════════════════════════════════════════════════════════════ */
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 var(--space-8); }
+  .wrap-narrow { max-width: 840px; margin: 0 auto; padding: 0 var(--space-8); }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+   * 상단 내비게이션
+   * ═══════════════════════════════════════════════════════════════════════ */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    background: rgba(244,240,252,0.78);
+    border-bottom: 0.5px solid var(--border-1);
+  }
+  .nav__row {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px; max-width: 1200px; margin: 0 auto; padding: 0 var(--space-8);
+  }
+  .nav__brand {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    font-family: var(--font-display); font-size: var(--text-lg);
+    letter-spacing: var(--track-snug); color: var(--fg-1);
+  }
+  .nav__brand-mark {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--ink); color: var(--cream);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--font-eng); font-weight: 700; font-size: 13px;
+    box-shadow: var(--shadow-cta);
+  }
+  .nav__brand i { font-style: italic; }
+  .nav__menu { display: flex; gap: var(--space-8); }
+  .nav__menu a {
+    font-size: var(--text-sm); color: var(--fg-2); font-weight: 500;
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .nav__menu a:hover { color: var(--accent); }
+  .nav__cta {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    padding: 8px 16px; border-radius: var(--r-pill);
+    background: var(--ink); color: var(--cream);
+    font-size: var(--text-sm); font-weight: 600;
+    transition: all var(--dur-fast) var(--ease-out);
+    box-shadow: var(--shadow-2);
+  }
+  .nav__cta:hover { background: var(--ink-2); transform: translateY(-1px); }
+  @media (max-width: 720px) { .nav__menu { display: none; } }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+   * 히어로 섹션
+   * ═══════════════════════════════════════════════════════════════════════ */
+  .hero { padding: var(--space-24) 0 var(--space-20); position: relative; }
+  .hero__eyebrow {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    font-family: var(--font-eng); font-size: var(--text-xs); font-weight: 500;
+    text-transform: uppercase; letter-spacing: var(--track-eyebrow);
+    color: var(--fg-3); margin-bottom: var(--space-6);
+  }
+  .hero__eyebrow::before {
+    content: ""; width: 8px; height: 8px; border-radius: 50%;
+    background: var(--status-live);
+    box-shadow: 0 0 0 4px rgba(31,138,91,0.16);
+    animation: pulse 2.4s ease-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(31,138,91,0.16); }
+    50% { box-shadow: 0 0 0 8px rgba(31,138,91,0.04); }
+  }
+  .hero__title {
+    font-family: var(--font-display); font-weight: 400;
+    font-size: clamp(56px, 9vw, var(--text-6xl));
+    line-height: 0.96; letter-spacing: var(--track-tight);
+    color: var(--fg-1); margin: 0 0 var(--space-8);
+    max-width: 14ch;
+  }
+  .hero__title i { color: var(--accent); }
+  .hero__title .underline {
+    background-image: linear-gradient(transparent 68%, var(--accent-tint) 68%);
+  }
+  .hero__lede {
+    font-family: var(--font-ui); font-size: var(--text-lg); font-weight: 400;
+    line-height: 1.55; color: var(--fg-2); max-width: 56ch;
+    margin: 0 0 var(--space-10);
+  }
+  .hero__lede strong { color: var(--fg-1); font-weight: 600; }
+  .hero__actions { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    padding: 14px 24px; border-radius: var(--r-pill);
+    font-family: var(--font-ui); font-size: var(--text-base); font-weight: 600;
+    border: 0; cursor: pointer;
+    transition: all var(--dur-fast) var(--ease-out);
+  }
+  .btn--primary {
+    background: var(--ink); color: var(--cream);
+    box-shadow: var(--shadow-cta);
+  }
+  .btn--primary:hover { background: var(--ink-2); transform: translateY(-1px); }
+  .btn--primary:active { transform: scale(0.97); }
+  .btn--secondary {
+    background: transparent; color: var(--fg-1);
+    border: 1px solid var(--border-2);
+  }
+  .btn--secondary:hover { background: var(--accent-tint); border-color: var(--accent); color: var(--accent); }
+  .btn .arrow { transition: transform var(--dur-fast) var(--ease-out); }
+  .btn:hover .arrow { transform: translateX(3px); }
+
+  /* 히어로 메타 — 작은 통계 라인 */
+  .hero__meta {
+    display: flex; gap: var(--space-10); flex-wrap: wrap;
+    margin-top: var(--space-16); padding-top: var(--space-8);
+    border-top: 0.5px solid var(--border-1);
+  }
+  .hero__stat { display: flex; flex-direction: column; gap: var(--space-1); }
+  .hero__stat-num {
+    font-family: var(--font-display); font-size: var(--text-2xl);
+    line-height: 1; letter-spacing: var(--track-tight); color: var(--fg-1);
+    font-variant-numeric: tabular-nums;
+  }
+  .hero__stat-label {
+    font-family: var(--font-mono); font-size: var(--text-xs);
+    color: var(--fg-3); text-transform: uppercase; letter-spacing: var(--track-eyebrow);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+   * 섹션 공통
+   * ═══════════════════════════════════════════════════════════════════════ */
+  section { padding: var(--space-20) 0; position: relative; }
+  .section__head { margin-bottom: var(--space-16); max-width: 720px; }
+  .chapter {
+    display: inline-flex; align-items: center; gap: var(--space-3);
+    font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 500;
+    color: var(--fg-3); margin-bottom: var(--space-4);
+    text-transform: uppercase; letter-spacing: var(--track-eyebrow);
+  }
+  .chapter::before {
+    content: ""; display: inline-block; width: 32px; height: 1px;
+    background: var(--fg-4);
+  }
+  .section__title {
+    font-family: var(--font-display); font-weight: 400;
+    font-size: clamp(36px, 5vw, var(--text-3xl));
+    line-height: 1.05; letter-spacing: var(--track-tight);
+    color: var(--fg-1); margin: 0 0 var(--space-4);
+  }
+  .section__title i { color: var(--accent); }
+  .section__lede {
+    font-size: var(--text-md); color: var(--fg-2); line-height: 1.6;
+    max-width: 60ch; margin: 0;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+   * 프로덕트 그리드 — 메인 쇼케이스
+   * ═══════════════════════════════════════════════════════════════════════ */
+  .projects { background: var(--cream); }
+  .grid {
+    display: grid; gap: var(--space-6);
+    grid-template-columns: repeat(12, 1fr);
+  }
+  .card {
+    background: var(--cream-2); border-radius: var(--r-xl);
+    border: 0.5px solid var(--border-1);
+    box-shadow: var(--shadow-3);
+    padding: var(--space-10);
+    transition: all var(--dur-base) var(--ease-out);
+    position: relative; overflow: hidden;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-4);
+  }
+  .card--featured { grid-column: span 12; min-height: 480px; }
+  .card--regular  { grid-column: span 6; min-height: 420px; }
+  @media (max-width: 920px) {
+    .card--regular { grid-column: span 12; }
+  }
+
+  /* 카드 헤더 — 앱 마크 + 상태 */
+  .card__head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: var(--space-8);
+  }
+  .card__mark {
+    width: 56px; height: 56px; border-radius: var(--r-lg);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 28px; color: #fff;
+    box-shadow: var(--shadow-2);
+    font-style: italic;
+  }
+  .card__mark--scs   { background: linear-gradient(135deg, #7C3AED, #4F1FB5); }
+  .card__mark--money { background: linear-gradient(135deg, #1F8A5B, #0E5E3A); }
+  .card__mark--sky   { background: linear-gradient(135deg, #4A8FE7, #1E5BA8); }
+
+  .status {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    padding: 6px 12px; border-radius: var(--r-pill);
+    font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 500;
+    letter-spacing: var(--track-eyebrow); text-transform: uppercase;
+  }
+  .status::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%;
+  }
+  .status--live { background: rgba(31,138,91,0.10); color: var(--status-live); }
+  .status--live::before { background: var(--status-live); }
+  .status--dev  { background: rgba(217,169,92,0.14); color: #8C6F31; }
+  .status--dev::before  { background: var(--status-dev); animation: pulse-dot 1.6s ease-in-out infinite; }
+  .status--soon { background: rgba(26,18,48,0.06); color: var(--fg-3); }
+  .status--soon::before { background: var(--fg-4); }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.3); }
+  }
+
+  /* 카드 메타 */
+  .card__meta {
+    font-family: var(--font-mono); font-size: var(--text-xs);
+    color: var(--fg-3); text-transform: uppercase;
+    letter-spacing: var(--track-eyebrow); margin-bottom: var(--space-3);
+  }
+  .card__title {
+    font-family: var(--font-display); font-weight: 400;
+    font-size: var(--text-3xl); line-height: 1.05;
+    letter-spacing: var(--track-tight);
+    color: var(--fg-1); margin: 0 0 var(--space-4);
+  }
+  .card__title i { color: var(--accent); }
+  .card__tagline {
+    font-family: var(--font-ui); font-size: var(--text-md);
+    color: var(--fg-2); line-height: 1.55;
+    margin: 0 0 var(--space-6); max-width: 48ch;
+  }
+  .card__body {
+    font-size: var(--text-base); color: var(--fg-3); line-height: 1.65;
+    max-width: 56ch;
+  }
+
+  /* 카드 푸터 */
+  .card__foot {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: var(--space-8); padding-top: var(--space-6);
+    border-top: 0.5px solid var(--border-1); gap: var(--space-4);
+  }
+  .card__tags { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .tag {
+    padding: 4px 10px; border-radius: var(--r-pill);
+    background: var(--accent-soft); color: var(--accent);
+    font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .card__link {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    font-family: var(--font-ui); font-size: var(--text-sm); font-weight: 600;
+    color: var(--fg-1);
+    transition: gap var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+  }
+  .card__link:hover { color: var(--accent); gap: var(--space-3); }
+  /* 보조 링크 : 카드 푸터의 부가 액션 (예: 개인정보 처리방침) - 모노 / 옅은 톤 */
+  .card__link--muted {
+    font-family: var(--font-mono); font-weight: 500;
+    font-size: var(--text-xs); color: var(--fg-3);
+    text-transform: uppercase; letter-spacing: var(--track-eyebrow);
+    padding: 6px 12px; border-radius: var(--r-pill);
+    border: 0.5px solid var(--border-1);
+  }
+  .card__link--muted:hover {
+    color: var(--accent); border-color: var(--accent); background: var(--accent-tint);
+    gap: var(--space-2);
+  }
+  /* 카드 푸터 안에서 여러 링크를 묶는 컨테이너 */
+  .card__links { display: inline-flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+
+  /* Featured 카드 (self-check-study) 내부 좌우 분할 */
+  .card--featured .card__split {
+    display: grid; grid-template-columns: 1.1fr 0.9fr; gap: var(--space-12);
+    align-items: center;
+  }
+  .card--featured .card__preview {
+    background: linear-gradient(140deg, var(--accent-soft) 0%, #FDF5E6 100%);
+    border-radius: var(--r-lg); padding: var(--space-8);
+    aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center;
+    border: 0.5px solid var(--border-1);
+    position: relative; overflow: hidden;
+  }
+  /* 폰 목업 */
+  .phone {
+    width: 200px; height: 380px; border-radius: 28px;
+    background: var(--cream-2);
+    box-shadow: var(--shadow-4);
+    border: 6px solid var(--ink);
+    padding: 16px 12px; position: relative;
+    font-family: var(--font-ui); color: var(--fg-1);
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .phone__notch {
+    position: absolute; top: -4px; left: 50%; transform: translateX(-50%);
+    width: 60px; height: 16px; background: var(--ink); border-radius: 0 0 10px 10px;
+  }
+  .phone__top {
+    font-family: var(--font-display); font-size: 14px;
+    font-style: italic; color: var(--accent); margin-top: 4px;
+    text-align: center;
+  }
+  .phone__check {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px; border-radius: 8px;
+    background: var(--accent-soft); font-size: 11px;
+  }
+  .phone__check.done { background: rgba(31,138,91,0.10); color: var(--status-live); text-decoration: line-through; opacity: 0.75; }
+  .phone__check .box {
+    width: 14px; height: 14px; border-radius: 4px;
+    background: var(--cream-2); border: 1.5px solid var(--accent);
+    flex-shrink: 0;
+  }
+  .phone__check.done .box {
+    background: var(--status-live); border-color: var(--status-live);
+    position: relative;
+  }
+  .phone__check.done .box::after {
+    content: "✓"; position: absolute; inset: 0;
+    color: #fff; font-size: 10px; line-height: 11px; text-align: center;
+  }
+  .phone__stamp {
+    margin-top: auto;
+    display: inline-flex; align-self: center; align-items: center; justify-content: center;
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    font-family: var(--font-display); font-style: italic; font-size: 14px;
+    transform: rotate(-12deg);
+    box-shadow: var(--glow);
+  }
+  @media (max-width: 720px) {
+    .card--featured .card__split { grid-template-columns: 1fr; }
+    .card--featured .card__preview { display: none; }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+   * "지금 만드는 중" 라이브 인디케이터
+   * ═══════════════════════════════════════════════════════════════════════ */
+  .nowbuilding { background: var(--ink); color: var(--cream); padding: var(--space-24) 0; }
+  .nowbuilding .chapter { color: rgba(244,240,252,0.55); }
+  .nowbuilding .chapter::before { background: rgba(244,240,252,0.35); }
+  .nowbuilding .section__title { color: var(--cream); }
+  .nowbuilding .section__title i { color: #C8A8FF; }
+  .nowbuilding .section__lede { color: rgba(244,240,252,0.72); }
+
+  .ticker-list { display: flex; flex-direction: column; gap: var(--space-1); margin-top: var(--space-12); }
+  .ticker-item {
+    display: grid; grid-template-columns: 140px 1fr auto; gap: var(--space-8);
+    align-items: center; padding: var(--space-6) 0;
+    border-top: 0.5px solid rgba(244,240,252,0.10);
+    font-family: var(--font-ui);
+  }
+  .ticker-item:last-child { border-bottom: 0.5px solid rgba(244,240,252,0.10); }
+  .ticker-item__time {
+    font-family: var(--font-mono); font-size: var(--text-xs);
+    color: rgba(244,240,252,0.55); letter-spacing: var(--track-eyebrow); text-transform: uppercase;
+  }
+  .ticker-item__what { font-size: var(--text-md); color: var(--cream); font-weight: 500; }
+  .ticker-item__what em {
+    font-family: var(--font-display); font-style: italic; color: #C8A8FF; font-weight: 400;
+  }
+  .ticker-item__tag {
+    padding: 4px 12px; border-radius: var(--r-pill);
+    background: rgba(244,240,252,0.08); color: rgba(244,240,252,0.72);
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.04em;
+  }
+  @media (max-width: 720px) {
+    .ticker-item { grid-template-columns: 1fr; gap: var(--space-2); }
+    .ticker-item__tag { justify-self: start; }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+   * 개발 로그 미리보기
+   * ═══════════════════════════════════════════════════════════════════════ */
+  .devlog__head {
+    display: flex; justify-content: space-between; align-items: end; flex-wrap: wrap;
+    gap: var(--space-6); margin-bottom: var(--space-16);
+  }
+  .devlog__head .section__head { margin-bottom: 0; }
+  .devlog__link {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    font-family: var(--font-ui); font-size: var(--text-sm); font-weight: 600;
+    color: var(--fg-1); padding: 10px 18px; border-radius: var(--r-pill);
+    border: 1px solid var(--border-2);
+    transition: all var(--dur-fast) var(--ease-out);
+  }
+  .devlog__link:hover { background: var(--accent-tint); border-color: var(--accent); color: var(--accent); }
+
+  .log-list { display: flex; flex-direction: column; gap: var(--space-1); }
+  .log-item {
+    display: grid; grid-template-columns: 140px 1fr; gap: var(--space-8);
+    padding: var(--space-8) 0; border-top: 0.5px solid var(--border-1);
+    transition: padding var(--dur-base) var(--ease-out);
+    position: relative;
+  }
+  .log-item:hover { padding-left: var(--space-3); }
+  .log-item:last-child { border-bottom: 0.5px solid var(--border-1); }
+  .log-item__date {
+    font-family: var(--font-mono); font-size: var(--text-xs);
+    color: var(--fg-3); text-transform: uppercase; letter-spacing: var(--track-eyebrow);
+    padding-top: 4px;
+  }
+  .log-item__title {
+    font-family: var(--font-display); font-weight: 400;
+    font-size: var(--text-xl); line-height: 1.25; letter-spacing: var(--track-snug);
+    color: var(--fg-1); margin: 0 0 var(--space-3);
+  }
+  .log-item__title i { color: var(--accent); }
+  .log-item__body {
+    font-size: var(--text-base); color: var(--fg-2); line-height: 1.65; margin: 0;
+    max-width: 64ch;
+  }
+  .log-item__chips { display: flex; gap: var(--space-2); margin-top: var(--space-3); flex-wrap: wrap; }
+  .chip-mono {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+    padding: 3px 9px; border-radius: var(--r-xs);
+    background: rgba(26,18,48,0.04); color: var(--fg-3);
+    letter-spacing: 0.04em;
+  }
+  @media (max-width: 720px) {
+    .log-item { grid-template-columns: 1fr; gap: var(--space-2); }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+   * 이메일 구독 / CTA 카드
+   * ═══════════════════════════════════════════════════════════════════════ */
+  .subscribe { padding: var(--space-20) 0 var(--space-24); }
+  .subscribe__card {
+    background: var(--cream-2); border-radius: var(--r-2xl);
+    box-shadow: var(--shadow-4);
+    padding: var(--space-16); position: relative; overflow: hidden;
+    border: 0.5px solid var(--border-1);
+  }
+  /* 카드 위에 떠 있는 보라 글로우 */
+  .subscribe__card::before {
+    content: ""; position: absolute; inset: -50% -20% auto auto;
+    width: 480px; height: 480px; border-radius: 50%;
+    background: radial-gradient(circle, var(--accent-tint), transparent 60%);
+    pointer-events: none;
+  }
+  .subscribe__inner {
+    display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-16);
+    position: relative; z-index: 1;
+  }
+  @media (max-width: 920px) {
+    .subscribe__card { padding: var(--space-10); }
+    .subscribe__inner { grid-template-columns: 1fr; gap: var(--space-10); }
+  }
+  .subscribe__title {
+    font-family: var(--font-display); font-weight: 400;
+    font-size: clamp(32px, 4vw, 44px); line-height: 1.05;
+    letter-spacing: var(--track-tight); color: var(--fg-1);
+    margin: 0 0 var(--space-4);
+  }
+  .subscribe__title i { color: var(--accent); }
+  .subscribe__lede {
+    font-size: var(--text-md); color: var(--fg-2); line-height: 1.55; margin: 0;
+  }
+  .subscribe__form {
+    display: flex; flex-direction: column; gap: var(--space-3);
+    justify-content: center;
+  }
+  .subscribe__field {
+    display: flex; gap: var(--space-2); padding: 6px;
+    background: var(--cream); border: 1px solid var(--border-2);
+    border-radius: var(--r-pill);
+    transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+  }
+  .subscribe__field:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-tint);
+  }
+  .subscribe__input {
+    flex: 1; border: 0; background: transparent; outline: none;
+    padding: 10px 18px; font: inherit; color: var(--fg-1);
+    font-size: var(--text-base);
+  }
+  .subscribe__input::placeholder { color: var(--fg-4); }
+  .subscribe__submit {
+    background: var(--ink); color: var(--cream);
+    border: 0; padding: 10px 22px; border-radius: var(--r-pill);
+    font-weight: 600; font-size: var(--text-sm);
+    transition: all var(--dur-fast) var(--ease-out);
+    box-shadow: var(--shadow-2);
+  }
+  .subscribe__submit:hover { background: var(--ink-2); transform: translateY(-1px); }
+  .subscribe__submit:active { transform: scale(0.97); }
+  .subscribe__small {
+    font-family: var(--font-mono); font-size: 11px; color: var(--fg-3);
+    text-transform: uppercase; letter-spacing: var(--track-eyebrow);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+   * 푸터
+   * ═══════════════════════════════════════════════════════════════════════ */
+  footer {
+    padding: var(--space-16) 0 var(--space-10);
+    border-top: 0.5px solid var(--border-1);
+  }
+  .foot__row {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: var(--space-8);
+    margin-bottom: var(--space-16);
+  }
+  @media (max-width: 920px) {
+    .foot__row { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 560px) {
+    .foot__row { grid-template-columns: 1fr; }
+  }
+  .foot__brand {
+    font-family: var(--font-display); font-size: var(--text-2xl);
+    letter-spacing: var(--track-tight); color: var(--fg-1);
+    margin-bottom: var(--space-4);
+  }
+  .foot__brand i { color: var(--accent); }
+  .foot__about {
+    font-size: var(--text-sm); color: var(--fg-3); line-height: 1.65;
+    max-width: 40ch;
+  }
+  .foot__col-head {
+    font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 500;
+    color: var(--fg-3); text-transform: uppercase; letter-spacing: var(--track-eyebrow);
+    margin-bottom: var(--space-4);
+  }
+  .foot__col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+  .foot__col a {
+    font-size: var(--text-sm); color: var(--fg-2);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .foot__col a:hover { color: var(--accent); }
+  .foot__bottom {
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
+    gap: var(--space-4); padding-top: var(--space-8);
+    border-top: 0.5px solid var(--border-1);
+    font-family: var(--font-mono); font-size: var(--text-xs); color: var(--fg-3);
+    letter-spacing: 0.04em;
+  }
+  .foot__bottom a { color: var(--fg-2); }
+  .foot__bottom a:hover { color: var(--accent); }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+   * 스크롤 리빌 모션 (인터섹션 옵저버 기반)
+   * ═══════════════════════════════════════════════════════════════════════ */
+  .reveal {
+    opacity: 0; transform: translateY(20px);
+    transition: opacity var(--dur-slow) var(--ease-out),
+                transform var(--dur-slow) var(--ease-out);
+  }
+  .reveal.is-in { opacity: 1; transform: translateY(0); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important; animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
     }
-  </style>
+    .reveal { opacity: 1; transform: none; }
+  }
+</style>
 </head>
+
 <body>
 
-  <!-- ── 상단 내비 ── -->
+  <!-- ─── 상단 네비게이션 ─────────────────────────────────────────────────── -->
   <nav class="nav">
-    <div class="nav__inner">
-      <a href="#top" class="nav__logo">woo-hoo<span class="accent">.</span>lab</a>
-      <button class="nav__toggle" aria-label="메뉴 열기" aria-expanded="false">☰</button>
-      <div class="nav__links" id="navLinks">
-        <a href="#products">실험실</a>
-        <a href="./devlog.html">개발로그</a>
-        <a href="#download">다운로드</a>
-        <a href="#subscribe" class="nav__cta">구독 →</a>
+    <div class="nav__row">
+      <a href="#" class="nav__brand" aria-label="woo-hoo.kr 홈">
+        <span class="nav__brand-mark">w</span>
+        <span>woo-<i>hoo</i>.kr</span>
+      </a>
+      <div class="nav__menu">
+        <a href="#projects">Projects</a>
+        <a href="#building">Now building</a>
+        <a href="#devlog">Devlog</a>
+        <a href="#about">About</a>
       </div>
+      <a href="#subscribe" class="nav__cta">Subscribe →</a>
     </div>
   </nav>
 
-  <!-- ── 히어로: 대표 프로덕트 (셀프체크 스터디) ── -->
-  <header class="hero mesh crosshair" id="top">
-    <!-- 파일 경로 — 사이트 내 위치 표시(엔지니어 저널 헤더) -->
-    <div class="path reveal seq-1" style="position:absolute;top:22px;left:24px;z-index:5;">
-      ~/woo-hoo.lab&nbsp;/&nbsp;featured<span class="path__cursor" aria-hidden="true"></span>
-    </div>
-    <!-- 마지널리아 — 우측 주석 노트 -->
-    <div class="marginalia note--hide-mobile reveal seq-5" style="top:80px; right:24px; color:rgba(255,255,255,0.82); z-index:5;">
-      <span class="num" style="color:#ffd60a;">[note 01]</span>
-      스토어 심사 약 2주째 — 출시 알림은 메일로 받아두세요.
-    </div>
+  <main>
 
-    <!-- 부엉이 마스코트 (눈동자가 커서를 따라감) -->
-    <svg id="owl" class="doodle doodle--owl float-a" width="86" height="86" viewBox="0 0 64 64" aria-hidden="true">
-      <circle cx="32" cy="32" r="26" fill="#7cd6ff" stroke="#111" stroke-width="3"/>
-      <circle cx="24" cy="29" r="7.5" fill="#fff" stroke="#111" stroke-width="2.5"/>
-      <circle cx="40" cy="29" r="7.5" fill="#fff" stroke="#111" stroke-width="2.5"/>
-      <circle class="owl-eye" cx="24" cy="29" r="3.4" fill="#111"/>
-      <circle class="owl-eye" cx="40" cy="29" r="3.4" fill="#111"/>
-      <path d="M28 39 L32 44 L36 39 Z" fill="#ffd60a" stroke="#111" stroke-width="2" stroke-linejoin="round"/>
-    </svg>
-    <span class="doodle--woohoo float-b">woo!hoo!</span>
-    <svg class="doodle doodle--star float-b" width="64" height="64" viewBox="0 0 56 56" aria-hidden="true">
-      <path d="M28 5 L34 22 L52 22 L38 33 L43 50 L28 39 L13 50 L18 33 L4 22 L22 22 Z" fill="#9cff6b" stroke="#111" stroke-width="3"/>
-    </svg>
+    <!-- ─── 히어로 ─────────────────────────────────────────────────────── -->
+    <section class="hero">
+      <div class="wrap">
+        <div class="hero__eyebrow reveal">A 1-person dev lab · live since 2025</div>
 
-    <!-- 드래그 가능한 스티커 (데스크탑) -->
-    <svg class="sticker" style="top: 64%; left: 7%;" width="56" height="56" viewBox="0 0 56 56" aria-hidden="true">
-      <path d="M28 50 C 6 34, 6 14, 20 14 C 27 14, 28 21, 28 21 C 28 21, 29 14, 36 14 C 50 14, 50 34, 28 50 Z" fill="#ff4da6" stroke="#111" stroke-width="3"/>
-    </svg>
-    <svg class="sticker" style="top: 30%; left: 4%;" width="46" height="46" viewBox="0 0 40 40" aria-hidden="true">
-      <path d="M22 3 L9 23 L18 23 L16 37 L31 16 L21 16 Z" fill="#ffd60a" stroke="#111" stroke-width="3" stroke-linejoin="round"/>
-    </svg>
+        <h1 class="hero__title reveal">
+          살아있는<br>
+          <i>개발자</i> 사이트.
+        </h1>
 
-    <!-- 손글씨 주석 -->
-    <div class="note note--hide-mobile" style="top: 18%; left: 40%;">
-      <span class="annot annot--rot annot--pink">지금 스토어 심사 중! →</span>
-    </div>
+        <p class="hero__lede reveal">
+          “완벽한 회사 사이트”보다 <strong>매일 조금씩 자라는 실험실</strong>을 만들고 있습니다.
+          작은 앱을 계속 출시하고, 만드는 과정을 그대로 보여주는 1인 스튜디오 —
+          이 페이지에는 지금 살아 움직이는 프로젝트만 올라옵니다.
+        </p>
 
-    <div class="hero__inner">
-      <div>
-        <!-- 챕터 표기 — 에디토리얼 위계 -->
-        <span class="chapter reveal seq-1" style="color:rgba(255,255,255,0.72);">
-          <span class="chapter__num" style="color:#fff;">01</span>
-          Now Featuring · <em style="font-family:var(--font-display-en);font-style:italic;">in review</em>
-        </span>
-        <h1 class="hero__title reveal seq-2"><span class="y">셀프체크</span><br><span class="marker-draw" id="heroMark">스터디.<svg viewBox="0 0 300 26" preserveAspectRatio="none" aria-hidden="true"><path d="M5 17 C 70 7, 210 8, 295 13"/></svg></span></h1>
-        <p class="hero__sub reveal seq-3">스케줄을 등록하고 달성을 체크하는 가벼운 학습 앱. 중고등학생과 학부모를 위해 만들었습니다.</p>
-        <div class="hero__cta reveal seq-4">
-          <a href="#subscribe" class="tape tape--pink">출시 알림 받기 ↓</a>
-          <a href="./apps/self-check-study.html" class="btn btn--ghost-light">앱 자세히 보기 →</a>
+        <div class="hero__actions reveal">
+          <a href="#projects" class="btn btn--primary">
+            진행 중인 앱 보기 <span class="arrow">→</span>
+          </a>
+          <a href="#subscribe" class="btn btn--secondary">
+            새 앱 소식 받기
+          </a>
+        </div>
+
+        <div class="hero__meta reveal">
+          <div class="hero__stat">
+            <span class="hero__stat-num">03</span>
+            <span class="hero__stat-label">Projects shipping</span>
+          </div>
+          <div class="hero__stat">
+            <span class="hero__stat-num">01</span>
+            <span class="hero__stat-label">Live in stores</span>
+          </div>
+          <div class="hero__stat">
+            <span class="hero__stat-num">∞</span>
+            <span class="hero__stat-label">Days building</span>
+          </div>
         </div>
       </div>
+    </section>
 
-      <!-- 폰 목업: 셀프체크 스터디 화면 (상태바·앱바·홈인디케이터 포함) -->
-      <div class="phone reveal seq-3" aria-hidden="true">
-        <div class="phone__statusbar">
-          <span class="phone__time">9:41</span>
-          <span class="phone__icons">
-            <svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="7" width="3" height="4" rx="1" fill="#111"/><rect x="4.5" y="5" width="3" height="6" rx="1" fill="#111"/><rect x="9" y="2.5" width="3" height="8.5" rx="1" fill="#111"/><rect x="13.5" y="0" width="3" height="11" rx="1" fill="#111"/></svg>
-            <svg width="22" height="11" viewBox="0 0 22 11"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5" fill="none" stroke="#111"/><rect x="2" y="2" width="13" height="7" rx="1.2" fill="#111"/><rect x="19.5" y="3.5" width="1.8" height="4" rx="0.9" fill="#111"/></svg>
-          </span>
+    <!-- ─── 프로덕트 그리드 ─────────────────────────────────────────────── -->
+    <section id="projects" class="projects">
+      <div class="wrap">
+        <div class="section__head reveal">
+          <div class="chapter">§ 01 — Projects</div>
+          <h2 class="section__title">
+            지금 출시 중이거나, <i>이번 분기에 내보낼</i> 앱들.
+          </h2>
+          <p class="section__lede">
+            한 번에 한 가지씩 — 일정 관리부터 자동화, 입시 컨설팅까지.
+            모두 “내가 직접 쓸 수 있을 만큼 좋은가” 를 통과한 것들입니다.
+          </p>
         </div>
-        <div class="phone__appbar">
-          <span class="phone__back">‹</span>
-          <span class="phone__apptitle">오늘의 체크</span>
-          <span class="phone__menu">⋯</span>
+
+        <div class="grid">
+
+          <!-- Featured : self-check-study (운영중) -->
+          <article class="card card--featured reveal">
+            <div class="card__split">
+              <div>
+                <div class="card__head">
+                  <div style="display:flex; align-items:center; gap: var(--space-4);">
+                    <div class="card__mark card__mark--scs">s</div>
+                    <div>
+                      <div class="card__meta">self-check-study · Android</div>
+                      <h3 class="card__title">
+                        <i>도장</i>으로 쌓이는 학습 일기.
+                      </h3>
+                    </div>
+                  </div>
+                  <span class="status status--live">Live · 심사중</span>
+                </div>
+
+                <p class="card__tagline">
+                  중고등학생이 스스로 공부 일정을 등록하고, 체크리스트를 도장으로 완성해
+                  카톡으로 자랑할 수 있는 학습 일기 앱.
+                </p>
+                <p class="card__body">
+                  공부는 결국 “해냈다” 는 감각을 누가 더 자주 느끼느냐의 싸움.
+                  체크박스로 시작해서, 끝낸 일정은 도장으로 굳어집니다.
+                  성취 페이지는 그대로 친구에게 카톡으로 자랑할 수 있도록 디자인했어요.
+                </p>
+
+                <div class="card__foot">
+                  <div class="card__tags">
+                    <span class="tag">학습 일기</span>
+                    <span class="tag">중·고등학생</span>
+                    <span class="tag">공유 카드</span>
+                  </div>
+                  <div class="card__links">
+                    <!-- 앱별 스토어 등록용 공개 처리방침 (privacy/self-check-study.html) -->
+                    <a href="./privacy/self-check-study.html" class="card__link card__link--muted">
+                      Privacy
+                    </a>
+                    <a href="#" class="card__link">
+                      Play 스토어 열기 <span class="arrow">↗</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card__preview" aria-hidden="true">
+                <div class="phone">
+                  <div class="phone__notch"></div>
+                  <div class="phone__top">오늘의 공부</div>
+                  <div class="phone__check done"><span class="box"></span><span>수학 모의고사 3회</span></div>
+                  <div class="phone__check done"><span class="box"></span><span>영단어 50개</span></div>
+                  <div class="phone__check"><span class="box"></span><span>물리 챕터 4 정리</span></div>
+                  <div class="phone__check"><span class="box"></span><span>국어 비문학 2지문</span></div>
+                  <div class="phone__stamp">woo-hoo!</div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- make-money (개발중) -->
+          <article class="card card--regular reveal">
+            <div class="card__head">
+              <div class="card__mark card__mark--money">m</div>
+              <span class="status status--dev">In dev</span>
+            </div>
+            <div class="card__meta">make-money · Automation</div>
+            <h3 class="card__title">
+              뉴스에서 <i>콘텐츠</i>로,<br>한 줄도 안 쓰고.
+            </h3>
+            <p class="card__tagline">
+              뉴스를 자동 크롤링해 관점별 콘텐츠를 생성하고,
+              광고를 붙여 블로그·티스토리에 자동 등록하는 파이프라인.
+            </p>
+            <p class="card__body">
+              하루치 뉴스에서 “이 사람이라면 이렇게 정리하겠다” 싶은 관점을
+              여러 페르소나로 분기해 생성합니다. 광고 배치까지 자동.
+            </p>
+            <div class="card__foot">
+              <div class="card__tags">
+                <span class="tag">크롤러</span>
+                <span class="tag">LLM 파이프라인</span>
+                <span class="tag">티스토리 API</span>
+              </div>
+              <div class="card__links">
+                <a href="./privacy/make-money.html" class="card__link card__link--muted">
+                  Privacy
+                </a>
+                <a href="#" class="card__link">
+                  개발 로그 보기 <span class="arrow">→</span>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- googSky (개발중) -->
+          <article class="card card--regular reveal">
+            <div class="card__head">
+              <div class="card__mark card__mark--sky">g</div>
+              <span class="status status--dev">In dev</span>
+            </div>
+            <div class="card__meta">googSky · 입시 컨설팅</div>
+            <h3 class="card__title">
+              <i>등급만 입력하면</i><br>지원 가능한 대학.
+            </h3>
+            <p class="card__tagline">
+              과목별 등급만 입력하면 안정·적정·도전 권으로 지원 가능 대학을
+              정리해 주는 입시 컨설팅 앱.
+            </p>
+            <p class="card__body">
+              복잡한 입시 데이터를 부모님도 한눈에 볼 수 있도록 단순화하는 게 목표.
+              데이터는 매년 갱신되고, 진행 상황은 모두 공개로 기록합니다.
+            </p>
+            <div class="card__foot">
+              <div class="card__tags">
+                <span class="tag">입시 데이터</span>
+                <span class="tag">안정·적정·도전</span>
+                <span class="tag">학부모 친화</span>
+              </div>
+              <div class="card__links">
+                <a href="./privacy/googsky.html" class="card__link card__link--muted">
+                  Privacy
+                </a>
+                <a href="#" class="card__link">
+                  기능 명세 보기 <span class="arrow">→</span>
+                </a>
+              </div>
+            </div>
+          </article>
+
         </div>
-        <div class="phone__screen">
-          <div class="phone__date">2026. 5. 22. 금요일 · 5개 중 2개 완료</div>
-          <div class="phone__bar"><span style="width:40%"></span></div>
-          <div class="todo done"><span class="chk">✓</span><span>수학 모의고사 오답노트</span></div>
-          <div class="todo done"><span class="chk">✓</span><span>영어 단어 50개</span></div>
-          <div class="todo"><span class="chk"></span><span>국어 비문학 3지문</span></div>
-          <div class="todo"><span class="chk"></span><span>물리 인강 2강</span></div>
-          <div class="todo"><span class="chk"></span><span>독서 30분</span></div>
-        </div>
-        <div class="phone__home"></div>
       </div>
-    </div>
-  </header>
+    </section>
 
-  <!-- ── 마퀴 티커 밴드 #1 ── -->
-  <div class="marquee marquee--ink" aria-hidden="true">
-    <div class="marquee__inner">
-      <span>BUILDING IN PUBLIC</span><span class="star">✶</span>
-      <span>작은 앱을 계속 만듭니다</span><span class="star">✶</span>
-      <span>woo!hoo!</span><span class="star">✶</span>
-      <span>SELF-CHECK · MAKE-MONEY · GOOGSKY</span><span class="star">✶</span>
-      <span>BUILDING IN PUBLIC</span><span class="star">✶</span>
-      <span>작은 앱을 계속 만듭니다</span><span class="star">✶</span>
-      <span>woo!hoo!</span><span class="star">✶</span>
-      <span>SELF-CHECK · MAKE-MONEY · GOOGSKY</span><span class="star">✶</span>
-    </div>
-  </div>
+    <!-- ─── "지금 만드는 중" 라이브 인디케이터 ───────────────────────────── -->
+    <section id="building" class="nowbuilding">
+      <div class="wrap">
+        <div class="section__head reveal">
+          <div class="chapter">§ 02 — Now building</div>
+          <h2 class="section__title">
+            오늘 / 이번 주에 <i>실제로</i> 손대고 있는 일들.
+          </h2>
+          <p class="section__lede">
+            깃 커밋만큼 자주, 그러나 사람의 언어로. 지금 무엇을 만들고 있는지 — 공개합니다.
+          </p>
+        </div>
 
-  <!-- ── 실험실 그리드 ── -->
-  <section class="section" id="products">
+        <ol class="ticker-list reveal" aria-label="현재 진행 중인 작업">
+          <li class="ticker-item">
+            <span class="ticker-item__time">Today · 17:42</span>
+            <span class="ticker-item__what">
+              self-check-study <em>도장 애니메이션</em> · 카톡 공유 카드 OG 이미지 튜닝
+            </span>
+            <span class="ticker-item__tag">scs</span>
+          </li>
+          <li class="ticker-item">
+            <span class="ticker-item__time">Today · 11:08</span>
+            <span class="ticker-item__what">
+              make-money <em>티스토리 OAuth</em> 재인증 흐름 — 토큰 만료 자동 복구
+            </span>
+            <span class="ticker-item__tag">money</span>
+          </li>
+          <li class="ticker-item">
+            <span class="ticker-item__time">Yesterday</span>
+            <span class="ticker-item__what">
+              googSky <em>2025 정시 데이터</em> 임포트 · 학교별 백분위 칼럼 정규화
+            </span>
+            <span class="ticker-item__tag">sky</span>
+          </li>
+          <li class="ticker-item">
+            <span class="ticker-item__time">This week</span>
+            <span class="ticker-item__what">
+              woo-hoo.kr <em>v2 리디자인</em> · 프로덕트 쇼케이스 + 구독 라우팅
+            </span>
+            <span class="ticker-item__tag">site</span>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ─── 개발 로그 미리보기 ──────────────────────────────────────────── -->
+    <section id="devlog">
+      <div class="wrap">
+        <div class="devlog__head reveal">
+          <div class="section__head" style="margin-bottom:0;">
+            <div class="chapter">§ 03 — Devlog</div>
+            <h2 class="section__title">
+              만드는 과정 — <i>실패 포함</i>.
+            </h2>
+            <p class="section__lede">
+              완성된 글이 아니라 “지금 푸는 문제” 의 메모. 짧지만 솔직하게.
+            </p>
+          </div>
+          <a href="./devlog.html" class="devlog__link">전체 로그 →</a>
+        </div>
+
+        <div class="log-list reveal">
+
+          <article class="log-item">
+            <div class="log-item__date">2026 · 05 · 22</div>
+            <div>
+              <h3 class="log-item__title">
+                도장(stamp) 마이크로 인터랙션 — <i>“해냈다”</i>는 감각의 시각화.
+              </h3>
+              <p class="log-item__body">
+                체크가 끝난 순간 종이에 도장이 찍히는 듯한 0.4초의 모션을 추가.
+                햅틱 + 옅은 효과음 + 살짝의 종이 그림자. 학생 5명 테스트 결과
+                “한 번 더 하고 싶다” 는 반응이 명확히 늘었다.
+              </p>
+              <div class="log-item__chips">
+                <span class="chip-mono">self-check-study</span>
+                <span class="chip-mono">animation</span>
+                <span class="chip-mono">user-test</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="log-item">
+            <div class="log-item__date">2026 · 05 · 18</div>
+            <div>
+              <h3 class="log-item__title">
+                make-money — <i>같은 뉴스, 다른 페르소나</i> 5종을 동시 생성.
+              </h3>
+              <p class="log-item__body">
+                하나의 원문 뉴스를 “회의적 분석가 / 따뜻한 에세이스트 / 데이터 정리광 /
+                Z세대 / 학부모” 의 시점으로 분기 생성하는 프롬프트 체인을 안정화.
+                티스토리 자동 발행은 30분 간격 큐로 분산.
+              </p>
+              <div class="log-item__chips">
+                <span class="chip-mono">make-money</span>
+                <span class="chip-mono">LLM</span>
+                <span class="chip-mono">queue</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="log-item">
+            <div class="log-item__date">2026 · 05 · 11</div>
+            <div>
+              <h3 class="log-item__title">
+                googSky — “<i>안정·적정·도전</i>” 의 경계, 그 어딘가.
+              </h3>
+              <p class="log-item__body">
+                대학별 컷의 분산이 클수록 “적정” 의 범위가 모호해진다.
+                절대 등급 차이가 아니라 “안정성 점수” 로 다시 정의 중.
+                학부모 인터뷰 8건에서 가장 흔한 질문은 “그래서 진짜 안전한가요?” 였다.
+              </p>
+              <div class="log-item__chips">
+                <span class="chip-mono">googSky</span>
+                <span class="chip-mono">data-model</span>
+                <span class="chip-mono">interview</span>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── 이메일 구독 ───────────────────────────────────────────────── -->
+    <section id="subscribe" class="subscribe">
+      <div class="wrap">
+        <div class="subscribe__card reveal">
+          <div class="subscribe__inner">
+            <div>
+              <div class="chapter">§ 04 — Letter</div>
+              <h2 class="subscribe__title">
+                새 앱·실험·개발 로그를<br><i>가장 먼저</i> 메일로.
+              </h2>
+              <p class="subscribe__lede">
+                일 주일에 한 번 — 이번 주에 무엇을 만들었고,
+                무엇이 잘 안 풀렸는지 짧게 적어 보냅니다. 광고 없음. 언제든 해지.
+              </p>
+            </div>
+
+            <form class="subscribe__form" action="https://formspree.io/f/XXXXXXXX" method="POST">
+              <!-- TODO: Formspree endpoint 교체 -->
+              <label class="subscribe__field">
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="you@example.com"
+                  class="subscribe__input"
+                  required
+                  aria-label="이메일 주소"
+                />
+                <button type="submit" class="subscribe__submit">Get the letter</button>
+              </label>
+              <p class="subscribe__small">
+                weekly · no spam · unsubscribe in one click
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ─── 푸터 ─────────────────────────────────────────────────────────── -->
+  <footer id="about">
     <div class="wrap">
-      <div class="section__head reveal">
-        <span class="chapter">
-          <span class="chapter__num">02</span>
-          Lab · Products &amp; Experiments
-        </span>
-        <h2 class="section__title">만든 것들, 만드는 것들.</h2>
-      </div>
-
-      <div class="grid">
-        <!-- 셀프체크 스터디 -->
-        <article class="card pcard reveal d1">
-          <span class="stamp"><span class="dot"></span>심사 중</span>
-          <h3 class="pcard__name">셀프체크 스터디</h3>
-          <p class="pcard__desc">체크리스트로 시작해 도장으로 쌓이고 카톡으로 자랑하는 학습 일기 앱. 중·고등학생을 위해.</p>
-          <a class="pcard__link" href="./apps/self-check-study.html">앱 소개 보기 →</a>
-        </article>
-
-        <!-- make-money -->
-        <article class="card pcard reveal d2">
-          <span class="stamp stamp--green"><span class="dot"></span>운영 중</span>
-          <h3 class="pcard__name">make-money</h3>
-          <p class="pcard__desc">뉴스를 자동 크롤링해 관점별 콘텐츠를 생성하고, 광고를 붙여 블로그·티스토리에 자동 등록하는 자동화 도구.</p>
-          <!-- TODO: 실제 레포/링크로 교체 -->
-          <a class="pcard__link" href="#">자세히 보기 →</a>
-        </article>
-
-        <!-- googsky -->
-        <article class="card pcard card--featured reveal d3">
-          <span class="stamp stamp--ink"><span class="dot"></span>만드는 중</span>
-          <h3 class="pcard__name">googsky</h3>
-          <p class="pcard__desc">과목별 등급만 가볍게 입력하면 안정·적정·도전권 대학을 나눠 알려주는 대입 컨설팅 앱.</p>
-          <!-- TODO: 실제 레포/랜딩 링크로 교체 -->
-          <a class="pcard__link" href="#building">진행 상황 보기 →</a>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── 지금 만드는 중: googsky ── -->
-  <section class="building dotgrid-light" id="building">
-    <!-- 우측 마지널리아 -->
-    <div class="marginalia note--hide-mobile" style="top:40px; right:24px; color:rgba(255,255,255,0.7);">
-      <span class="num" style="color:#ffd60a;">[note 03]</span>
-      매주 진행도를 갱신합니다 — 개발로그에서.
-    </div>
-    <div class="building__inner reveal">
-      <span class="chapter" style="color:rgba(255,255,255,0.72);">
-        <span class="chapter__num" style="color:#ffd60a;">03</span>
-        Building in Public · 진행 중
-      </span>
-      <h2 class="building__name">googsky <small>— 대입 컨설팅</small></h2>
-      <p class="building__desc">
-        아이의 과목별 등급만 가볍게 입력하면 가능한 대학을 안정권·적정권·도전권으로 나눠서 알려줍니다.
-        복잡한 입시 데이터를 한 번에 정리하는 게 목표예요. 진행 상황은 공개로 기록합니다.
-      </p>
-      <!-- data-width: 스크롤 등장 시 JS가 이 값으로 바를 채운다 -->
-      <div class="progress"><div class="progress__bar" data-width="45%"></div></div>
-      <div class="building__meta">진행도 ~45% · <a href="./devlog.html" style="text-decoration: underline">개발로그</a>에서 따라가기</div>
-    </div>
-  </section>
-
-  <!-- ── 개발로그 미리보기 ── -->
-  <section class="section" id="devlog">
-    <div class="wrap">
-      <div class="section__head reveal" style="display: flex; justify-content: space-between; align-items: flex-end;">
+      <div class="foot__row">
         <div>
-          <span class="chapter">
-            <span class="chapter__num">04</span>
-            Devlog · 개발 로그
-          </span>
-          <h2 class="section__title">기록을 남깁니다.</h2>
+          <div class="foot__brand">woo-<i>hoo</i>.kr</div>
+          <p class="foot__about">
+            1인 개발자가 작은 앱을 계속 만들어 올리는 실험실.
+            완벽한 첫 출시보다, <em>매주 살아 움직이는 사이트</em>를 지향합니다.
+          </p>
         </div>
-        <a href="./devlog.html" class="btn">전체 보기 →</a>
-      </div>
 
-      <!-- 최근 항목 미리보기 (devlog.html과 동일 내용 유지) -->
-      <a class="logrow reveal d1" href="./devlog.html">
-        <span class="logrow__date">2026.05.20</span>
-        <span class="logrow__title">googsky 등급→대학 매칭 로직 1차 완성</span>
-        <span class="logrow__tag">googsky</span>
-      </a>
-      <a class="logrow reveal d2" href="./devlog.html">
-        <span class="logrow__date">2026.05.12</span>
-        <span class="logrow__title">셀프체크 스터디 스토어 심사 제출</span>
-        <span class="logrow__tag">셀프체크</span>
-      </a>
-    </div>
-  </section>
+        <div class="foot__col">
+          <div class="foot__col-head">Projects</div>
+          <ul>
+            <li><a href="#projects">self-check-study</a></li>
+            <li><a href="#projects">make-money</a></li>
+            <li><a href="#projects">googSky</a></li>
+          </ul>
+        </div>
 
-  <!-- ── 마퀴 티커 밴드 #2 (반대 방향) ── -->
-  <div class="marquee marquee--yellow marquee--rev" aria-hidden="true">
-    <div class="marquee__inner">
-      <span>지금 받기</span><span class="star">✶</span>
-      <span>새 소식을 메일로</span><span class="star">✶</span>
-      <span>NO SPAM, JUST SHIPPING</span><span class="star">✶</span>
-      <span>woo-hoo.kr</span><span class="star">✶</span>
-      <span>지금 받기</span><span class="star">✶</span>
-      <span>새 소식을 메일로</span><span class="star">✶</span>
-      <span>NO SPAM, JUST SHIPPING</span><span class="star">✶</span>
-      <span>woo-hoo.kr</span><span class="star">✶</span>
-    </div>
-  </div>
+        <div class="foot__col">
+          <div class="foot__col-head">Writing</div>
+          <ul>
+            <li><a href="#devlog">Devlog</a></li>
+            <li><a href="#subscribe">Newsletter</a></li>
+            <li><a href="./privacy/">Privacy</a></li>
+          </ul>
+        </div>
 
-  <!-- ── 다운로드 & 구독 ── -->
-  <section class="ds" id="download">
-    <div class="ds__inner">
-      <!-- 다운로드 -->
-      <div class="reveal d1">
-        <span class="chapter">
-          <span class="chapter__num">05</span>
-          Download · 다운로드
-        </span>
-        <h2 class="section__title" style="font-size: 44px;">셀프체크 스터디</h2>
-        <p style="font-weight: 600; margin-top: 8px;">스토어 심사가 끝나는 대로 여기에 올라옵니다.</p>
-        <div class="store">
-          <!-- TODO: 심사 완료 후 실제 App Store 링크로 교체 + aria-disabled 제거 -->
-          <a class="store__btn" aria-disabled="true">
-            <small>준비 중 · iOS</small><b> App Store</b>
-          </a>
-          <!-- TODO: 심사 완료 후 실제 Google Play 링크로 교체 + aria-disabled 제거 -->
-          <a class="store__btn" aria-disabled="true">
-            <small>준비 중 · Android</small><b> Google Play</b>
-          </a>
+        <div class="foot__col">
+          <div class="foot__col-head">Elsewhere</div>
+          <ul>
+            <li><a href="#">GitHub ↗</a></li>
+            <li><a href="#">X / Twitter ↗</a></li>
+            <li><a href="mailto:woohoo.dew1017@gmail.com">Email ↗</a></li>
+          </ul>
         </div>
       </div>
 
-      <!-- 구독 -->
-      <div id="subscribe" class="reveal d2">
-        <span class="chapter">
-          <span class="chapter__num">06</span>
-          Subscribe · 이메일 구독
-        </span>
-        <h2 class="section__title" style="font-size: 44px;">새 소식을 받아보세요.</h2>
-        <p style="font-weight: 600; margin-top: 8px;">새 앱·실험·개발로그 소식을 메일로 보내드립니다.</p>
-        <!-- TODO: action을 실제 Formspree endpoint로 교체 (https://formspree.io/f/XXXXXXXX) -->
-        <form class="subscribe__form" action="https://formspree.io/f/XXXXXXXX" method="POST">
-          <input type="email" name="email" placeholder="your@email.com" required aria-label="이메일 주소" />
-          <button type="submit" class="btn btn--pink">구독 →</button>
-        </form>
-        <p class="subscribe__note">스팸 없이, 새 소식이 있을 때만 보냅니다.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── 푸터 ── -->
-  <footer class="footer">
-    <div class="footer__inner">
-      <div>© 2026 woo-hoo.kr · <a href="./privacy.html" style="text-decoration: underline;">개인정보처리방침</a></div>
-      <div class="footer__links">
-        <!-- TODO: 실제 프로필 URL로 교체 -->
-        <a href="#" aria-label="GitHub">GitHub</a>
-        <a href="#" aria-label="X (Twitter)">X</a>
-        <a href="mailto:dev@b-lot.co.kr">Email</a>
+      <div class="foot__bottom">
+        <span>© 2026 woo-hoo.kr · Made with too much coffee.</span>
+        <span>Built solo in Seoul · <a href="./privacy/">Privacy</a></span>
       </div>
     </div>
   </footer>
 
   <script>
-    /*
-     * 모바일 내비 토글
-     * 목적: 작은 화면에서 햄버거 버튼으로 메뉴를 열고 닫는다.
+    /**
+     * 스크롤 리빌 모션
+     * IntersectionObserver 로 .reveal 요소를 한 번만 페이드인.
+     * - prefers-reduced-motion 사용자에게는 CSS 단계에서 비활성화됨.
      */
-    (function () {
-      var toggle = document.querySelector(".nav__toggle");
-      var links = document.getElementById("navLinks");
-      if (!toggle || !links) return;
-
-      toggle.addEventListener("click", function () {
-        var open = links.classList.toggle("open");
-        toggle.setAttribute("aria-expanded", open ? "true" : "false");
-      });
-
-      // 메뉴 항목 클릭 시 닫기 (모바일에서 앵커 이동 후 메뉴 정리)
-      links.querySelectorAll("a").forEach(function (a) {
-        a.addEventListener("click", function () {
-          links.classList.remove("open");
-          toggle.setAttribute("aria-expanded", "false");
-        });
-      });
-    })();
-
-    /*
-     * 스크롤 등장 애니메이션 + 진행도 바 채움
-     * 목적: .reveal 요소가 뷰포트에 들어오면 .in을 붙여 페이드/슬라이드로 등장시키고,
-     *       진행도 바(.progress__bar[data-width])는 data-width 값으로 채운다.
-     * IntersectionObserver 미지원/모션 최소화 선호 시에는 즉시 노출한다.
-     */
-    (function () {
-      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      var bar = document.querySelector(".progress__bar[data-width]");
-
-      function fillBar() {
-        if (bar) bar.style.width = bar.getAttribute("data-width");
-      }
-
-      if (reduce || !("IntersectionObserver" in window)) {
-        // 모션 없이 최종 상태로 즉시 표시
-        document.querySelectorAll(".reveal").forEach(function (el) {
-          el.classList.add("in");
-        });
-        fillBar();
+    (function initScrollReveal() {
+      const targets = document.querySelectorAll('.reveal');
+      if (!('IntersectionObserver' in window) || targets.length === 0) {
+        targets.forEach(function (el) { el.classList.add('is-in'); });
         return;
       }
-
-      var io = new IntersectionObserver(
-        function (entries) {
-          entries.forEach(function (entry) {
-            if (!entry.isIntersecting) return;
-            entry.target.classList.add("in");
-            if (entry.target.classList.contains("building__inner")) fillBar();
-            io.unobserve(entry.target); // 한 번만 등장
-          });
-        },
-        { threshold: 0.18, rootMargin: "0px 0px -8% 0px" }
-      );
-
-      document.querySelectorAll(".reveal").forEach(function (el) {
-        io.observe(el);
-      });
-    })();
-
-    /*
-     * nav 스크롤 그림자
-     * 목적: 페이지를 조금이라도 내리면 상단 내비에 하드 섀도우를 붙여 떠 있는 느낌을 준다.
-     */
-    (function () {
-      var nav = document.querySelector(".nav");
-      if (!nav) return;
-      function onScroll() {
-        nav.classList.toggle("scrolled", window.scrollY > 8);
-      }
-      onScroll();
-      window.addEventListener("scroll", onScroll, { passive: true });
-    })();
-
-    /* ─────────────── 크리에이티브 레이어 ─────────────── */
-
-    var prefersReduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    /*
-     * 히어로 헤드라인 마커 긋기
-     * 목적: 로드 직후 노란 마커가 "스터디." 아래로 그어지는 애니메이션을 발동한다.
-     */
-    (function () {
-      var mark = document.getElementById("heroMark");
-      if (mark) requestAnimationFrame(function () { mark.classList.add("draw"); });
-    })();
-
-    /*
-     * 부엉이 눈동자 커서 추적
-     * 목적: 마우스 위치에 따라 두 눈동자를 눈 안에서 살짝 움직여 살아있는 느낌을 준다.
-     * 파라미터: 전역 mousemove 좌표. 모션 최소화 선호 시 비활성.
-     */
-    (function () {
-      var owl = document.getElementById("owl");
-      if (!owl || prefersReduce) return;
-      var eyes = owl.querySelectorAll(".owl-eye");
-      window.addEventListener("mousemove", function (e) {
-        var box = owl.getBoundingClientRect();
-        var cx = box.left + box.width / 2;
-        var cy = box.top + box.height / 2;
-        var ang = Math.atan2(e.clientY - cy, e.clientX - cx);
-        // viewBox(64) 기준 최대 2.2 단위 이동
-        var dx = Math.cos(ang) * 2.2;
-        var dy = Math.sin(ang) * 2.2;
-        eyes.forEach(function (eye) {
-          eye.setAttribute("transform", "translate(" + dx + " " + dy + ")");
+      const io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-in');
+            io.unobserve(entry.target);
+          }
         });
-      });
-    })();
-
-    /*
-     * 클릭 시 woo!/hoo!/✶ 튀어오르기
-     * 목적: 페이지 아무 곳이나 클릭하면 클릭 지점에서 작은 글자가 떠올랐다 사라진다.
-     * 링크/버튼/입력 클릭은 방해하지 않도록 그대로 통과시킨다(요소는 pointer-events:none).
-     */
-    (function () {
-      var words = ["woo!", "hoo!", "✶", "🎉", "yay!"];
-      var colors = ["#ff4da6", "#0a84ff", "#16a34a", "#111", "#e0a800"];
-      document.addEventListener("click", function (e) {
-        var w = words[(Math.random() * words.length) | 0];
-        var el = document.createElement("span");
-        el.className = "pop";
-        el.textContent = w;
-        el.style.left = e.clientX + "px";
-        el.style.top = e.clientY + "px";
-        el.style.color = colors[(Math.random() * colors.length) | 0];
-        el.style.fontSize = 20 + Math.random() * 16 + "px";
-        document.body.appendChild(el);
-        setTimeout(function () { el.remove(); }, 900);
-      });
-    })();
-
-    /*
-     * 드래그 가능한 스티커
-     * 목적: 히어로의 스티커(.sticker)를 마우스/터치로 자유롭게 끌어 옮길 수 있게 한다.
-     * 포인터 이벤트로 마우스·터치를 함께 처리한다.
-     */
-    (function () {
-      document.querySelectorAll(".sticker").forEach(function (s) {
-        var sx, sy, ox, oy, dragging = false;
-        // 초기 위치를 transform 기반으로 관리하기 위해 현재 offset을 0으로 두고 누적
-        var tx = 0, ty = 0;
-        s.addEventListener("pointerdown", function (e) {
-          dragging = true;
-          s.classList.add("dragging");
-          s.setPointerCapture(e.pointerId);
-          sx = e.clientX; sy = e.clientY; ox = tx; oy = ty;
-          e.preventDefault();
-        });
-        s.addEventListener("pointermove", function (e) {
-          if (!dragging) return;
-          tx = ox + (e.clientX - sx);
-          ty = oy + (e.clientY - sy);
-          s.style.transform = "translate(" + tx + "px," + ty + "px)";
-        });
-        function end() { dragging = false; s.classList.remove("dragging"); }
-        s.addEventListener("pointerup", end);
-        s.addEventListener("pointercancel", end);
-      });
+      }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+      targets.forEach(function (el) { io.observe(el); });
     })();
   </script>
+
 </body>
 </html>
