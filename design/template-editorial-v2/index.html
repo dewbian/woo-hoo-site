@@ -615,6 +615,35 @@
   .subscribe__small {
     font-family: var(--font-mono); font-size: 11px; color: var(--fg-3);
     text-transform: uppercase; letter-spacing: var(--track-eyebrow);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  /* 제출 실패 시 hint 텍스트를 에러 톤으로 전환 */
+  .subscribe__small.is-error {
+    color: var(--danger); text-transform: none; letter-spacing: 0;
+    font-family: var(--font-ui); font-size: var(--text-sm);
+  }
+  /* 입력 영역 (성공 후 숨김 처리되는 컨테이너) */
+  .subscribe__body {
+    display: flex; flex-direction: column; gap: var(--space-3);
+  }
+  /* 제출 성공 메시지 — 큰 세리프로 따뜻한 톤 */
+  .subscribe__result {
+    font-family: var(--font-display); font-weight: 400;
+    font-size: var(--text-xl); line-height: 1.4;
+    letter-spacing: var(--track-snug); color: var(--fg-1);
+    padding: var(--space-4) 0;
+    animation: subscribeIn 0.45s var(--ease-out);
+  }
+  .subscribe__result strong {
+    font-style: italic; color: var(--accent); font-weight: 400;
+  }
+  @keyframes subscribeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  /* 제출 중 버튼 비활성 상태 */
+  .subscribe__submit:disabled {
+    opacity: 0.6; cursor: not-allowed; transform: none;
   }
 
   /* ═══════════════════════════════════════════════════════════════════════
@@ -1038,22 +1067,40 @@
               </p>
             </div>
 
-            <form class="subscribe__form" action="https://formspree.io/f/XXXXXXXX" method="POST">
-              <!-- TODO: Formspree endpoint 교체 -->
-              <label class="subscribe__field">
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="you@example.com"
-                  class="subscribe__input"
-                  required
-                  aria-label="이메일 주소"
-                />
-                <button type="submit" class="subscribe__submit">Get the letter</button>
-              </label>
-              <p class="subscribe__small">
-                weekly · no spam · unsubscribe in one click
-              </p>
+            <!-- 구독 폼 : Web3Forms 사용. JS 가 비동기 제출 → 성공 시 inline 메시지 표시. -->
+            <form class="subscribe__form" id="subscribeForm" novalidate>
+              <!-- 필수 : Web3Forms access key -->
+              <input type="hidden" name="access_key" value="daa2b029-746c-4d7b-81a7-8aa584aa6588">
+              <!-- 운영자 알림 메일에 표시될 메타 -->
+              <input type="hidden" name="subject" value="새 구독자 — woo-hoo.kr">
+              <input type="hidden" name="from_name" value="woo-hoo.kr Newsletter">
+              <!-- 봇 차단 honeypot : 사람에겐 보이지 않고, 봇이 채우면 자동 거부 -->
+              <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off"
+                     aria-hidden="true"
+                     style="position:absolute; left:-9999px; opacity:0; pointer-events:none;">
+
+              <!-- 입력 영역 (성공 시 숨김) -->
+              <div class="subscribe__body" data-role="body">
+                <label class="subscribe__field">
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="you@example.com"
+                    class="subscribe__input"
+                    required
+                    aria-label="이메일 주소"
+                  />
+                  <button type="submit" class="subscribe__submit">Get the letter</button>
+                </label>
+                <p class="subscribe__small" data-role="hint">
+                  weekly · no spam · unsubscribe in one click
+                </p>
+              </div>
+
+              <!-- 성공 메시지 (제출 성공 시에만 표시) -->
+              <div class="subscribe__result" data-role="result" hidden role="status" aria-live="polite">
+                <strong>감사합니다.</strong> 새 앱·실험이 나오면 가장 먼저 메일로 알려드릴게요.
+              </div>
             </form>
           </div>
         </div>
@@ -1110,6 +1157,53 @@
   </footer>
 
   <script>
+    /**
+     * 구독 폼 비동기 제출 (Web3Forms)
+     * - 페이지 이동 없이 inline 으로 결과 표시
+     * - 성공: 입력 영역 숨기고 감사 메시지 노출
+     * - 실패: 버튼 활성 복원 + hint 를 에러 톤으로 전환
+     * - 봇 차단: honeypot(botcheck) 필드 + Web3Forms 자체 필터
+     */
+    (function initSubscribeForm() {
+      const form = document.getElementById('subscribeForm');
+      if (!form) return;
+      const body      = form.querySelector('[data-role="body"]');
+      const result    = form.querySelector('[data-role="result"]');
+      const hint      = form.querySelector('[data-role="hint"]');
+      const submitBtn = form.querySelector('.subscribe__submit');
+      const hintDefault = hint.textContent;
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        if (submitBtn.disabled) return;
+        submitBtn.disabled = true;
+        submitBtn.textContent = '보내는 중…';
+        hint.classList.remove('is-error');
+        hint.textContent = hintDefault;
+
+        try {
+          const fd = new FormData(form);
+          const res = await fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            body: fd,
+            headers: { Accept: 'application/json' },
+          });
+          const json = await res.json();
+          if (json && json.success) {
+            body.hidden = true;
+            result.hidden = false;
+          } else {
+            throw new Error((json && json.message) || '제출이 실패했어요.');
+          }
+        } catch (err) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = '다시 시도';
+          hint.classList.add('is-error');
+          hint.textContent = '잠시 후 다시 시도해 주세요. (' + (err.message || 'error') + ')';
+        }
+      });
+    })();
+
     /**
      * 스크롤 리빌 모션
      * IntersectionObserver 로 .reveal 요소를 한 번만 페이드인.
