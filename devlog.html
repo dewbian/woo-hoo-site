@@ -1,0 +1,217 @@
+<!--
+  파일 목적: woo-hoo.kr 개발 로그 페이지 — 프로젝트 진행 상황을 타임라인으로 공개 기록
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>개발로그 | woo-hoo.lab</title>
+  <meta name="description" content="woo-hoo 실험실의 개발 로그 — 셀프체크 스터디, make-money, googsky의 진행 상황 기록." />
+  <meta name="theme-color" content="#ffd60a" />
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./styles.css" />
+  <style>
+    /* ── 개발로그 페이지 전용 스타일 ── */
+    .log-hero {
+      border-bottom: var(--bd);
+      padding: 56px 0 64px;
+      background: var(--yellow);
+      position: relative;
+    }
+    .log-hero__title { font-family: var(--font-display-kr); font-weight: 400; font-size: 96px; letter-spacing: -1px; line-height: 0.95; }
+    .log-hero__sub { margin-top: 14px; font-weight: 600; max-width: 520px; font-size: 16px; }
+
+    /* 필터 태그 (현재는 표시용, 정적) */
+    .filters { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+    .filter {
+      font-size: 13px; font-weight: 800;
+      border: var(--bd); border-radius: 999px;
+      padding: 5px 14px; background: var(--white);
+    }
+
+    /* 타임라인 */
+    .timeline { padding: 56px 0; }
+    .entry {
+      border-left: var(--bd);
+      padding: 0 0 36px 28px;
+      margin-left: 8px;
+      position: relative;
+    }
+    .entry:last-child { padding-bottom: 0; }
+    .entry::before {
+      content: "";
+      position: absolute;
+      left: -9px; top: 4px;
+      width: 14px; height: 14px;
+      background: var(--pink);
+      border: var(--bd);
+      border-radius: 50%;
+    }
+    .entry__date { font-size: 13px; font-weight: 800; color: var(--muted); }
+    .entry__title { font-family: var(--font-display-kr); font-weight: 400; font-size: 30px; letter-spacing: -0.5px; line-height: 1.1; margin: 4px 0 10px; }
+    .entry__num {
+      font-family: var(--font-display-en);
+      font-style: italic;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--muted);
+      margin-right: 8px;
+    }
+    .entry__tag {
+      display: inline-block; font-size: 11px; font-weight: 800;
+      border: var(--bd); border-radius: 999px; padding: 2px 10px; margin-bottom: 10px;
+    }
+    .entry__tag--googsky { background: var(--yellow); }
+    .entry__tag--self { background: var(--sky); }
+    .entry__tag--money { background: var(--green); }
+    .entry__body { color: #333; font-size: 15px; max-width: 620px; }
+
+    @media (max-width: 720px) {
+      .log-hero__title { font-size: 36px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── 상단 내비 ── -->
+  <nav class="nav">
+    <div class="nav__inner">
+      <a href="./" class="nav__logo">woo-hoo<span class="accent">.</span>lab</a>
+      <button class="nav__toggle" aria-label="메뉴 열기" aria-expanded="false">☰</button>
+      <div class="nav__links" id="navLinks">
+        <a href="./#products">실험실</a>
+        <a href="./devlog.html">개발로그</a>
+        <a href="./#download">다운로드</a>
+        <a href="./#subscribe" class="nav__cta">구독 →</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── 로그 히어로 ── -->
+  <header class="log-hero">
+    <div class="wrap">
+      <div class="path path--ink" style="margin-bottom:8px;">
+        <a href="./" style="text-decoration:underline;">~/woo-hoo.lab</a>&nbsp;/&nbsp;devlog<span class="path__cursor" aria-hidden="true" style="background:var(--ink);"></span>
+      </div>
+      <span class="chapter" style="margin-top:6px;">
+        <span class="chapter__num">∞</span>
+        Devlog · <em style="font-family:var(--font-display-en);font-style:italic;">a running journal</em>
+      </span>
+      <h1 class="log-hero__title" style="margin-top: 10px;">개발로그</h1>
+      <p class="log-hero__sub">완성작부터 만드는 중인 실험까지 — 진행 상황을 그때그때 기록합니다.</p>
+      <div class="filters">
+        <span class="filter">전체</span>
+        <span class="filter">googsky</span>
+        <span class="filter">셀프체크</span>
+        <span class="filter">make-money</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── 마퀴 티커 밴드 ── -->
+  <div class="marquee marquee--ink" aria-hidden="true">
+    <div class="marquee__inner">
+      <span>DEVLOG</span><span class="star">✶</span>
+      <span>building in public</span><span class="star">✶</span>
+      <span>기록을 남깁니다</span><span class="star">✶</span>
+      <span>woo!hoo!</span><span class="star">✶</span>
+      <span>DEVLOG</span><span class="star">✶</span>
+      <span>building in public</span><span class="star">✶</span>
+      <span>기록을 남깁니다</span><span class="star">✶</span>
+      <span>woo!hoo!</span><span class="star">✶</span>
+    </div>
+  </div>
+
+  <!-- ── 타임라인 ── -->
+  <main class="timeline">
+    <div class="wrap">
+
+      <!-- 항목은 최신순으로 직접 추가한다 (정적 작성) -->
+      <article class="entry reveal">
+        <div class="entry__date"><span class="entry__num">E.03</span>2026.05.20</div>
+        <span class="entry__tag entry__tag--googsky">googsky</span>
+        <h2 class="entry__title">등급 → 대학 매칭 로직 1차 완성</h2>
+        <p class="entry__body">
+          과목별 등급을 입력받아 안정·적정·도전권으로 분류하는 핵심 로직의 1차 버전을 완성했습니다.
+          아직 데이터셋이 거칠지만, 입력 → 분류 → 결과까지의 흐름이 한 번에 도는 걸 확인했어요.
+        </p>
+      </article>
+
+      <article class="entry reveal">
+        <div class="entry__date"><span class="entry__num">E.02</span>2026.05.12</div>
+        <span class="entry__tag entry__tag--self">셀프체크</span>
+        <h2 class="entry__title">셀프체크 스터디 스토어 심사 제출</h2>
+        <p class="entry__body">
+          스케줄 등록·달성 체크·푸시 알림까지 기본 기능을 마무리하고 App Store / Google Play에 심사를 제출했습니다.
+          개인정보처리방침도 woo-hoo.kr에 올렸습니다.
+        </p>
+      </article>
+
+      <article class="entry reveal">
+        <div class="entry__date"><span class="entry__num">E.01</span>2026.05.01</div>
+        <span class="entry__tag entry__tag--money">make-money</span>
+        <h2 class="entry__title">뉴스 크롤링 → 자동 포스팅 파이프라인 안정화</h2>
+        <p class="entry__body">
+          뉴스를 수집해 관점별 콘텐츠를 생성하고 광고를 붙여 블로그·티스토리에 자동 등록하는 파이프라인을
+          꾸준히 돌리며 안정화했습니다.
+        </p>
+      </article>
+
+    </div>
+  </main>
+
+  <!-- ── 푸터 ── -->
+  <footer class="footer" style="border-top: var(--bd);">
+    <div class="footer__inner">
+      <div>© 2026 woo-hoo.kr · <a href="./privacy.html" style="text-decoration: underline;">개인정보처리방침</a></div>
+      <div class="footer__links">
+        <!-- TODO: 실제 프로필 URL로 교체 -->
+        <a href="#" aria-label="GitHub">GitHub</a>
+        <a href="#" aria-label="X (Twitter)">X</a>
+        <a href="mailto:dev@b-lot.co.kr">Email</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* 모바일 내비 토글 (index.html과 동일 동작) */
+    (function () {
+      var toggle = document.querySelector(".nav__toggle");
+      var links = document.getElementById("navLinks");
+      if (!toggle || !links) return;
+      toggle.addEventListener("click", function () {
+        var open = links.classList.toggle("open");
+        toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+    })();
+
+    /* 스크롤 등장 (index.html과 동일 동작) */
+    (function () {
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var els = document.querySelectorAll(".reveal");
+      if (reduce || !("IntersectionObserver" in window)) {
+        els.forEach(function (el) { el.classList.add("in"); });
+        return;
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("in");
+          io.unobserve(entry.target);
+        });
+      }, { threshold: 0.18, rootMargin: "0px 0px -8% 0px" });
+      els.forEach(function (el) { io.observe(el); });
+    })();
+
+    /* nav 스크롤 그림자 */
+    (function () {
+      var nav = document.querySelector(".nav");
+      if (!nav) return;
+      function onScroll() { nav.classList.toggle("scrolled", window.scrollY > 8); }
+      onScroll();
+      window.addEventListener("scroll", onScroll, { passive: true });
+    })();
+  </script>
+</body>
+</html>

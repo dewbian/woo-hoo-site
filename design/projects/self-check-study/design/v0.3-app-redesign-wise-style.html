@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<!--
+  self-check-study v0.3 디자인 목업
+  - Wise 디자인 시스템(sage canvas + lime CTA + 24px pill + 헤비 디스플레이) 적용
+  - 셀프체크 스터디의 요일 무지개색은 카테고리 컬러로 유지
+  - 모바일 디바이스 mockup 안에 Today / Stamps / Calendar / Timer / Eval 5 화면 렌더
+  - 단일 HTML 파일, 외부 의존성은 Pretendard CDN 1개
+-->
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>self-check-study — 공부, 기록, 자랑.</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" as="style" crossorigin
+  href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+/* ───────────────────────── Wise tokens ───────────────────────── */
+:root{
+  /* brand & accent */
+  --primary:#9fe870;
+  --primary-active:#cdffad;
+  --primary-neutral:#c5edab;
+  --primary-pale:#e2f6d5;
+  /* surface */
+  --canvas:#ffffff;
+  --canvas-soft:#e8ebe6;
+  /* text */
+  --ink:#0e0f0c;
+  --ink-deep:#163300;
+  --body:#454745;
+  --mute:#868685;
+  /* semantic */
+  --positive:#2ead4b;
+  --positive-deep:#054d28;
+  --warning:#ffd11a;
+  --warning-deep:#b86700;
+  --warning-content:#4a3b1c;
+  --negative:#d03238;
+  --negative-bg:#320707;
+  /* radius */
+  --r-sm:8px; --r-md:12px; --r-lg:16px; --r-xl:24px; --r-pill:9999px;
+  /* spacing */
+  --s-xxs:2px; --s-xs:4px; --s-sm:8px; --s-md:12px; --s-lg:16px;
+  --s-xl:24px; --s-2xl:32px; --s-3xl:48px; --s-4xl:72px;
+  /* 셀프체크 시그니처 요일 무지개 */
+  --d-mon:#FF6B6B; --d-tue:#FFA94D; --d-wed:#FFD93D;
+  --d-thu:#51CF66; --d-fri:#339AF0; --d-sat:#845EF7; --d-sun:#E64980;
+  /* 과목 컬러 (앱 내부 카테고리) */
+  --c-math:#339AF0; --c-eng:#E64980; --c-kor:#845EF7; --c-free:var(--primary);
+}
+
+/* ───────────────────────── reset ───────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  font-feature-settings:'ss06','ss07','calt';
+  background:var(--canvas);
+  color:var(--ink);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+img,svg{display:block;max-width:100%}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+a{color:inherit;text-decoration:none}
+
+/* ───────────────────────── typography ───────────────────────── */
+.t-mega{font-size:clamp(56px,8vw,126px);font-weight:900;line-height:.92;letter-spacing:-.04em}
+.t-xxl {font-size:clamp(44px,6vw,96px); font-weight:900;line-height:.95;letter-spacing:-.035em}
+.t-xl  {font-size:clamp(36px,4.5vw,64px);font-weight:900;line-height:1.02;letter-spacing:-.03em}
+.t-md  {font-size:clamp(28px,3.4vw,40px);font-weight:900;line-height:1.1; letter-spacing:-.025em}
+.t-sm  {font-size:clamp(22px,2.4vw,32px);font-weight:700;line-height:1.2; letter-spacing:-.02em}
+.t-xs  {font-size:20px;font-weight:700;line-height:1.3;letter-spacing:-.015em}
+.t-lead{font-size:20px;font-weight:400;line-height:1.5;color:var(--body)}
+.t-body{font-size:16px;font-weight:400;line-height:1.5;color:var(--body)}
+.t-bodyS{font-size:14px;font-weight:400;line-height:1.43;color:var(--body)}
+.t-cap{font-size:12px;font-weight:500;line-height:1.33;color:var(--mute);letter-spacing:.02em}
+.t-eyebrow{font-size:13px;font-weight:600;line-height:1.2;color:var(--ink-deep);
+  text-transform:uppercase;letter-spacing:.12em}
+
+/* ───────────────────────── layout primitives ───────────────────────── */
+.container{max-width:1200px;margin:0 auto;padding:0 var(--s-xl)}
+.band{padding:var(--s-4xl) 0;position:relative}
+.band--sage{background:var(--canvas-soft)}
+.band--white{background:var(--canvas)}
+.band--ink{background:var(--ink);color:var(--canvas-soft)}
+.band--pale{background:var(--primary-pale)}
+.row{display:flex;gap:var(--s-xl);align-items:center;flex-wrap:wrap}
+.stack{display:flex;flex-direction:column;gap:var(--s-lg)}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s-xl)}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-xl)}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-xl)}
+@media (max-width:1023px){.grid-3,.grid-4{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:639px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+
+/* ───────────────────────── buttons ───────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-size:16px;font-weight:600;line-height:24px;
+  padding:var(--s-md) var(--s-xl);
+  border-radius:var(--r-xl);
+  transition:transform .15s ease,background .15s ease,color .15s ease;
+  white-space:nowrap;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn--primary{background:var(--primary);color:var(--ink)}
+.btn--primary:hover{background:var(--primary-active)}
+.btn--secondary{background:var(--canvas-soft);color:var(--ink)}
+.btn--secondary:hover{background:#dde0db}
+.btn--tertiary{background:var(--canvas);color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.btn--tertiary:hover{background:var(--canvas-soft)}
+.btn--white{background:var(--canvas);color:var(--ink)}
+.btn--white:hover{background:var(--primary-pale)}
+.btn--sm{padding:8px var(--s-lg);font-size:14px;line-height:20px}
+.btn--lg{padding:var(--s-lg) var(--s-2xl);font-size:18px;line-height:28px}
+
+/* ───────────────────────── nav ───────────────────────── */
+.nav{position:sticky;top:0;z-index:50;background:var(--canvas-soft);
+  border-bottom:1px solid rgba(14,15,12,.06)}
+.nav__inner{display:flex;align-items:center;justify-content:space-between;
+  padding:var(--s-md) var(--s-xl);max-width:1200px;margin:0 auto}
+.nav__brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.02em}
+.nav__logo{width:28px;height:28px;border-radius:8px;background:var(--ink);
+  display:grid;place-items:center;color:var(--primary);font-weight:900;font-size:14px}
+.nav__links{display:flex;gap:var(--s-xl);align-items:center}
+.nav__link{font-size:14px;font-weight:600;color:var(--ink)}
+.nav__link:hover{opacity:.7}
+@media (max-width:767px){.nav__links{display:none}}
+
+/* ───────────────────────── hero ───────────────────────── */
+.hero{position:relative;overflow:hidden;background:var(--canvas-soft);padding-top:var(--s-3xl)}
+.hero__inner{display:grid;grid-template-columns:1.1fr 1fr;gap:var(--s-3xl);align-items:center;
+  max-width:1200px;margin:0 auto;padding:var(--s-4xl) var(--s-xl)}
+@media (max-width:1023px){.hero__inner{grid-template-columns:1fr;gap:var(--s-2xl);text-align:left}}
+.hero__eyebrow{margin-bottom:var(--s-lg)}
+.hero__title{margin-bottom:var(--s-xl)}
+.hero__title em{font-style:normal;color:var(--positive)}
+.hero__sub{max-width:520px;margin-bottom:var(--s-2xl)}
+.hero__cta{display:flex;gap:var(--s-md);flex-wrap:wrap}
+.hero__meta{display:flex;gap:var(--s-xl);margin-top:var(--s-2xl);
+  padding-top:var(--s-xl);border-top:1px solid rgba(14,15,12,.1);flex-wrap:wrap}
+.hero__meta-item{display:flex;flex-direction:column;gap:2px}
+.hero__meta-num{font-weight:900;font-size:28px;letter-spacing:-.02em;color:var(--ink)}
+.hero__meta-label{font-size:13px;color:var(--mute);font-weight:500}
+
+/* hero 배경: 달력 그리드 + lime 스탬프 패턴 */
+.hero__pattern{position:absolute;inset:0;pointer-events:none;opacity:.45;
+  background-image:
+    linear-gradient(rgba(14,15,12,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(14,15,12,.04) 1px,transparent 1px);
+  background-size:64px 64px;
+  mask-image:linear-gradient(180deg,#000 0%,#000 60%,transparent 100%);}
+.hero__stamp{position:absolute;width:36px;height:36px;border-radius:50%;
+  background:var(--primary);opacity:.85;animation:pop 1.6s ease forwards;opacity:0}
+@keyframes pop{from{opacity:0;transform:scale(.4)}to{opacity:.9;transform:scale(1)}}
+
+/* ───────────────────────── device mockup ───────────────────────── */
+.device-wrap{display:flex;justify-content:center;perspective:1200px}
+.device{
+  width:320px;height:680px;background:var(--ink);border-radius:42px;padding:10px;
+  box-shadow:
+    0 40px 80px -30px rgba(14,15,12,.35),
+    0 12px 24px -12px rgba(14,15,12,.18),
+    inset 0 0 0 1px rgba(255,255,255,.04);
+  position:relative;flex-shrink:0;
+}
+.device::before{content:"";position:absolute;top:24px;left:50%;transform:translateX(-50%);
+  width:88px;height:6px;border-radius:6px;background:#222;z-index:2}
+.device__screen{width:100%;height:100%;background:var(--canvas-soft);
+  border-radius:34px;overflow:hidden;position:relative;display:flex;flex-direction:column}
+.device--sm{width:280px;height:600px}
+.device--sm .device__screen{border-radius:30px}
+
+/* status bar 안 작은 부분 */
+.sb{display:flex;justify-content:space-between;align-items:center;
+  padding:14px var(--s-xl) 8px;font-size:13px;font-weight:600;color:var(--ink)}
+.sb__dots{display:flex;gap:3px}
+.sb__dots span{width:4px;height:4px;border-radius:50%;background:var(--ink);opacity:.4}
+.sb__dots span:nth-child(-n+3){opacity:1}
+
+/* 모바일 헤더 */
+.mh{padding:var(--s-md) var(--s-xl) var(--s-sm)}
+.mh__date{font-size:13px;color:var(--mute);font-weight:500;margin-bottom:2px}
+.mh__greet{font-size:24px;font-weight:900;letter-spacing:-.02em;color:var(--ink)}
+
+/* 화면 콘텐츠 영역 (스크롤 가능 가정) */
+.ms{flex:1;padding:0 var(--s-xl);overflow:hidden}
+
+/* 탭바 */
+.tb{display:flex;justify-content:space-around;padding:8px 0 16px;
+  background:var(--canvas);border-top:1px solid rgba(14,15,12,.06)}
+.tb__item{display:flex;flex-direction:column;align-items:center;gap:2px;
+  font-size:11px;font-weight:600;color:var(--mute);padding:6px 12px;border-radius:12px}
+.tb__item--active{color:var(--ink)}
+.tb__item--active .tb__icon{background:var(--ink);color:var(--primary)}
+.tb__icon{width:32px;height:32px;border-radius:10px;background:transparent;
+  display:grid;place-items:center;font-size:18px;color:var(--ink)}
+
+/* ───────────── Today 화면 ───────────── */
+.today-now{background:var(--canvas);border-radius:var(--r-xl);
+  padding:var(--s-lg);margin-top:var(--s-md);position:relative;overflow:hidden}
+.today-now__eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--positive);margin-bottom:6px}
+.today-now__title{font-size:22px;font-weight:900;letter-spacing:-.02em;color:var(--ink);margin-bottom:2px}
+.today-now__time{font-size:13px;color:var(--body);font-weight:500;margin-bottom:var(--s-lg)}
+.today-now__cta{display:flex;align-items:center;justify-content:space-between}
+.today-now__btn{background:var(--primary);color:var(--ink);
+  padding:10px 16px;border-radius:var(--r-pill);font-weight:700;font-size:14px;
+  display:inline-flex;align-items:center;gap:6px}
+.today-now__chip{background:var(--canvas-soft);padding:6px 10px;border-radius:var(--r-pill);
+  font-size:11px;font-weight:700;color:var(--body)}
+
+.session-list{margin-top:var(--s-lg);display:flex;flex-direction:column;gap:8px}
+.sess{display:flex;align-items:center;gap:10px;padding:10px 12px;
+  background:var(--canvas);border-radius:var(--r-lg)}
+.sess__dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;background:var(--c-math)}
+.sess--eng .sess__dot{background:var(--c-eng)}
+.sess--kor .sess__dot{background:var(--c-kor)}
+.sess--free .sess__dot{background:var(--primary)}
+.sess__title{font-size:13px;font-weight:700;color:var(--ink);flex:1;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sess__time{font-size:11px;color:var(--mute);font-weight:600}
+.sess__badge{margin-left:auto;font-size:11px;font-weight:700;padding:2px 6px;
+  border-radius:6px;background:var(--primary-pale);color:var(--positive-deep)}
+.sess--pending .sess__badge{background:var(--canvas-soft);color:var(--mute)}
+.sess--running .sess__badge{background:var(--warning);color:var(--warning-content)}
+.sess--done .sess__title{text-decoration:none;color:var(--ink)}
+
+/* 완료 카드 (점수 + 공유) */
+.done-card{background:var(--canvas);border-radius:var(--r-xl);padding:var(--s-lg);
+  margin-top:var(--s-md);display:flex;align-items:center;gap:var(--s-md)}
+.done-card__emoji{font-size:32px}
+.done-card__body{flex:1;min-width:0}
+.done-card__title{font-size:13px;font-weight:700;color:var(--ink);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.done-card__meta{font-size:11px;font-weight:600;color:var(--positive-deep);margin-top:2px}
+.done-card__share{width:36px;height:36px;border-radius:var(--r-pill);
+  background:var(--primary-pale);display:grid;place-items:center;color:var(--positive-deep);font-size:14px}
+
+/* ───────────── Stamps 화면 ───────────── */
+.stamp-today{background:var(--canvas);border-radius:var(--r-xl);
+  padding:var(--s-lg);margin-top:var(--s-md);display:flex;align-items:center;gap:10px}
+.stamp-today__date{font-size:12px;font-weight:700;color:var(--mute)}
+.stamp-today__main{font-size:18px;font-weight:900;color:var(--ink);letter-spacing:-.02em}
+.stamp-today__pct{font-size:12px;font-weight:600;color:var(--positive)}
+.stamp-today__share{margin-left:auto;width:36px;height:36px;border-radius:var(--r-pill);
+  background:var(--primary);display:grid;place-items:center;font-size:14px;color:var(--ink)}
+
+.stamp-grid{margin-top:var(--s-lg);display:grid;grid-template-columns:repeat(5,1fr);
+  gap:10px;background:var(--canvas);padding:var(--s-lg);border-radius:var(--r-xl)}
+.stamp{aspect-ratio:1;border-radius:50%;background:var(--canvas-soft);
+  display:grid;place-items:center;font-size:13px;font-weight:900;color:var(--canvas)}
+.stamp--math{background:var(--c-math)}
+.stamp--eng {background:var(--c-eng)}
+.stamp--kor {background:var(--c-kor)}
+.stamp--free{background:var(--primary);color:var(--ink)}
+.stamp--empty{background:var(--canvas-soft);color:transparent;
+  box-shadow:inset 0 0 0 1px rgba(14,15,12,.08)}
+
+.stamp-stats{margin-top:var(--s-md);display:flex;justify-content:space-between;
+  padding:0 var(--s-xs)}
+.stamp-stats__num{font-size:24px;font-weight:900;letter-spacing:-.02em}
+.stamp-stats__lbl{font-size:11px;color:var(--mute);font-weight:600}
+
+/* ───────────── Calendar 화면 ───────────── */
+.cal-head{display:flex;align-items:center;justify-content:space-between;padding:var(--s-md) 0}
+.cal-head__title{font-size:18px;font-weight:900;letter-spacing:-.02em}
+.cal-head__nav{display:flex;gap:6px}
+.cal-head__btn{width:28px;height:28px;border-radius:var(--r-pill);background:var(--canvas);
+  display:grid;place-items:center;font-size:14px;color:var(--ink)}
+
+.cal-dow{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;
+  padding:var(--s-sm) 0;margin-bottom:var(--s-xs)}
+.cal-dow > div{text-align:center;font-size:10px;font-weight:800;color:var(--mute);
+  text-transform:uppercase;letter-spacing:.06em;padding:2px 0;border-radius:6px}
+.cal-dow > div:nth-child(1){color:var(--d-mon)}
+.cal-dow > div:nth-child(2){color:var(--d-tue)}
+.cal-dow > div:nth-child(3){color:var(--d-wed)}
+.cal-dow > div:nth-child(4){color:var(--d-thu)}
+.cal-dow > div:nth-child(5){color:var(--d-fri)}
+.cal-dow > div:nth-child(6){color:var(--d-sat)}
+.cal-dow > div:nth-child(7){color:var(--d-sun)}
+
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;background:var(--canvas);
+  padding:var(--s-md);border-radius:var(--r-xl)}
+.cal-cell{aspect-ratio:1;border-radius:10px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;font-size:11px;font-weight:700;
+  color:var(--ink);background:var(--canvas-soft);position:relative}
+.cal-cell--out{opacity:.25}
+.cal-cell--today{box-shadow:inset 0 0 0 2px var(--ink)}
+.cal-cell--rest{background:var(--canvas-soft);color:var(--mute)}
+.cal-cell--rest::after{content:"휴";position:absolute;bottom:3px;font-size:8px;font-weight:700;color:var(--mute)}
+
+/* 요일별 색 × 점수 오퍼시티 (간이) */
+.c-mon-9{background:#FF6B6B;color:#fff}
+.c-mon-7{background:#FF6B6B;color:#fff;opacity:.7}
+.c-tue-9{background:#FFA94D;color:#fff}
+.c-tue-5{background:#FFA94D;color:#fff;opacity:.55}
+.c-wed-7{background:#FFD93D;color:var(--ink);opacity:.85}
+.c-wed-9{background:#FFD93D;color:var(--ink)}
+.c-thu-9{background:#51CF66;color:#fff}
+.c-thu-3{background:#51CF66;color:#fff;opacity:.35}
+.c-fri-9{background:#339AF0;color:#fff}
+.c-fri-5{background:#339AF0;color:#fff;opacity:.55}
+.c-sat-9{background:#845EF7;color:#fff}
+.c-sun-7{background:#E64980;color:#fff;opacity:.75}
+
+/* ───────────── Timer 화면 ───────────── */
+.timer{flex:1;display:flex;flex-direction:column;align-items:center;
+  padding:var(--s-2xl) var(--s-xl);justify-content:space-between;
+  background:var(--ink);color:var(--canvas)}
+.timer__chip{background:var(--primary-pale);color:var(--ink);padding:6px 12px;
+  border-radius:var(--r-pill);font-size:12px;font-weight:700}
+.timer__ring{width:200px;height:200px;border-radius:50%;
+  background:conic-gradient(var(--primary) 0deg 252deg,rgba(255,255,255,.1) 252deg 360deg);
+  display:grid;place-items:center;position:relative}
+.timer__ring::before{content:"";position:absolute;inset:14px;border-radius:50%;background:var(--ink)}
+.timer__time{position:relative;z-index:1;font-size:36px;font-weight:900;
+  letter-spacing:-.02em;color:var(--canvas)}
+.timer__sub{color:var(--mute);font-size:13px;font-weight:600;text-align:center}
+.timer__ctrl{display:flex;gap:var(--s-md);width:100%}
+.timer__btn{flex:1;padding:14px;border-radius:var(--r-xl);font-weight:700;font-size:14px;
+  display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.timer__btn--pause{background:rgba(255,255,255,.08);color:var(--canvas)}
+.timer__btn--stop{background:var(--primary);color:var(--ink)}
+
+/* ───────────── Eval modal 화면 ───────────── */
+.eval{flex:1;display:flex;flex-direction:column;justify-content:flex-end;
+  background:rgba(14,15,12,.4);padding:var(--s-lg)}
+.eval__sheet{background:var(--canvas);border-radius:var(--r-xl);padding:var(--s-xl)}
+.eval__title{font-size:18px;font-weight:900;letter-spacing:-.02em;color:var(--ink);margin-bottom:4px}
+.eval__sub{font-size:13px;color:var(--body);margin-bottom:var(--s-lg)}
+.eval__meta{display:flex;gap:var(--s-sm);margin-bottom:var(--s-xl)}
+.eval__chip{padding:6px 10px;background:var(--canvas-soft);border-radius:var(--r-pill);
+  font-size:11px;font-weight:700;color:var(--body)}
+.eval__faces{display:flex;justify-content:space-between;gap:var(--s-sm);margin-bottom:var(--s-lg)}
+.eval__face{flex:1;aspect-ratio:1;border-radius:var(--r-xl);background:var(--canvas-soft);
+  display:grid;place-items:center;font-size:36px;transition:transform .15s ease}
+.eval__face:hover{transform:scale(1.06)}
+.eval__face--sel{background:var(--primary);box-shadow:0 0 0 3px var(--ink)}
+.eval__skip{display:block;text-align:center;font-size:13px;font-weight:700;
+  color:var(--mute);padding:var(--s-md)}
+
+/* ───────────────────────── feature cards ───────────────────────── */
+.feat{background:var(--canvas);border-radius:var(--r-xl);padding:var(--s-2xl);
+  display:flex;flex-direction:column;gap:var(--s-lg);min-height:340px;
+  transition:transform .2s ease}
+.feat:hover{transform:translateY(-4px)}
+.feat--sage{background:var(--canvas-soft)}
+.feat--pale{background:var(--primary-pale)}
+.feat--dark{background:var(--ink);color:var(--canvas-soft)}
+.feat--dark .feat__num{color:var(--primary)}
+.feat__num{font-size:13px;font-weight:800;color:var(--positive);letter-spacing:.08em;text-transform:uppercase}
+.feat__title{font-size:28px;font-weight:900;letter-spacing:-.025em;line-height:1.1;color:inherit}
+.feat--dark .feat__title{color:var(--primary)}
+.feat__body{font-size:15px;line-height:1.5;color:var(--body)}
+.feat--dark .feat__body{color:var(--canvas-soft)}
+.feat__viz{flex:1;border-radius:var(--r-lg);margin-top:auto;
+  display:flex;align-items:flex-end;padding:var(--s-md);min-height:120px}
+
+/* viz: 점수 bars */
+.viz-score{background:var(--canvas-soft);gap:8px;align-items:flex-end;display:flex;padding:var(--s-md)}
+.viz-score__bar{flex:1;background:var(--primary);border-radius:6px 6px 0 0}
+.viz-score__bar:nth-child(1){height:32px;background:var(--canvas-soft);box-shadow:inset 0 0 0 1px rgba(14,15,12,.15)}
+.viz-score__bar:nth-child(2){height:56px;background:var(--primary-neutral)}
+.viz-score__bar:nth-child(3){height:82px;background:var(--primary)}
+.viz-score__bar:nth-child(4){height:64px;background:var(--primary-neutral)}
+.viz-score__bar:nth-child(5){height:95px;background:var(--primary)}
+.viz-score__bar:nth-child(6){height:42px;background:var(--canvas-soft);box-shadow:inset 0 0 0 1px rgba(14,15,12,.15)}
+
+/* viz: mini rainbow calendar */
+.viz-cal{background:var(--canvas);padding:var(--s-md);
+  display:grid;grid-template-columns:repeat(7,1fr);gap:4px;align-items:start}
+.viz-cal > div{aspect-ratio:1;border-radius:4px}
+.feat--sage .viz-cal{background:var(--canvas)}
+
+/* viz: chat bubble */
+.viz-chat{flex-direction:column;align-items:flex-start;gap:var(--s-sm);
+  background:var(--canvas-soft);padding:var(--s-lg);display:flex;justify-content:flex-end}
+.feat--pale .viz-chat{background:var(--canvas)}
+.bubble{padding:10px 14px;border-radius:18px;font-size:13px;line-height:1.4;font-weight:500;
+  max-width:90%;color:var(--ink)}
+.bubble--me{background:var(--warning);border-bottom-right-radius:6px;align-self:flex-end}
+.bubble--family{background:var(--canvas);border-bottom-left-radius:6px;box-shadow:inset 0 0 0 1px rgba(14,15,12,.06)}
+
+/* ───────────────────────── tour band ───────────────────────── */
+.tour{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-2xl);align-items:start}
+@media (max-width:1023px){.tour{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:639px){.tour{grid-template-columns:1fr}}
+.tour-item{display:flex;flex-direction:column;gap:var(--s-md);align-items:center;text-align:center}
+.tour-item__cap{display:flex;flex-direction:column;gap:4px;padding:0 var(--s-md)}
+.tour-item__no{font-size:12px;font-weight:800;color:var(--positive);letter-spacing:.1em}
+.tour-item__name{font-size:18px;font-weight:900;letter-spacing:-.02em;color:var(--ink)}
+.tour-item__desc{font-size:13px;color:var(--body)}
+
+/* ───────────────────────── final dark ───────────────────────── */
+.final{background:var(--ink);color:var(--canvas);padding:var(--s-4xl) var(--s-xl)}
+.final__inner{max-width:1100px;margin:0 auto;text-align:center}
+.final__title{font-weight:900;letter-spacing:-.04em;line-height:.94;color:var(--primary);
+  font-size:clamp(56px,9vw,140px)}
+.final__sub{margin:var(--s-xl) auto var(--s-2xl);max-width:520px;color:#bcbeb9}
+
+/* footer */
+.foot{background:var(--ink);color:var(--canvas-soft);padding:var(--s-3xl) var(--s-xl);
+  border-top:1px solid rgba(255,255,255,.06)}
+.foot__inner{max-width:1200px;margin:0 auto;display:grid;
+  grid-template-columns:2fr 1fr 1fr 1fr;gap:var(--s-2xl)}
+@media (max-width:767px){.foot__inner{grid-template-columns:1fr 1fr}}
+.foot__brand{font-size:24px;font-weight:900;color:var(--canvas);letter-spacing:-.02em;margin-bottom:8px}
+.foot__about{font-size:13px;color:#8d8f8a;line-height:1.5;max-width:280px}
+.foot__col-title{font-size:11px;font-weight:800;letter-spacing:.12em;color:var(--mute);
+  text-transform:uppercase;margin-bottom:var(--s-md)}
+.foot__link{display:block;padding:4px 0;font-size:14px;color:var(--canvas-soft)}
+.foot__link:hover{color:var(--primary)}
+.foot__bottom{max-width:1200px;margin:var(--s-2xl) auto 0;padding-top:var(--s-lg);
+  border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;
+  font-size:12px;color:var(--mute);flex-wrap:wrap;gap:var(--s-md)}
+
+/* ───────────────────────── reveal animation ───────────────────────── */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s ease}
+.reveal.is-in{opacity:1;transform:translateY(0)}
+.reveal:nth-child(2){transition-delay:.08s}
+.reveal:nth-child(3){transition-delay:.16s}
+.reveal:nth-child(4){transition-delay:.24s}
+</style>
+</head>
+<body>
+
+<!-- ───────────────────────── NAV ───────────────────────── -->
+<nav class="nav">
+  <div class="nav__inner">
+    <a class="nav__brand" href="#">
+      <span class="nav__logo">셀</span>
+      <span>self-check-study</span>
+    </a>
+    <div class="nav__links">
+      <a class="nav__link" href="#features">기능</a>
+      <a class="nav__link" href="#tour">화면</a>
+      <a class="nav__link" href="#download">다운로드</a>
+      <a class="btn btn--primary btn--sm" href="#download">사전 알림 받기</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ───────────────────────── HERO ───────────────────────── -->
+<section class="hero">
+  <!-- 배경: 달력 그리드 패턴 + 곳곳에 lime 도장 -->
+  <div class="hero__pattern"></div>
+  <div class="hero__stamp" style="top:18%;left:8%;animation-delay:.2s"></div>
+  <div class="hero__stamp" style="top:58%;left:28%;animation-delay:.5s;width:24px;height:24px"></div>
+  <div class="hero__stamp" style="top:78%;left:14%;animation-delay:.8s;width:18px;height:18px"></div>
+  <div class="hero__stamp" style="top:22%;right:48%;animation-delay:1.0s;width:28px;height:28px"></div>
+
+  <div class="hero__inner">
+    <div>
+      <div class="t-eyebrow hero__eyebrow reveal">셀프체크 스터디 · v0.3 출시 예정</div>
+      <h1 class="t-mega hero__title reveal">
+        공부,<br>기록,<br><em>자랑.</em>
+      </h1>
+      <p class="t-lead hero__sub reveal">
+        체크리스트로 시작해서, 도장으로 쌓이고, 카톡으로 자랑한다.
+        중·고등학생을 위한 오프라인 셀프체크 스터디 앱.
+      </p>
+      <div class="hero__cta reveal">
+        <a class="btn btn--primary btn--lg" href="#download">Play Store 사전 알림</a>
+        <a class="btn btn--tertiary btn--lg" href="#tour">화면 둘러보기</a>
+      </div>
+      <div class="hero__meta">
+        <div class="hero__meta-item">
+          <div class="hero__meta-num">71<span style="color:var(--mute);font-weight:600">/71</span></div>
+          <div class="hero__meta-label">자동 테스트 PASS</div>
+        </div>
+        <div class="hero__meta-item">
+          <div class="hero__meta-num">22.1<span style="color:var(--mute);font-weight:600">MB</span></div>
+          <div class="hero__meta-label">release apk</div>
+        </div>
+        <div class="hero__meta-item">
+          <div class="hero__meta-num">0<span style="color:var(--mute);font-weight:600">건</span></div>
+          <div class="hero__meta-label">서버 데이터 수집</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 디바이스: Today 화면 -->
+    <div class="device-wrap reveal">
+      <div class="device">
+        <div class="device__screen">
+          <div class="sb">
+            <span>9:41</span>
+            <div class="sb__dots"><span></span><span></span><span></span><span></span></div>
+          </div>
+          <div class="mh">
+            <div class="mh__date">5월 15일 금요일</div>
+            <div class="mh__greet">오늘도 화이팅.</div>
+          </div>
+          <div class="ms">
+            <div class="today-now">
+              <div class="today-now__eyebrow">▶ 지금 세션</div>
+              <div class="today-now__title">수학 (쎈 2장)</div>
+              <div class="today-now__time">15:30 — 16:10 · 40분</div>
+              <div class="today-now__cta">
+                <span class="today-now__btn">▶ 시작</span>
+                <span class="today-now__chip">다음: 영어 탭</span>
+              </div>
+            </div>
+            <div class="done-card">
+              <div class="done-card__emoji">😄</div>
+              <div class="done-card__body">
+                <div class="done-card__title">수학 (인강 1강) 완료</div>
+                <div class="done-card__meta">92% · 만족도 좋음</div>
+              </div>
+              <div class="done-card__share">↗</div>
+            </div>
+            <div class="session-list">
+              <div class="sess sess--done">
+                <div class="sess__dot"></div>
+                <div class="sess__title">수학 (인강 1강)</div>
+                <div class="sess__time">16:10</div>
+                <div class="sess__badge">92%</div>
+              </div>
+              <div class="sess sess--eng sess--pending">
+                <div class="sess__dot"></div>
+                <div class="sess__title">영어 탭</div>
+                <div class="sess__time">16:50</div>
+                <div class="sess__badge">대기</div>
+              </div>
+              <div class="sess sess--kor sess--pending">
+                <div class="sess__dot"></div>
+                <div class="sess__title">국어 자습서</div>
+                <div class="sess__time">17:50</div>
+                <div class="sess__badge">대기</div>
+              </div>
+            </div>
+          </div>
+          <div class="tb">
+            <div class="tb__item tb__item--active"><span class="tb__icon">●</span>오늘</div>
+            <div class="tb__item"><span class="tb__icon">▦</span>일정</div>
+            <div class="tb__item"><span class="tb__icon">✦</span>스탬프</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────── FEATURES (3-up) ───────────────────────── -->
+<section class="band band--white" id="features">
+  <div class="container">
+    <div style="max-width:780px;margin-bottom:var(--s-4xl)">
+      <div class="t-eyebrow reveal" style="color:var(--mute);margin-bottom:var(--s-md)">왜 다른가</div>
+      <h2 class="t-xl reveal">
+        체크박스 앱 아닌,<br><em style="color:var(--positive);font-style:normal">점수가 쌓이는 학습 일기.</em>
+      </h2>
+    </div>
+
+    <div class="grid-3">
+      <article class="feat feat--sage reveal">
+        <div class="feat__num">01 — 점수 모델</div>
+        <h3 class="feat__title">했다 / 안 했다는 너무 거칠다.</h3>
+        <p class="feat__body">목표 시간 대비 도달률(70%) + 만족도 이모티(30%)의 가중평균으로 세션 점수를 산출한다. 같은 "완료"도 다르게 기록된다.</p>
+        <div class="feat__viz viz-score">
+          <div class="viz-score__bar"></div>
+          <div class="viz-score__bar"></div>
+          <div class="viz-score__bar"></div>
+          <div class="viz-score__bar"></div>
+          <div class="viz-score__bar"></div>
+          <div class="viz-score__bar"></div>
+        </div>
+      </article>
+
+      <article class="feat feat--pale reveal">
+        <div class="feat__num">02 — 무지개 달력</div>
+        <h3 class="feat__title">한 달이 한 장의 풍경으로 남는다.</h3>
+        <p class="feat__body">요일별 무지개 7색 × 점수 5단계 오퍼시티. 빈 셀이 적은 달, 진한 셀이 많은 주가 한눈에 보인다.</p>
+        <div class="feat__viz viz-cal">
+          <div style="background:#FF6B6B;opacity:.9"></div>
+          <div style="background:#FFA94D;opacity:.7"></div>
+          <div style="background:#FFD93D;opacity:.5"></div>
+          <div style="background:#51CF66;opacity:.85"></div>
+          <div style="background:#339AF0;opacity:.4"></div>
+          <div style="background:#845EF7;opacity:.95"></div>
+          <div style="background:#E64980;opacity:.65"></div>
+
+          <div style="background:#FF6B6B;opacity:.7"></div>
+          <div style="background:#FFA94D;opacity:.95"></div>
+          <div style="background:#FFD93D;opacity:.8"></div>
+          <div style="background:#51CF66;opacity:.3"></div>
+          <div style="background:#339AF0;opacity:.9"></div>
+          <div style="background:#845EF7;opacity:.55"></div>
+          <div style="background:var(--canvas-soft)"></div>
+
+          <div style="background:#FF6B6B;opacity:.5"></div>
+          <div style="background:#FFA94D;opacity:.6"></div>
+          <div style="background:#FFD93D;opacity:.95"></div>
+          <div style="background:#51CF66;opacity:.75"></div>
+          <div style="background:#339AF0;opacity:.5"></div>
+          <div style="background:#845EF7;opacity:.85"></div>
+          <div style="background:#E64980;opacity:.4"></div>
+        </div>
+      </article>
+
+      <article class="feat feat--dark reveal">
+        <div class="feat__num">03 — 외부 보상 루프</div>
+        <h3 class="feat__title">진짜 보상은 카톡에서 온다.</h3>
+        <p class="feat__body">앱 안의 점수보다 부모·조부모·친구의 한 마디가 더 강력하다. 시스템 공유 시트로 카톡에 결과를 내보낸다.</p>
+        <div class="feat__viz viz-chat">
+          <div class="bubble bubble--me">✅ 수학 (인강 1강) 완료<br>😄 92% — woo-hoo.kr</div>
+          <div class="bubble bubble--family">우와 잘했어!! 👏</div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────── TOUR (4 device mockups) ───────────────────────── -->
+<section class="band band--sage" id="tour">
+  <div class="container">
+    <div style="max-width:780px;margin-bottom:var(--s-3xl)">
+      <div class="t-eyebrow reveal" style="margin-bottom:var(--s-md)">화면 둘러보기</div>
+      <h2 class="t-xl reveal">앱의 5개 핵심 화면.</h2>
+    </div>
+
+    <div class="tour">
+      <!-- Tour 1: Stamps -->
+      <div class="tour-item reveal">
+        <div class="device device--sm">
+          <div class="device__screen">
+            <div class="sb"><span>9:41</span><div class="sb__dots"><span></span><span></span><span></span><span></span></div></div>
+            <div class="mh">
+              <div class="mh__date">5월 스탬프</div>
+              <div class="mh__greet">37개 모음.</div>
+            </div>
+            <div class="ms">
+              <div class="stamp-today">
+                <div>
+                  <div class="stamp-today__date">5/15 (금)</div>
+                  <div class="stamp-today__main">3 / 4 세션</div>
+                  <div class="stamp-today__pct">76%</div>
+                </div>
+                <span class="stamp-today__share">↗</span>
+              </div>
+              <div class="stamp-grid">
+                <div class="stamp stamp--math">수</div>
+                <div class="stamp stamp--math">수</div>
+                <div class="stamp stamp--eng">영</div>
+                <div class="stamp stamp--kor">국</div>
+                <div class="stamp stamp--math">수</div>
+                <div class="stamp stamp--eng">영</div>
+                <div class="stamp stamp--free">자</div>
+                <div class="stamp stamp--math">수</div>
+                <div class="stamp stamp--kor">국</div>
+                <div class="stamp stamp--eng">영</div>
+                <div class="stamp stamp--math">수</div>
+                <div class="stamp stamp--eng">영</div>
+                <div class="stamp stamp--kor">국</div>
+                <div class="stamp stamp--empty">·</div>
+                <div class="stamp stamp--empty">·</div>
+              </div>
+            </div>
+            <div class="tb">
+              <div class="tb__item"><span class="tb__icon">●</span>오늘</div>
+              <div class="tb__item"><span class="tb__icon">▦</span>일정</div>
+              <div class="tb__item tb__item--active"><span class="tb__icon">✦</span>스탬프</div>
+            </div>
+          </div>
+        </div>
+        <div class="tour-item__cap">
+          <div class="tour-item__no">01</div>
+          <div class="tour-item__name">스탬프</div>
+          <div class="tour-item__desc">오늘 카드 + 5열 도장 그리드. 과목 컬러로 한 달이 채워진다.</div>
+        </div>
+      </div>
+
+      <!-- Tour 2: Calendar -->
+      <div class="tour-item reveal">
+        <div class="device device--sm">
+          <div class="device__screen">
+            <div class="sb"><span>9:41</span><div class="sb__dots"><span></span><span></span><span></span><span></span></div></div>
+            <div class="mh">
+              <div class="mh__date">2026</div>
+              <div class="mh__greet">5월의 풍경.</div>
+            </div>
+            <div class="ms">
+              <div class="cal-head">
+                <div class="cal-head__title">5월</div>
+                <div class="cal-head__nav">
+                  <span class="cal-head__btn">‹</span>
+                  <span class="cal-head__btn">›</span>
+                </div>
+              </div>
+              <div class="cal-dow"><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div><div>일</div></div>
+              <div class="cal-grid">
+                <!-- 첫 주 (out + 1~3) -->
+                <div class="cal-cell cal-cell--out">28</div>
+                <div class="cal-cell cal-cell--out">29</div>
+                <div class="cal-cell cal-cell--out">30</div>
+                <div class="cal-cell c-thu-9">1</div>
+                <div class="cal-cell c-fri-5">2</div>
+                <div class="cal-cell c-sat-9">3</div>
+                <div class="cal-cell c-sun-7">4</div>
+                <!-- 둘째 주 -->
+                <div class="cal-cell c-mon-9">5</div>
+                <div class="cal-cell c-tue-5">6</div>
+                <div class="cal-cell c-wed-7">7</div>
+                <div class="cal-cell c-thu-3">8</div>
+                <div class="cal-cell c-fri-9">9</div>
+                <div class="cal-cell cal-cell--rest">10</div>
+                <div class="cal-cell c-sun-7">11</div>
+                <!-- 셋째 주 -->
+                <div class="cal-cell c-mon-7">12</div>
+                <div class="cal-cell c-tue-9">13</div>
+                <div class="cal-cell c-wed-9">14</div>
+                <div class="cal-cell c-thu-9 cal-cell--today">15</div>
+                <div class="cal-cell">16</div>
+                <div class="cal-cell">17</div>
+                <div class="cal-cell">18</div>
+                <!-- 넷째/다섯째 주 일부 -->
+                <div class="cal-cell">19</div><div class="cal-cell">20</div><div class="cal-cell">21</div>
+                <div class="cal-cell">22</div><div class="cal-cell">23</div><div class="cal-cell">24</div><div class="cal-cell">25</div>
+                <div class="cal-cell">26</div><div class="cal-cell">27</div><div class="cal-cell">28</div>
+                <div class="cal-cell">29</div><div class="cal-cell">30</div><div class="cal-cell">31</div>
+                <div class="cal-cell cal-cell--out">1</div>
+              </div>
+            </div>
+            <div class="tb">
+              <div class="tb__item"><span class="tb__icon">●</span>오늘</div>
+              <div class="tb__item"><span class="tb__icon">▦</span>일정</div>
+              <div class="tb__item tb__item--active"><span class="tb__icon">✦</span>스탬프</div>
+            </div>
+          </div>
+        </div>
+        <div class="tour-item__cap">
+          <div class="tour-item__no">02</div>
+          <div class="tour-item__name">달력</div>
+          <div class="tour-item__desc">요일색 × 점수 오퍼시티. 셀 탭으로 그날의 상세 시트가 펼쳐진다.</div>
+        </div>
+      </div>
+
+      <!-- Tour 3: Timer -->
+      <div class="tour-item reveal">
+        <div class="device device--sm">
+          <div class="device__screen">
+            <div class="sb" style="color:var(--canvas);background:var(--ink)">
+              <span>9:41</span>
+              <div class="sb__dots"><span style="background:var(--canvas)"></span><span style="background:var(--canvas)"></span><span style="background:var(--canvas)"></span><span style="background:var(--canvas);opacity:.4"></span></div>
+            </div>
+            <div class="timer">
+              <span class="timer__chip">수학 (쎈 2장)</span>
+              <div class="timer__ring">
+                <span class="timer__time">11:23</span>
+              </div>
+              <div style="text-align:center">
+                <div class="timer__sub">남은 시간 · 70% 도달</div>
+              </div>
+              <div class="timer__ctrl">
+                <button class="timer__btn timer__btn--pause">⏸ 일시정지</button>
+                <button class="timer__btn timer__btn--stop">완료</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tour-item__cap">
+          <div class="tour-item__no">03</div>
+          <div class="tour-item__name">타이머</div>
+          <div class="tour-item__desc">풀스크린 카운트다운 + 도달률 링. 완료 누르면 평가 모달로.</div>
+        </div>
+      </div>
+
+      <!-- Tour 4: Eval modal -->
+      <div class="tour-item reveal">
+        <div class="device device--sm">
+          <div class="device__screen" style="background:var(--canvas-soft)">
+            <div class="sb"><span>9:41</span><div class="sb__dots"><span></span><span></span><span></span><span></span></div></div>
+            <div class="mh">
+              <div class="mh__date">5월 15일 금요일</div>
+              <div class="mh__greet" style="opacity:.4">오늘도 화이팅.</div>
+            </div>
+            <div class="ms" style="opacity:.4">
+              <div class="today-now">
+                <div class="today-now__eyebrow">▶ 지금 세션</div>
+                <div class="today-now__title">수학 (쎈 2장)</div>
+                <div class="today-now__time">15:30 — 16:10</div>
+              </div>
+            </div>
+            <div class="eval">
+              <div class="eval__sheet">
+                <div class="eval__title">어땠어?</div>
+                <div class="eval__sub">수학 (쎈 2장) 세션을 어떻게 느꼈는지 알려주세요.</div>
+                <div class="eval__meta">
+                  <span class="eval__chip">38 / 40분</span>
+                  <span class="eval__chip">95% 도달</span>
+                </div>
+                <div class="eval__faces">
+                  <div class="eval__face">😫</div>
+                  <div class="eval__face">😐</div>
+                  <div class="eval__face eval__face--sel">😄</div>
+                </div>
+                <button class="eval__skip">건너뛰기</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tour-item__cap">
+          <div class="tour-item__no">04</div>
+          <div class="tour-item__name">평가 모달</div>
+          <div class="tour-item__desc">😫 😐 😄 3 이모티 + 건너뛰기. 만족도가 점수의 30%를 차지한다.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────── FINAL DARK ───────────────────────── -->
+<section class="final" id="download">
+  <div class="final__inner">
+    <h2 class="final__title reveal">Study,<br>stamped.</h2>
+    <p class="final__sub t-lead reveal" style="color:#bcbeb9">
+      Play Store 출시 예정. 사전 알림을 신청하면 출시일에 가장 먼저 알려드립니다.
+    </p>
+    <div class="reveal" style="display:flex;gap:var(--s-md);justify-content:center;flex-wrap:wrap">
+      <a class="btn btn--primary btn--lg" href="#">사전 알림 받기</a>
+      <a class="btn btn--white btn--lg" href="#tour">화면 다시 보기</a>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────── FOOTER ───────────────────────── -->
+<footer class="foot">
+  <div class="foot__inner">
+    <div>
+      <div class="foot__brand">self-check-study</div>
+      <div class="foot__about">중·고등학생을 위한 셀프체크 스터디 앱. 오프라인 작동, 로컬 저장, 서버 데이터 수집 없음.</div>
+    </div>
+    <div>
+      <div class="foot__col-title">제품</div>
+      <a class="foot__link" href="#features">기능</a>
+      <a class="foot__link" href="#tour">화면</a>
+      <a class="foot__link" href="#download">다운로드</a>
+    </div>
+    <div>
+      <div class="foot__col-title">법적 고지</div>
+      <a class="foot__link" href="./privacy.html">개인정보처리방침</a>
+    </div>
+    <div>
+      <div class="foot__col-title">연락처</div>
+      <a class="foot__link" href="mailto:dewbian1017@gmail.com">dewbian1017@gmail.com</a>
+      <a class="foot__link" href="https://woo-hoo.kr">woo-hoo.kr</a>
+    </div>
+  </div>
+  <div class="foot__bottom">
+    <span>© 2026 woo-hoo.kr</span>
+    <span>Made with care in Seoul</span>
+  </div>
+</footer>
+
+<script>
+  // 스크롤 reveal — 한 번만 발화
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('is-in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>

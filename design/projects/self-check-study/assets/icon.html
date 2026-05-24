@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<!--
+  Play Store 앱 아이콘 (1024 x 1024 / 512 x 512 preview)
+  - 키 컬러: ink #0e0f0c + lime #9fe870 (Wise + 셀프체크 시그니처)
+  - 컨셉: C 모양 ring(시계 dial + 체크리스트 시작) + 안쪽 lime 체크마크 +
+    12시 방향 lime tick(시간 인식) + 하단 "SELF CHECK" 라벨
+  - SVG 인라인. .icon 영역만 캡처해 mipmap source 로 사용.
+-->
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>App Icon — self-check-study</title>
+<link rel="stylesheet" as="style" crossorigin
+  href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Pretendard Variable',Pretendard,sans-serif;
+  background:#222;min-height:100vh;
+  display:grid;place-items:center;padding:32px;gap:40px;
+  -webkit-font-smoothing:antialiased;color:#fff;
+}
+.row{display:flex;gap:48px;align-items:center}
+
+/* 메인 아이콘 — 1024 x 1024. SVG 내부에서 색/형태 모두 컨트롤. */
+.icon{
+  width:1024px;height:1024px;
+  border-radius:240px;overflow:hidden;
+  box-shadow:0 48px 120px rgba(0,0,0,.5);
+}
+
+/* round-mask 미리보기 (Android adaptive icon). 단순 다운스케일. */
+.preview{display:flex;flex-direction:column;gap:16px;align-items:center}
+.preview-icon{
+  width:192px;height:192px;border-radius:50%;overflow:hidden;
+  box-shadow:0 12px 30px rgba(0,0,0,.4);
+}
+.preview-label{font-size:13px;color:#aaa;font-family:monospace}
+
+.guide{font-family:monospace;font-size:11px;color:#aaa}
+</style>
+</head>
+<body>
+  <div class="guide">icon = 1024 × 1024 (Play Store hi-res + Flutter mipmap source)</div>
+  <div class="row">
+
+    <!-- 메인 1024 -->
+    <div class="icon">
+      <svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+        <!-- ink 배경 round 240px -->
+        <rect width="1024" height="1024" fill="#0e0f0c" rx="240" ry="240"/>
+
+        <!-- v0.3.0+ icon revision:
+             외부 scale 변환 제거 — Android adaptive icon 시스템 마스크가 추가 패딩을 적용하므로
+             SVG 콘텐츠를 안전영역 (1024 viewBox 안 약 168~855) 에 직접 배치.
+             ring 적당히 작게 + 라벨 y 위치 위로 올려 잘림 방지. -->
+
+        <!-- 12시 방향 부드러운 dot -->
+        <circle cx="512" cy="285" r="20" fill="#9fe870"/>
+
+        <!-- 원 ring -->
+        <circle cx="512" cy="500"
+                r="180"
+                stroke="#9fe870" stroke-width="48" fill="none"/>
+
+        <!-- 체크 마크 — 시각적 "check" 메타포 유지 -->
+        <path d="M 426 504 L 488 568 L 614 430"
+              stroke="#9fe870" stroke-width="52"
+              stroke-linecap="round" stroke-linejoin="round"
+              fill="none"/>
+
+        <!-- 우상단 sparkle (1.5x 확대, 중심 720,345 기준) -->
+        <g fill="#9fe870">
+          <path d="M 720 285
+                   Q 738 330 780 345
+                   Q 738 360 720 405
+                   Q 702 360 660 345
+                   Q 702 330 720 285 Z"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- 라운드 마스크 프리뷰 192 -->
+    <div class="preview">
+      <div class="preview-icon">
+        <svg width="192" height="192" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+          <rect width="1024" height="1024" fill="#0e0f0c"/>
+          <circle cx="512" cy="285" r="20" fill="#9fe870"/>
+          <circle cx="512" cy="500" r="180"
+                  stroke="#9fe870" stroke-width="48" fill="none"/>
+          <path d="M 426 504 L 488 568 L 614 430"
+                stroke="#9fe870" stroke-width="52"
+                stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <g fill="#9fe870">
+            <path d="M 720 285 Q 738 330 780 345 Q 738 360 720 405 Q 702 360 660 345 Q 702 330 720 285 Z"/>
+          </g>
+        </svg>
+      </div>
+      <div class="preview-label">round mask preview</div>
+    </div>
+  </div>
+</body>
+</html>

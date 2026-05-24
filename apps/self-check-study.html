@@ -1,0 +1,579 @@
+<!--
+  파일 목적: woo-hoo.kr 의 셀프체크 스터디 앱 상세 소개 페이지
+  — 템플릿 디자인 시스템(에디토리얼/엔지니어 저널)을 그대로 따르되,
+    "앱 브리프" 톤으로 좀 더 정돈된 느낌(워암 페이퍼)으로 재구성한다.
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>셀프체크 스터디 — 공부, 기록, 자랑. | woo-hoo.lab</title>
+  <meta name="description" content="중·고등학생을 위한 오프라인 셀프체크 스터디 앱. 체크리스트로 시작해 도장으로 쌓이고 카톡으로 자랑하는 학습 일기." />
+  <meta property="og:title" content="셀프체크 스터디 — 공부, 기록, 자랑." />
+  <meta property="og:description" content="중·고등학생을 위한 오프라인 셀프체크 스터디 앱." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://woo-hoo.kr/apps/self-check-study.html" />
+  <meta property="og:image" content="https://woo-hoo.kr/apps/self-check-study/feature-graphic.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#fff4d6" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="../styles.css" />
+  <style>
+    /* ───── 페이지 전용 스타일 ───── */
+
+    /* 히어로 — 워암 페이퍼 + 미세 라인 패턴 */
+    .app-hero {
+      position: relative;
+      border-bottom: var(--bd);
+      background:
+        radial-gradient(60% 80% at 100% 0%, rgba(255, 214, 10, 0.55) 0%, transparent 60%),
+        radial-gradient(70% 70% at 0% 100%, rgba(255, 77, 166, 0.18) 0%, transparent 60%),
+        linear-gradient(180deg, #fff4d6 0%, #f6ecc6 100%);
+      overflow: hidden;
+    }
+    .app-hero::after {
+      /* 인쇄용 가는 가로줄 + 노이즈 (저널 페이지 느낌) */
+      content: "";
+      position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        repeating-linear-gradient(transparent 0 28px, rgba(17,17,17,0.04) 28px 29px),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+      opacity: 0.35;
+      mix-blend-mode: multiply;
+    }
+    .app-hero__inner {
+      position: relative; z-index: 2;
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 80px 24px 90px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 48px;
+      align-items: center;
+    }
+    .app-hero__title {
+      font-family: var(--font-display-kr);
+      font-weight: 400;
+      font-size: 104px;
+      line-height: 0.94;
+      letter-spacing: -2px;
+      margin: 14px 0 18px;
+    }
+    .app-hero__title em {
+      font-family: var(--font-display-en);
+      font-style: italic;
+      font-weight: 700;
+      color: var(--pink);
+    }
+    .app-hero__tag { font-size: 18px; font-weight: 600; max-width: 440px; }
+    .app-hero__cta { margin-top: 26px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .app-hero__meta {
+      margin-top: 36px;
+      display: flex; flex-wrap: wrap; gap: 28px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.4px;
+      color: var(--muted);
+    }
+    .app-hero__meta b { color: var(--ink); font-weight: 700; }
+
+    /* 디바이스 프레임 (히어로 우측의 오늘 화면 보여주기) */
+    .device {
+      position: relative;
+      justify-self: center;
+      width: 280px;
+      padding: 14px 14px 22px;
+      background: var(--white);
+      border: 3px solid var(--ink);
+      border-radius: 38px;
+      box-shadow:
+        10px 10px 0 rgba(255, 77, 166, 0.55),
+        22px 22px 0 rgba(0, 0, 0, 0.28);
+    }
+    .device::before {
+      content: "";
+      position: absolute; top: 8px; left: 50%;
+      width: 88px; height: 18px;
+      background: var(--ink); border-radius: 0 0 12px 12px;
+      transform: translateX(-50%);
+    }
+    .device__screen {
+      margin-top: 12px;
+      border-radius: 22px;
+      overflow: hidden;
+      border: 2px solid var(--ink);
+    }
+    .device__screen img { width: 100%; height: auto; display: block; }
+
+    /* 떠다니는 작은 아이콘 (히어로 액센트) */
+    .app-icon {
+      position: absolute; top: 60px; right: 60px;
+      width: 64px; height: 64px;
+      border-radius: 16px;
+      border: 2px solid var(--ink);
+      box-shadow: 4px 4px 0 var(--ink);
+      transform: rotate(-6deg);
+    }
+
+    /* ───── 3-필러 섹션 ───── */
+    .pillar {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+      padding: 80px 0;
+      border-bottom: 1.5px dashed rgba(17,17,17,0.18);
+    }
+    .pillar:last-of-type { border-bottom: var(--bd); }
+    .pillar--rev { direction: rtl; }
+    .pillar--rev > * { direction: ltr; }
+    .pillar__num {
+      font-family: var(--font-display-en);
+      font-style: italic;
+      font-weight: 700;
+      font-size: 70px;
+      line-height: 1;
+      color: var(--pink);
+      letter-spacing: -2px;
+    }
+    .pillar__title {
+      font-family: var(--font-display-kr);
+      font-weight: 400;
+      font-size: 52px;
+      letter-spacing: -1px;
+      line-height: 1;
+      margin: 8px 0 16px;
+    }
+    .pillar__body { font-size: 16px; line-height: 1.7; color: #333; max-width: 460px; }
+    .pillar__shot {
+      position: relative;
+      justify-self: center;
+      max-width: 280px;
+      width: 100%;
+    }
+    .pillar__shot img {
+      width: 100%; height: auto; display: block;
+      border: 3px solid var(--ink);
+      border-radius: 26px;
+      box-shadow: 8px 8px 0 var(--ink);
+    }
+    .pillar__shot--tilt { transform: rotate(-3deg); }
+    .pillar__shot--tilt-r { transform: rotate(3deg); }
+
+    /* ───── 핵심 기능 그리드 ───── */
+    .features { padding: 80px 0; border-bottom: var(--bd); background: #faf6e7; position: relative; }
+    .features::before {
+      /* 미세 도트 그리드 (잉크) */
+      content: ""; position: absolute; inset: 0;
+      background-image: radial-gradient(rgba(17,17,17,0.06) 1.2px, transparent 1.2px);
+      background-size: 20px 20px;
+      pointer-events: none;
+    }
+    .features__inner { position: relative; max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+    .features__grid {
+      margin-top: 32px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+    .feat {
+      background: var(--white);
+      border: var(--bd);
+      border-radius: var(--r-md);
+      padding: 22px 24px;
+      display: flex; gap: 16px; align-items: flex-start;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .feat:hover { transform: translate(-3px,-3px); box-shadow: var(--shadow-hard); }
+    .feat__no {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 1px;
+      color: var(--muted);
+      padding-top: 4px;
+      flex: none;
+    }
+    .feat__title { font-weight: 800; font-size: 16px; margin-bottom: 4px; }
+    .feat__desc { font-size: 14px; color: #444; line-height: 1.55; }
+
+    /* ───── 스크린샷 갤러리 (콜라주) ───── */
+    .gallery { padding: 80px 0; border-bottom: var(--bd); position: relative; overflow: hidden; }
+    .gallery__rail {
+      margin-top: 36px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+    }
+    .gallery__shot {
+      border: 3px solid var(--ink);
+      border-radius: 22px;
+      overflow: hidden;
+      background: var(--white);
+      box-shadow: 6px 6px 0 var(--ink);
+      transition: transform 0.18s, box-shadow 0.18s;
+    }
+    .gallery__shot img { width: 100%; height: auto; display: block; }
+    .gallery__shot:nth-child(odd) { transform: rotate(-1.5deg); }
+    .gallery__shot:nth-child(even) { transform: rotate(1.5deg); margin-top: 24px; }
+    .gallery__shot:hover { transform: rotate(0) translate(-3px, -3px); box-shadow: 10px 10px 0 var(--pink); }
+
+    /* ───── 프라이버시 약속 ───── */
+    .promise { background: var(--ink); color: var(--white); padding: 72px 0; border-bottom: var(--bd); position: relative; overflow: hidden; }
+    .promise .label, .promise .chapter { color: rgba(255,255,255,0.7); }
+    .promise__title {
+      font-family: var(--font-display-kr);
+      font-weight: 400;
+      font-size: 64px;
+      line-height: 0.95;
+      letter-spacing: -1.5px;
+      margin: 10px 0 28px;
+    }
+    .promise__title em {
+      font-family: var(--font-display-en);
+      font-style: italic;
+      color: var(--green);
+    }
+    .promise__grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-top: 16px;
+    }
+    .promise__item {
+      border: 2px solid rgba(255,255,255,0.18);
+      border-radius: var(--r-md);
+      padding: 18px;
+      background: rgba(255,255,255,0.03);
+    }
+    .promise__item b {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      color: var(--yellow);
+      display: block;
+      margin-bottom: 6px;
+    }
+    .promise__item span { font-size: 14px; line-height: 1.55; opacity: 0.92; }
+
+    /* ───── 종결 CTA ───── */
+    .close { background: var(--paper); padding: 80px 0 100px; text-align: center; }
+    .close__title {
+      font-family: var(--font-display-kr);
+      font-weight: 400;
+      font-size: 60px;
+      letter-spacing: -1px;
+      line-height: 1;
+      margin: 12px 0 18px;
+    }
+    .close__cta { display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .close__back { display: block; margin-top: 28px; font-family: var(--font-mono); font-size: 13px; color: var(--muted); text-decoration: underline; }
+
+    /* 마퀴 톤 변형 */
+    .marquee--cream { background: #fff4d6; color: var(--ink); }
+
+    /* ───── 모바일 ───── */
+    @media (max-width: 860px) {
+      .app-hero__inner { grid-template-columns: 1fr; padding: 56px 24px 64px; }
+      .device { width: 220px; }
+      .app-icon { display: none; }
+      .app-hero__title { font-size: 64px; letter-spacing: -1px; }
+      .pillar { grid-template-columns: 1fr; gap: 32px; padding: 56px 0; }
+      .pillar--rev { direction: ltr; }
+      .pillar__num { font-size: 50px; }
+      .pillar__title { font-size: 36px; }
+      .features__grid { grid-template-columns: 1fr; }
+      .gallery__rail { grid-template-columns: repeat(2, 1fr); }
+      .promise__title, .close__title { font-size: 42px; }
+      .promise__grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── 상단 내비 ── -->
+  <nav class="nav">
+    <div class="nav__inner">
+      <a href="../" class="nav__logo">woo-hoo<span class="accent">.</span>lab</a>
+      <button class="nav__toggle" aria-label="메뉴 열기" aria-expanded="false">☰</button>
+      <div class="nav__links" id="navLinks">
+        <a href="../#products">실험실</a>
+        <a href="../devlog.html">개발로그</a>
+        <a href="../#download">다운로드</a>
+        <a href="../#subscribe" class="nav__cta">구독 →</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── 앱 히어로 ── -->
+  <header class="app-hero">
+    <!-- 파일 경로 -->
+    <div class="path path--ink reveal seq-1" style="position:absolute;top:22px;left:24px;z-index:5;">
+      <a href="../" style="text-decoration:underline;">~/woo-hoo.lab</a>&nbsp;/&nbsp;apps&nbsp;/&nbsp;self-check-study<span class="path__cursor" aria-hidden="true" style="background:var(--ink);"></span>
+    </div>
+    <!-- 우측 상단 작은 앱 아이콘 (스티커처럼) -->
+    <img class="app-icon reveal seq-5" src="./self-check-study/icon.png" alt="셀프체크 스터디 아이콘" />
+    <!-- 마지널리아 -->
+    <div class="marginalia note--hide-mobile reveal seq-5" style="top:120px; right:160px;">
+      <span class="num">[note]</span>
+      v0.4.1 — Android 5.0+ · 오프라인 작동.
+    </div>
+
+    <div class="app-hero__inner">
+      <div>
+        <span class="chapter reveal seq-1">
+          <span class="chapter__num">APP</span>
+          Self-Check Study · <em style="font-family:var(--font-display-en);font-style:italic;">in review</em>
+        </span>
+        <h1 class="app-hero__title reveal seq-2">공부<span style="color:var(--pink)">,</span><br>기록<span style="color:var(--blue)">,</span><br><em>자랑</em>.</h1>
+        <p class="app-hero__tag reveal seq-3">체크리스트로 시작해 도장으로 쌓이고 카톡으로 자랑하는 학습 일기 앱. 중·고등학생을 위해 만들었습니다.</p>
+        <div class="app-hero__cta reveal seq-4">
+          <a href="../#subscribe" class="tape tape--pink">출시 알림 받기 ↓</a>
+          <span class="stamp"><span class="dot"></span>스토어 심사 중</span>
+        </div>
+        <div class="app-hero__meta reveal seq-5">
+          <span><b>플랫폼</b> · Android 5.0+</span>
+          <span><b>카테고리</b> · 교육</span>
+          <span><b>오프라인</b> · 100%</span>
+          <span><b>가입</b> · 없음</span>
+        </div>
+      </div>
+
+      <!-- 디바이스: 오늘 화면 -->
+      <div class="device reveal seq-3" aria-hidden="true">
+        <div class="device__screen">
+          <img src="./self-check-study/screenshot-today.png" alt="셀프체크 스터디 오늘 화면" />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── 마퀴 ── -->
+  <div class="marquee marquee--ink" aria-hidden="true">
+    <div class="marquee__inner">
+      <span>공부</span><span class="star">✶</span>
+      <span>기록</span><span class="star">✶</span>
+      <span>자랑</span><span class="star">✶</span>
+      <span>오프라인 학습 일기</span><span class="star">✶</span>
+      <span>SELF-CHECK STUDY</span><span class="star">✶</span>
+      <span>공부</span><span class="star">✶</span>
+      <span>기록</span><span class="star">✶</span>
+      <span>자랑</span><span class="star">✶</span>
+      <span>오프라인 학습 일기</span><span class="star">✶</span>
+      <span>SELF-CHECK STUDY</span><span class="star">✶</span>
+    </div>
+  </div>
+
+  <!-- ── 3-필러 ── -->
+  <section class="wrap">
+
+    <!-- Pillar 01 — 점수 -->
+    <div class="pillar reveal">
+      <div>
+        <div class="pillar__num">01.</div>
+        <h2 class="pillar__title">점수가 쌓이는<br>학습 일기.</h2>
+        <p class="pillar__body">
+          "했다 / 안 했다"는 너무 거칠죠. 목표 시간 대비 <b>도달률 70%</b> 와
+          <b>만족도 이모티 30%</b> 의 가중평균으로 세션 점수를 산출합니다.
+          같은 "완료"도 다르게 기록됩니다.
+        </p>
+      </div>
+      <div class="pillar__shot pillar__shot--tilt">
+        <img src="./self-check-study/screenshot-eval.png" alt="자기평가 모달" />
+      </div>
+    </div>
+
+    <!-- Pillar 02 — 달력 -->
+    <div class="pillar pillar--rev reveal">
+      <div>
+        <div class="pillar__num">02.</div>
+        <h2 class="pillar__title">한 달이 한 장의<br>풍경으로.</h2>
+        <p class="pillar__body">
+          요일별 <b>무지개 7색</b> × 점수 <b>5단계 오퍼시티</b> 의 월별 달력.
+          빈 셀이 적은 달, 진한 셀이 많은 주가 한눈에 보입니다.
+          꾸준함을 색으로 본다는 것.
+        </p>
+      </div>
+      <div class="pillar__shot pillar__shot--tilt-r">
+        <img src="./self-check-study/screenshot-calendar.png" alt="월별 달력 화면" />
+      </div>
+    </div>
+
+    <!-- Pillar 03 — 카톡 -->
+    <div class="pillar reveal">
+      <div>
+        <div class="pillar__num">03.</div>
+        <h2 class="pillar__title">진짜 보상은<br>카톡에서.</h2>
+        <p class="pillar__body">
+          앱 안의 점수보다 부모·조부모·친구의 한 마디가 더 강력합니다.
+          시스템 공유 시트로 카톡에 결과를 내보내세요.
+          <em style="font-family:var(--font-display-en);font-style:italic;color:var(--pink);">"✅ 수학 (인강 1강) 완료 / 😄 92%"</em>
+          한 줄짜리 자랑 카드.
+        </p>
+      </div>
+      <div class="pillar__shot pillar__shot--tilt">
+        <img src="./self-check-study/screenshot-stamps.png" alt="도장 그리드 화면" />
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── 핵심 기능 ── -->
+  <section class="features">
+    <div class="features__inner">
+      <div class="reveal">
+        <span class="chapter">
+          <span class="chapter__num">SPEC</span>
+          Core Features · 핵심 기능
+        </span>
+        <h2 class="section__title" style="margin-top:8px;">자세히 들여다보면.</h2>
+      </div>
+      <div class="features__grid">
+        <div class="feat reveal d1"><span class="feat__no">F.01</span><div><div class="feat__title">요일별 학습 일정 등록</div><div class="feat__desc">주간 반복 + 날짜별 인라인 달력 편집. 한 번 만들고 계속 굴립니다.</div></div></div>
+        <div class="feat reveal d1"><span class="feat__no">F.02</span><div><div class="feat__title">드래그앤드롭 순서 변경</div><div class="feat__desc">세션 순서를 손가락 하나로 자유 변경. 오늘의 흐름에 맞춰 재배치.</div></div></div>
+        <div class="feat reveal d2"><span class="feat__no">F.03</span><div><div class="feat__title">타이머 + 자기평가</div><div class="feat__desc">시간을 재고, 끝나면 😫 / 😐 / 😄 로 만족도를 남깁니다.</div></div></div>
+        <div class="feat reveal d2"><span class="feat__no">F.04</span><div><div class="feat__title">5열 도장 그리드</div><div class="feat__desc">완료 세션이 도장처럼 쌓입니다. 채워가는 만족감.</div></div></div>
+        <div class="feat reveal d3"><span class="feat__no">F.05</span><div><div class="feat__title">무지개 월별 달력</div><div class="feat__desc">요일별 7색 × 점수 5단계 오퍼시티로 한 달이 한 장에.</div></div></div>
+        <div class="feat reveal d3"><span class="feat__no">F.06</span><div><div class="feat__title">마이페이지 통계 + 추세</div><div class="feat__desc">7 / 14 / 28일 막대 차트로 흐름을 봅니다.</div></div></div>
+        <div class="feat reveal d3"><span class="feat__no">F.07</span><div><div class="feat__title">시작 · 자유시간 알림</div><div class="feat__desc">진동 + 배너로 가볍게. FCM 없이 로컬 알림만.</div></div></div>
+        <div class="feat reveal d3"><span class="feat__no">F.08</span><div><div class="feat__title">3 진입점 카톡 공유</div><div class="feat__desc">Today / 스탬프 오늘 / 달력 셀 — 어디서든 자랑.</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 스크린샷 갤러리 ── -->
+  <section class="gallery">
+    <div class="wrap">
+      <div class="reveal">
+        <span class="chapter">
+          <span class="chapter__num">SHOTS</span>
+          Screenshots · 화면 보기
+        </span>
+        <h2 class="section__title" style="margin-top:8px;">5장으로 보는 셀프체크 스터디.</h2>
+      </div>
+      <div class="gallery__rail">
+        <figure class="gallery__shot reveal d1"><img src="./self-check-study/screenshot-today.png" alt="오늘" /></figure>
+        <figure class="gallery__shot reveal d1"><img src="./self-check-study/screenshot-timer.png" alt="타이머" /></figure>
+        <figure class="gallery__shot reveal d2"><img src="./self-check-study/screenshot-eval.png" alt="자기평가" /></figure>
+        <figure class="gallery__shot reveal d2"><img src="./self-check-study/screenshot-stamps.png" alt="도장" /></figure>
+        <figure class="gallery__shot reveal d3"><img src="./self-check-study/screenshot-calendar.png" alt="달력" /></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 프라이버시 약속 ── -->
+  <section class="promise">
+    <div class="wrap">
+      <div class="reveal">
+        <span class="chapter">
+          <span class="chapter__num">PRIV</span>
+          Privacy · <em style="font-family:var(--font-display-en);font-style:italic;">no data leaves your phone</em>
+        </span>
+        <h2 class="promise__title">데이터는 <em>당신 폰</em>에만<br>머무릅니다.</h2>
+      </div>
+      <div class="promise__grid">
+        <div class="promise__item reveal d1"><b>OFFLINE</b><span>완전 오프라인 작동. 모든 데이터는 기기 로컬에만 저장.</span></div>
+        <div class="promise__item reveal d1"><b>NO TRACKING</b><span>광고 식별자·사용 기록·앱 로그를 외부로 전송하지 않습니다.</span></div>
+        <div class="promise__item reveal d2"><b>NO FCM</b><span>외부 푸시 서버 미사용. 로컬 알림만 사용합니다.</span></div>
+        <div class="promise__item reveal d2"><b>NO SIGN-UP</b><span>회원가입 없음. 다운받고 바로 사용.</span></div>
+      </div>
+      <p style="margin-top: 22px; font-family: var(--font-mono); font-size: 12px; opacity: 0.75;">
+        ▸ <a href="../privacy.html" style="text-decoration:underline;">개인정보처리방침 전문 →</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ── 종결 CTA ── -->
+  <section class="close">
+    <div class="wrap reveal">
+      <span class="chapter">
+        <span class="chapter__num">END</span>
+        Try It · 받아보기
+      </span>
+      <h2 class="close__title">지금은 심사 중이에요.<br>출시되면 알려드릴게요.</h2>
+      <div class="close__cta">
+        <a href="../#subscribe" class="tape tape--pink">출시 알림 받기 ↓</a>
+        <a href="../#products" class="btn">다른 실험도 보기 →</a>
+      </div>
+      <a href="../" class="close__back">← ~/woo-hoo.lab</a>
+    </div>
+  </section>
+
+  <!-- ── 푸터 ── -->
+  <footer class="footer" style="border-top: var(--bd);">
+    <div class="footer__inner">
+      <div>© 2026 woo-hoo.kr · <a href="../privacy.html" style="text-decoration: underline;">개인정보처리방침</a></div>
+      <div class="footer__links">
+        <!-- TODO: 실제 프로필 URL로 교체 -->
+        <a href="#" aria-label="GitHub">GitHub</a>
+        <a href="#" aria-label="X (Twitter)">X</a>
+        <a href="mailto:woohoo.dew1017@gmail.com">Email</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /*
+     * 모바일 내비 토글 + reveal + nav 스크롤 그림자 + 클릭 pop
+     * (다른 페이지와 동일한 동작 패턴)
+     */
+    (function () {
+      var toggle = document.querySelector(".nav__toggle");
+      var links = document.getElementById("navLinks");
+      if (toggle && links) {
+        toggle.addEventListener("click", function () {
+          var open = links.classList.toggle("open");
+          toggle.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+      }
+    })();
+
+    /* 스크롤 등장 */
+    (function () {
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var els = document.querySelectorAll(".reveal");
+      if (reduce || !("IntersectionObserver" in window)) {
+        els.forEach(function (el) { el.classList.add("in"); });
+        return;
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("in");
+          io.unobserve(entry.target);
+        });
+      }, { threshold: 0.18, rootMargin: "0px 0px -8% 0px" });
+      els.forEach(function (el) { io.observe(el); });
+    })();
+
+    /* nav 스크롤 그림자 */
+    (function () {
+      var nav = document.querySelector(".nav");
+      if (!nav) return;
+      function onScroll() { nav.classList.toggle("scrolled", window.scrollY > 8); }
+      onScroll();
+      window.addEventListener("scroll", onScroll, { passive: true });
+    })();
+
+    /* 클릭 pop (woo!/hoo!/✶) — 메인 페이지와 동일한 인터랙션 */
+    (function () {
+      var words = ["woo!", "hoo!", "✶", "✅", "yay!"];
+      var colors = ["#ff4da6", "#0a84ff", "#16a34a", "#111", "#e0a800"];
+      document.addEventListener("click", function (e) {
+        var w = words[(Math.random() * words.length) | 0];
+        var el = document.createElement("span");
+        el.className = "pop";
+        el.textContent = w;
+        el.style.left = e.clientX + "px";
+        el.style.top = e.clientY + "px";
+        el.style.color = colors[(Math.random() * colors.length) | 0];
+        el.style.fontSize = 20 + Math.random() * 16 + "px";
+        document.body.appendChild(el);
+        setTimeout(function () { el.remove(); }, 900);
+      });
+    })();
+  </script>
+</body>
+</html>

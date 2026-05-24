@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<!--
+  Play Store 피처 그래픽 (1024 x 500)
+  - 브라우저에서 .stage 영역만 캡처하면 그대로 사용 가능
+  - body는 캡처 가이드 배경
+-->
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Feature Graphic — self-check-study</title>
+<link rel="stylesheet" as="style" crossorigin
+  href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Pretendard Variable',Pretendard,sans-serif;
+  font-feature-settings:'ss06','ss07';
+  background:#222;min-height:100vh;display:grid;place-items:center;padding:32px;
+  -webkit-font-smoothing:antialiased;
+}
+.stage{
+  width:1024px;height:500px;
+  background:#e8ebe6;
+  position:relative;overflow:hidden;
+  color:#0e0f0c;
+  display:flex;align-items:center;padding:0 64px;
+  box-shadow:0 24px 60px rgba(0,0,0,.4);
+}
+/* 우측 거대 lime 도장 */
+.stamp{
+  position:absolute;right:-100px;top:-100px;
+  width:560px;height:560px;border-radius:50%;
+  background:#9fe870;
+}
+.stamp__inner{
+  position:absolute;right:-60px;top:80px;
+  width:380px;height:380px;border-radius:50%;
+  background:#cdffad;
+}
+/* 우측 도장 위 작은 흩어진 도장들 */
+.dot{position:absolute;width:36px;height:36px;border-radius:50%;background:#0e0f0c;opacity:.08}
+.dot--1{right:580px;top:80px;width:24px;height:24px}
+.dot--2{right:430px;top:340px;width:48px;height:48px;opacity:.06}
+.dot--3{right:80px;bottom:60px;width:32px;height:32px;background:#9fe870;opacity:1}
+
+/* 좌측 텍스트 */
+.left{position:relative;z-index:2;max-width:560px}
+.eyebrow{
+  display:inline-block;
+  font-size:14px;font-weight:700;color:#163300;
+  background:#cdffad;padding:6px 14px;border-radius:9999px;
+  text-transform:uppercase;letter-spacing:.08em;
+  margin-bottom:24px;
+}
+.headline{
+  font-size:96px;font-weight:900;line-height:.92;letter-spacing:-.04em;
+  color:#0e0f0c;margin-bottom:20px;
+}
+.headline em{font-style:normal;color:#2ead4b}
+.sub{
+  font-size:20px;font-weight:500;line-height:1.45;color:#454745;max-width:480px;
+}
+
+/* 우측 미니 디바이스 + 카톡 풍선 — z-index 위 */
+.preview{
+  position:absolute;right:64px;bottom:50%;transform:translateY(50%);
+  z-index:3;display:flex;flex-direction:column;gap:14px;align-items:flex-end;
+}
+.bubble{
+  background:#ffd11a;color:#0e0f0c;
+  padding:14px 18px;border-radius:22px;border-bottom-right-radius:6px;
+  font-size:18px;font-weight:600;line-height:1.35;
+  box-shadow:0 8px 20px rgba(0,0,0,.08);max-width:280px;
+}
+.bubble--reply{
+  background:#fff;color:#0e0f0c;border-bottom-right-radius:22px;border-bottom-left-radius:6px;
+  align-self:flex-start;font-weight:500;
+}
+
+/* 캡처 가이드 */
+.guide{position:absolute;top:8px;left:50%;transform:translateX(-50%);
+  font-family:monospace;font-size:11px;color:#fff;opacity:.6}
+</style>
+</head>
+<body>
+  <div class="guide">stage = 1024 × 500 (Play Store feature graphic)</div>
+  <div class="stage">
+    <div class="stamp"></div>
+    <div class="stamp__inner"></div>
+    <div class="dot dot--1"></div>
+    <div class="dot dot--2"></div>
+    <div class="dot dot--3"></div>
+
+    <div class="left">
+      <div class="eyebrow">SELF-CHECK STUDY</div>
+      <h1 class="headline">공부,<br>기록, <em>자랑.</em></h1>
+      <p class="sub">체크리스트로 시작해서, 도장으로 쌓이고,<br>카톡으로 자랑한다.</p>
+    </div>
+
+    <div class="preview">
+      <div class="bubble">✅ 수학 (인강 1강) 완료<br>😄 92% — woo-hoo.kr</div>
+      <div class="bubble bubble--reply">우와 잘했어!! 👏</div>
+    </div>
+  </div>
+</body>
+</html>
