@@ -1,0 +1,66 @@
+{# 파일 목적: 블로그 목록 — 헤더 + 페르소나 필터 칩 + 글 카드 그리드 + 페이지네이션 #}
+{% extends "base.html" %}
+
+{% block title %}{{ blog_title }} · woo-hoo.kr{% endblock %}
+{% block og_title %}{{ blog_title }} · woo-hoo.kr{% endblock %}
+
+{% block content %}
+<section class="blog-hero">
+  <div class="wrap-narrow">
+    <div class="blog-hero__eyebrow">woo-hoo.kr · daily news</div>
+    <h1 class="blog-hero__title">{{ blog_title }}</h1>
+    <p class="blog-hero__sub">세상 돌아가는 이야기를, 여섯 사람의 눈으로 다시 굽습니다.</p>
+  </div>
+</section>
+
+<div class="wrap blog-body">
+  {# ─ 페르소나 필터 칩 ─ #}
+  {% if all_angles %}
+  <nav class="chips" aria-label="페르소나 필터">
+    <a href="/blog" class="chip{% if not active_angle %} is-on{% endif %}">전체</a>
+    {% for s in all_angles %}
+    <a href="/blog?angle={{ s.label | urlencode }}"
+       class="chip{% if active_angle == s.label %} is-on{% endif %}"
+       style="--chip: {{ s.color }}; --chip-soft: {{ s.soft }};">
+      <span class="chip__emoji">{{ s.emoji }}</span>{{ s.label }}
+    </a>
+    {% endfor %}
+  </nav>
+  {% endif %}
+
+  {% if not articles %}
+  {# ─ 빈 상태 ─ #}
+  <div class="empty">
+    <div class="empty__emoji">🍞</div>
+    <h2 class="empty__title">아직 글이 없어요</h2>
+    <p class="empty__sub">{% if active_angle %}'{{ active_angle }}' 관점의 글이 아직 없네요. <a href="/blog">전체 보기</a>{% else %}첫 글이 곧 구워집니다. 잠시 후 다시 들러주세요.{% endif %}</p>
+  </div>
+  {% else %}
+  {# ─ 글 카드 그리드 ─ #}
+  <div class="cards">
+    {% for a in articles %}
+    <a class="card" href="/blog/{{ a.id }}">
+      <div class="card__body">
+        <span class="badge-angle" style="--c: {{ a.style.color }}; --c-soft: {{ a.style.soft }};">
+          {{ a.style.emoji }} {{ a.style.label }}
+        </span>
+        <h2 class="card__title">{{ a.title }}</h2>
+        <p class="card__summary">{{ a.summary }}</p>
+        <div class="card__meta">{{ a.date_display }}</div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+
+  {# ─ 페이지네이션 ─ #}
+  {% if total_pages > 1 %}
+  <nav class="pager" aria-label="페이지">
+    {% set q = ('&angle=' ~ (active_angle | urlencode)) if active_angle else '' %}
+    {% if has_prev %}<a class="pager__btn" href="/blog?page={{ page - 1 }}{{ q }}">← 이전</a>{% else %}<span class="pager__btn is-off">← 이전</span>{% endif %}
+    <span class="pager__pos">{{ page }} / {{ total_pages }}</span>
+    {% if has_next %}<a class="pager__btn" href="/blog?page={{ page + 1 }}{{ q }}">다음 →</a>{% else %}<span class="pager__btn is-off">다음 →</span>{% endif %}
+  </nav>
+  {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

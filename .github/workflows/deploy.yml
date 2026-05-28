@@ -1,0 +1,56 @@
+# 파일 목적: server/ push 시 준비된 웹서버(SSH)로 코드 동기화 + 의존성 설치 + systemd 재시작
+name: Deploy blog server
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "server/**"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch: {}
+
+# 동시 배포 방지(직전 실행 취소)
+concurrency:
+  group: deploy-blog
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # GitHub Actions 는 로컬 ~/.ssh/config 의 'woohoo' alias 를 쓸 수 없으므로
+      # 실제 host/user/key 를 레포 Secrets 에 등록해 사용한다.
+      #   SSH_HOST, SSH_USER, SSH_KEY(개인키 전체), SSH_PORT(선택, 기본 22), DEPLOY_PATH
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          ssh-keyscan -p "${{ secrets.SSH_PORT || '22' }}" -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+
+      # 앱 코드만 동기화. .env/.venv/__pycache__ 는 제외(--delete 시에도 보존).
+      - name: Rsync server code
+        run: |
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/id_deploy -p ${{ secrets.SSH_PORT || '22' }}" \
+            --exclude '.venv' --exclude '__pycache__' --exclude '.env' \
+            --exclude 'tests' --exclude '.pytest_cache' \
+            server/ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}/"
+
+      # 원격에서 venv 보장 → 의존성 설치 → 서비스 재시작.
+      # (Supabase/AdSense 등 런타임 환경변수는 서버의 DEPLOY_PATH/.env 에 1회 배치)
+      - name: Install deps & restart service
+        run: |
+          ssh -i ~/.ssh/id_deploy -p "${{ secrets.SSH_PORT || '22' }}" \
+            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" bash -lc '
+              set -e
+              cd "${{ secrets.DEPLOY_PATH }}"
+              test -d .venv || python3 -m venv .venv
+              .venv/bin/pip install -q --upgrade pip
+              .venv/bin/pip install -q -r requirements.txt
+              sudo systemctl restart woohoo-blog
+              sleep 2
+              curl -fsS http://127.0.0.1:8000/blog >/dev/null && echo "deploy OK"
+            '

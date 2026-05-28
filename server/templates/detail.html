@@ -1,0 +1,63 @@
+{# 파일 목적: 글 상세 — 제목/페르소나/날짜 + 본문(HTML) + 애드센스 인아티클 + 원본 출처 + SEO/OG #}
+{% extends "base.html" %}
+
+{% block title %}{{ article.title }} · {{ blog_title }}{% endblock %}
+{% block description %}{{ article.summary }}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_title %}{{ article.title }}{% endblock %}
+{% block og_description %}{{ article.summary }}{% endblock %}
+{# TODO(og:image): 페르소나별 대표 그래픽 생성 후 여기서 절대 URL 주입. 현재는 텍스트 카드만 노출. #}
+
+{% block content %}
+<article class="post wrap-narrow">
+  <a class="post__back" href="/blog">← {{ blog_title }}</a>
+
+  <header class="post__head">
+    <span class="badge-angle" style="--c: {{ article.style.color }}; --c-soft: {{ article.style.soft }};">
+      {{ article.style.emoji }} {{ article.style.label }}
+    </span>
+    <h1 class="post__title">{{ article.title }}</h1>
+    <div class="post__meta">
+      {% if article.date_display %}<time datetime="{{ article.date_iso }}">{{ article.date_display }}</time>{% endif %}
+      {% if article.char_count %}<span class="dot">·</span><span>{{ article.char_count }}자</span>{% endif %}
+    </div>
+  </header>
+
+  {# ─ 애드센스: 본문 시작 직후 (슬롯 지정 시 인아티클, 아니면 자동광고 스크립트가 처리) ─ #}
+  {% if adsense_pub_id and adsense_slot_inarticle %}
+  <div class="ad-slot">
+    <ins class="adsbygoogle" style="display:block;text-align:center"
+         data-ad-layout="in-article" data-ad-format="fluid"
+         data-ad-client="{{ adsense_pub_id }}" data-ad-slot="{{ adsense_slot_inarticle }}"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+  {% endif %}
+
+  <div class="prose">
+    {{ article.html | safe }}
+  </div>
+
+  {% if article.source_url %}
+  <aside class="source">
+    <span class="source__label">원본 뉴스</span>
+    <a class="source__link" href="{{ article.source_url }}" target="_blank" rel="noopener nofollow">
+      {{ article.source_title or article.source_url }} ↗
+    </a>
+  </aside>
+  {% endif %}
+
+  {# ─ 애드센스: 본문 끝 ─ #}
+  {% if adsense_pub_id and adsense_slot_inarticle %}
+  <div class="ad-slot">
+    <ins class="adsbygoogle" style="display:block;text-align:center"
+         data-ad-layout="in-article" data-ad-format="fluid"
+         data-ad-client="{{ adsense_pub_id }}" data-ad-slot="{{ adsense_slot_inarticle }}"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+  {% endif %}
+
+  <nav class="post__foot">
+    <a class="pager__btn" href="/blog">← 목록으로</a>
+  </nav>
+</article>
+{% endblock %}

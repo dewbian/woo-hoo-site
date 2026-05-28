@@ -1,0 +1,98 @@
+{# 파일 목적: 블로그 공통 레이아웃 — 라이브 woo-hoo.kr v2 헤더/푸터·토큰 계승, head(폰트·OG·애드센스) #}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}{{ blog_title }} · woo-hoo.kr{% endblock %}</title>
+  <meta name="description" content="{% block description %}woo-hoo.kr 가 매일 굽는 뉴스 한 조각 — 세상만사 구경만사.{% endblock %}" />
+  {% if canonical %}<link rel="canonical" href="{{ canonical }}" />{% endif %}
+
+  {# ─ OG / 공유 카드 (카톡·SNS) ─ #}
+  <meta property="og:type" content="{% block og_type %}website{% endblock %}" />
+  <meta property="og:site_name" content="woo-hoo.kr" />
+  <meta property="og:title" content="{% block og_title %}{{ blog_title }}{% endblock %}" />
+  <meta property="og:description" content="{% block og_description %}woo-hoo.kr 가 매일 굽는 뉴스 한 조각.{% endblock %}" />
+  {% if canonical %}<meta property="og:url" content="{{ canonical }}" />{% endif %}
+  {% block og_image %}{% endblock %}
+  <meta name="twitter:card" content="summary_large_image" />
+
+  {# ─ 폰트: 라이브 사이트와 동일 스택 (Instrument Serif / Poppins / JetBrains Mono / Pretendard) ─ #}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/blog/static/blog.css" />
+
+  {% if adsense_pub_id %}
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ adsense_pub_id }}" crossorigin="anonymous"></script>
+  {% endif %}
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  {# ─ 상단 네비게이션 (라이브 사이트 계승) ─ #}
+  <nav class="nav">
+    <div class="nav__row">
+      <a href="/" class="nav__brand" aria-label="woo-hoo.kr 홈">
+        <span class="nav__brand-mark">w</span>
+        <span>woo-<i>hoo</i>.kr</span>
+      </a>
+      <div class="nav__menu">
+        <a href="/#projects">Projects</a>
+        <a href="/#building">Now building</a>
+        <a href="/blog" class="is-active">세상만사</a>
+        <a href="/#about">About</a>
+      </div>
+      <a href="/#subscribe" class="nav__cta">Subscribe →</a>
+    </div>
+  </nav>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  {# ─ 푸터 (라이브 사이트 계승) ─ #}
+  <footer>
+    <div class="wrap">
+      <div class="foot__row">
+        <div>
+          <div class="foot__brand">woo-<i>hoo</i>.kr</div>
+          <p class="foot__about">
+            1인 개발자가 작은 앱을 계속 만들어 올리는 실험실.
+            완벽한 첫 출시보다, <em>매주 살아 움직이는 사이트</em>를 지향합니다.
+          </p>
+        </div>
+        <div class="foot__col">
+          <div class="foot__col-head">Projects</div>
+          <ul>
+            <li><a href="/#projects">self-check-study</a></li>
+            <li><a href="/#projects">make-money</a></li>
+            <li><a href="/#projects">googSky</a></li>
+          </ul>
+        </div>
+        <div class="foot__col">
+          <div class="foot__col-head">Writing</div>
+          <ul>
+            <li><a href="/blog">세상만사 구경만사</a></li>
+            <li><a href="/#devlog">Devlog</a></li>
+            <li><a href="/privacy.html">Privacy</a></li>
+          </ul>
+        </div>
+        <div class="foot__col">
+          <div class="foot__col-head">Elsewhere</div>
+          <ul>
+            <li><a href="/blog/feed.xml">RSS ↗</a></li>
+            <li><a href="mailto:dev@b-lot.co.kr">Email ↗</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot__bottom">
+        <span>© 2026 woo-hoo.kr · Made with too much coffee.</span>
+        <span>Built solo in Seoul · <a href="/privacy.html">Privacy</a></span>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

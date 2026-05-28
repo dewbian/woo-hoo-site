@@ -1,0 +1,11 @@
+{# 파일 목적: 404 — 미존재/미완료 글 #}
+{% extends "base.html" %}
+{% block title %}찾을 수 없는 글 · {{ blog_title }}{% endblock %}
+{% block content %}
+<div class="wrap-narrow state">
+  <div class="state__code">404</div>
+  <h1 class="state__title">그 글은 여기 없어요</h1>
+  <p class="state__sub">삭제됐거나, 아직 발행되지 않은 글일 수 있어요.</p>
+  <a class="pager__btn" href="/blog">← {{ blog_title }}</a>
+</div>
+{% endblock %}

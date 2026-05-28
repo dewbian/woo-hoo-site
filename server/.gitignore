@@ -1,0 +1,7 @@
+# 파일 목적: 서버 비밀/캐시 산출물 추적 제외
+.env
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
