@@ -50,7 +50,7 @@ jobs:
               test -d .venv || python3 -m venv .venv
               .venv/bin/pip install -q --upgrade pip
               .venv/bin/pip install -q -r requirements.txt
-              sudo systemctl restart woohoo-blog
+              systemctl restart woohoo-blog
               sleep 2
               curl -fsS http://127.0.0.1:8000/blog >/dev/null && echo "deploy OK"
             '
