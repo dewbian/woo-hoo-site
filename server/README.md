@@ -70,8 +70,10 @@ After=network.target
 [Service]
 WorkingDirectory=/home/www/woo-hoo.kr/server
 EnvironmentFile=/home/www/woo-hoo.kr/server/.env
+# 포트 8001 사용: 같은 서버의 다른 사이트가 8000 을 점유 중이라 충돌 회피.
+# 단, gunicorn 26+ 는 $HOME/.gunicorn 에 컨트롤 소켓을 만들려다 www-data 홈에서 권한오류 로그를 남긴다(워커는 정상). 필요시 Environment=HOME=/home/www/woo-hoo.kr/server 추가.
 ExecStart=/home/www/woo-hoo.kr/server/.venv/bin/gunicorn main:app \
-  -k uvicorn.workers.UvicornWorker -b 127.0.0.1:8000 --workers 2
+  -k uvicorn.workers.UvicornWorker -b 127.0.0.1:8001 --workers 2
 Restart=always
 User=www-data
 
@@ -84,7 +86,7 @@ sudo systemctl daemon-reload && sudo systemctl enable --now woohoo-blog
 3) nginx — `/blog` 만 파이썬으로 프록시(나머지는 기존 정적/GitHub Pages 유지):
 ```nginx
 location /blog {
-    proxy_pass http://127.0.0.1:8000;
+    proxy_pass http://127.0.0.1:8001;
     proxy_set_header Host $host;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;

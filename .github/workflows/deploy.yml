@@ -44,13 +44,16 @@ jobs:
       - name: Install deps & restart service
         run: |
           ssh -i ~/.ssh/id_deploy -p "${{ secrets.SSH_PORT || '22' }}" \
-            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" bash -lc '
-              set -e
-              cd "${{ secrets.DEPLOY_PATH }}"
-              test -d .venv || python3 -m venv .venv
-              .venv/bin/pip install -q --upgrade pip
-              .venv/bin/pip install -q -r requirements.txt
-              systemctl restart woohoo-blog
-              sleep 2
-              curl -fsS http://127.0.0.1:8000/blog >/dev/null && echo "deploy OK"
-            '
+            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" bash -s <<'REMOTE'
+          set -e
+          cd "${{ secrets.DEPLOY_PATH }}"
+          test -d .venv || python3 -m venv .venv
+          .venv/bin/pip install -q --upgrade pip
+          .venv/bin/pip install -q -r requirements.txt
+          systemctl restart woohoo-blog
+          # 헬스체크: 서버에 curl 이 없을 수 있어 venv python 으로 TCP 연결만 확인.
+          # 포트 8001 = woohoo-blog 전용(8000 은 무관한 다른 사이트라 검사 대상 아님).
+          # Supabase 미설정 시 HTTP 503 이 정상 상태이므로, HTTP 상태가 아닌 "포트 열림"만 본다.
+          sleep 3
+          .venv/bin/python -c "import socket; socket.create_connection(('127.0.0.1', 8001), 5).close(); print('deploy OK: 8001 listening')"
+          REMOTE
