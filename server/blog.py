@@ -20,15 +20,71 @@ _md = (
 )
 
 
+def _normalize_naver_image_url(url: str) -> str:
+    """네이버 이미지 URL 을 HTTPS 핫링크 가능 형태로 정규화한다.
+
+    문제: 수집된 본문 이미지가 `http://blogfiles.naver.net/...` / `http://imgnews.naver.net/...`
+    형태인데 이 origin 호스트는 HTTPS 를 지원하지 않는다(TLS 연결 자체 실패). 블로그
+    페이지는 HTTPS(woo-hoo.kr)라서 http 이미지는 혼합 콘텐츠로 차단 → 깨진 이미지로 보인다.
+    (브라우저에서 URL 을 직접 열면 최상위 탐색이라 혼합 콘텐츠가 아니어서 정상 표시됨.)
+
+    해결: `*.naver.net`(http 전용 origin)을 HTTPS CDN 쌍둥이 `*.pstatic.net`으로 치환한다.
+    동일 경로 이미지를 https 로 200 응답한다. 이미 pstatic 이면 http→https 만 승격한다.
+    네이버 외 호스트는 건드리지 않는다(임의 https 승격은 깨질 수 있으므로).
+
+    매개변수:
+        url: 원본 이미지 src URL
+    반환값:
+        정규화된(https pstatic) URL, 또는 비대상이면 원본 그대로
+    """
+    new = re.sub(r"(?i)://([a-z0-9.\-]+)\.naver\.net/", r"://\1.pstatic.net/", url)
+    if new != url:
+        return re.sub(r"(?i)^http://", "https://", new)
+    if re.match(r"(?i)^http://[a-z0-9.\-]+\.pstatic\.net/", url):
+        return re.sub(r"(?i)^http://", "https://", url)
+    return url
+
+
+def _fix_images(html: str) -> str:
+    """렌더된 HTML 의 모든 <img> 에 ① 네이버 이미지 URL 정규화(https pstatic)
+    ② `referrerpolicy="no-referrer"` 를 부여한다.
+
+    네이버 CDN 은 비-네이버 Referer 엔 403 을 주지만 Referer 가 없으면 200 을 주므로,
+    no-referrer 로 핫링크 차단을 우회한다.
+
+    매개변수:
+        html: 마크다운에서 렌더된 HTML
+    반환값:
+        <img> src 가 보정되고 referrerpolicy 가 부여된 HTML
+    """
+    def repl(m: re.Match) -> str:
+        tag = m.group(0)
+        # src="..." 한 곳만 정규화(이미지 1개당 src 1개)
+        tag = re.sub(
+            r'(?i)(src=")([^"]+)(")',
+            lambda s: s.group(1) + _normalize_naver_image_url(s.group(2)) + s.group(3),
+            tag, count=1,
+        )
+        # referrerpolicy 가 없으면 부여 — 자기닫힘(`/>`)/일반(`>`) 양쪽 처리
+        if "referrerpolicy" not in tag.lower():
+            if tag.endswith("/>"):
+                tag = tag[:-2].rstrip() + ' referrerpolicy="no-referrer" />'
+            else:
+                tag = tag[:-1].rstrip() + ' referrerpolicy="no-referrer">'
+        return tag
+    return re.sub(r"(?i)<img\b[^>]*>", repl, html)
+
+
 def markdown_to_html(content: str) -> str:
     """마크다운 본문을 안전한 HTML 로 변환한다.
 
     매개변수:
         content: 마크다운 문자열(없으면 빈 문자열 처리)
     반환값:
-        raw HTML 이 이스케이프된 안전한 HTML 문자열
+        raw HTML 이 이스케이프되고, 본문 <img> 가 HTTPS 핫링크용으로 보정된 안전한 HTML
     """
-    return _md.render(content or "")
+    # 렌더 후 <img> 보정: 네이버 http 이미지가 HTTPS 블로그 페이지에서 깨지지 않도록 한다.
+    return _fix_images(_md.render(content or ""))
 
 
 # ── 제목/요약 파생 (articles 에는 title/summary 가 없음 → content 에서 파생) ──

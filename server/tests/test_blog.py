@@ -76,6 +76,48 @@ def test_markdown_renders_basics():
     assert "<strong>" in html and "<em>" in html
 
 
+# ── markdown_to_html (네이버 이미지 핫링크 보정) ──
+# 버그: 수집 이미지가 http://blogfiles.naver.net(HTTPS 미지원) → HTTPS 블로그 페이지에서
+#       혼합 콘텐츠로 차단돼 깨짐. 수정: https *.pstatic.net 호스트 + referrerpolicy=no-referrer.
+def test_blogfiles_naver_net_rewritten_to_https_pstatic():
+    html = blog.markdown_to_html("![관련 이미지](http://blogfiles.naver.net/path/NEW-abc.jpg)")
+    assert "https://blogfiles.pstatic.net/path/NEW-abc.jpg" in html
+    assert "http://blogfiles.naver.net" not in html          # http/origin 호스트 잔존 금지
+    assert 'referrerpolicy="no-referrer"' in html            # referer 핫링크 차단 우회
+
+
+def test_imgnews_naver_net_rewritten_to_https_pstatic():
+    html = blog.markdown_to_html("![뉴스](http://imgnews.naver.net/image/009/1.jpg)")
+    assert "https://imgnews.pstatic.net/image/009/1.jpg" in html
+    assert "naver.net" not in html
+
+
+def test_already_https_pstatic_keeps_host_but_adds_referrerpolicy():
+    html = blog.markdown_to_html("![img](https://blogfiles.pstatic.net/a.jpg)")
+    assert "https://blogfiles.pstatic.net/a.jpg" in html
+    assert 'referrerpolicy="no-referrer"' in html
+
+
+def test_http_pstatic_upgraded_to_https():
+    html = blog.markdown_to_html("![img](http://imgnews.pstatic.net/x.jpg)")
+    assert "https://imgnews.pstatic.net/x.jpg" in html
+    assert "http://imgnews.pstatic.net" not in html
+
+
+def test_non_naver_image_unchanged_but_gets_referrerpolicy():
+    # 네이버 외 호스트는 URL 을 건드리지 않는다(임의 https 승격은 깨질 수 있음).
+    html = blog.markdown_to_html("![x](https://example.com/a.png)")
+    assert "https://example.com/a.png" in html
+    assert 'referrerpolicy="no-referrer"' in html
+
+
+def test_source_link_not_touched_by_image_fix():
+    # 본문 링크(<a>)는 이미지 정규화 대상이 아니므로 네이버 URL 그대로 유지돼야 한다.
+    html = blog.markdown_to_html("[출처 바로가기](https://n.news.naver.com/mnews/article/009/1)")
+    assert "https://n.news.naver.com/mnews/article/009/1" in html
+    assert "pstatic" not in html
+
+
 # ── angle_style ──
 def test_angle_known():
     s = blog.angle_style("경제 애널리스트")
