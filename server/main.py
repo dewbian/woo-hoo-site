@@ -146,6 +146,35 @@ def blog_feed():
     return Response(content=xml, media_type="application/rss+xml")
 
 
+@app.get("/blog/cards", response_class=HTMLResponse)
+def blog_cards(
+    request: Request,
+    page: int = Query(1, ge=1),
+    angle: str | None = Query(None),
+):
+    """무한스크롤용 카드 HTML 조각 렌더.
+
+    목록(/blog)의 다음 페이지 카드 마크업만 반환한다(레이아웃·헤더 없음).
+    프런트의 blog-infinite.js 가 이 조각을 받아 기존 그리드에 append 한다.
+
+    파라미터:
+        page: 가져올 페이지 번호(1부터).
+        angle: 페르소나 필터(없으면 전체).
+    반환:
+        _cards.html 로 렌더한 <a class="card"> 들의 HTML 문자열.
+        repo 미설정/조회 실패 시 503(JS 가 더 이상 로드하지 않도록).
+    """
+    # Supabase 미설정이면 목록 자체가 불가하므로 503 으로 알린다(JS 가 중단).
+    if repo is None:
+        return HTMLResponse(status_code=503)
+    try:
+        # total 은 무한스크롤 종료 판단을 첫 SSR 의 total_pages 로 하므로 여기선 불필요.
+        articles, _ = repo.list_articles(page=page, per_page=PER_PAGE, angle=angle)
+    except Exception:
+        return HTMLResponse(status_code=503)
+    return _render("_cards.html", request, articles=articles)
+
+
 @app.get("/blog/{article_id}", response_class=HTMLResponse)
 def blog_detail(request: Request, article_id: str):
     """글 상세 SSR — 마크다운→HTML 본문 + 애드센스 + SEO/OG + (선택)원본 출처."""

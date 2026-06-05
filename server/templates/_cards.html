@@ -1,0 +1,13 @@
+{# 파일 목적: 글 카드 반복 마크업 조각 — 목록 첫 렌더(list.html include)와 무한스크롤 추가 로드(/blog/cards)가 공유 #}
+{% for a in articles %}
+<a class="card" href="/blog/{{ a.id }}">
+  <div class="card__body">
+    <span class="badge-angle" style="--c: {{ a.style.color }}; --c-soft: {{ a.style.soft }};">
+      {{ a.style.emoji }} {{ a.style.label }}
+    </span>
+    <h2 class="card__title">{{ a.title }}</h2>
+    <p class="card__summary">{{ a.summary }}</p>
+    <div class="card__meta">{{ a.date_display }}</div>
+  </div>
+</a>
+{% endfor %}

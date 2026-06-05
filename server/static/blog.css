@@ -210,6 +210,32 @@ body::after {
 .pager__btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
 .pager__btn.is-off { opacity: 0.4; pointer-events: none; }
 
+/* ═══ 무한스크롤 ═══ */
+.infinite {
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-4);
+  margin-top: var(--space-12);
+}
+/* 보이지 않는 자동로드 트리거(높이만 차지, 시각/접근성 영향 없음) */
+.infinite__sentinel { width: 100%; height: 1px; }
+.infinite__spinner {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: var(--text-sm); color: var(--fg-3);
+}
+.spinner {
+  display: inline-block; width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid var(--border-2); border-top-color: var(--accent);
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.infinite__end {
+  text-align: center; margin-top: var(--space-12);
+  font-family: var(--font-mono); font-size: var(--text-sm); color: var(--fg-4);
+}
+/* .infinite__spinner 가 display:flex 라 hidden 속성 기본값(display:none)을 덮어쓰므로 강제 규칙으로 보장 */
+[hidden] { display: none !important; }
+/* 모션 최소화 선호 시 스피너 회전 속도를 늦춰 부담을 줄인다 */
+@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 1.6s; } }
+
 /* ═══ 상세 ═══ */
 .post { padding: var(--space-12) 0 var(--space-24); }
 .post__back {
