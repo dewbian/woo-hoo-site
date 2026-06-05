@@ -7,10 +7,34 @@
   "use strict";
 
   /**
+   * 아직 초기화되지 않은 애드센스 광고 유닛을 찾아 push 한다.
+   * SSR 로 박힌 광고와 무한스크롤로 append 된 광고를 동일하게 처리한다.
+   * data-ad-pushed 속성으로 자체 중복 push(TagError 'already have ads')를 막는다.
+   * (innerHTML 로 삽입된 inline <script> 는 실행되지 않으므로 초기화를 JS 가 전담)
+   * @param {ParentNode} [root=document] 광고를 찾을 범위
+   * @returns {void}
+   */
+  function initAds(root) {
+    var scope = root || document;
+    var ads = scope.querySelectorAll("ins.adsbygoogle:not([data-ad-pushed])");
+    for (var i = 0; i < ads.length; i++) {
+      ads[i].setAttribute("data-ad-pushed", "1");
+      try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      } catch (e) {
+        /* adsbygoogle.js 미로드/차단 시 무시(로드되면 큐가 처리됨) */
+      }
+    }
+  }
+
+  /**
    * 무한스크롤 초기화. 목록 페이지가 아니거나 더 가져올 페이지가 없으면 아무 일도 하지 않는다.
    * @returns {void}
    */
   function init() {
+    // 첫 렌더(SSR)된 목록 광고를 먼저 초기화한다(목록 그리드 유무와 무관하게 시도).
+    initAds(document);
+
     var cards = document.getElementById("cards");
     var infinite = document.getElementById("infinite");
     // 그리드/로더가 없으면(상세·빈 목록·마지막 페이지) 무한스크롤 대상이 아니다.
@@ -51,6 +75,8 @@
         .then(function (html) {
           // 받은 카드 조각을 그리드(grid) 끝에 그대로 삽입. 로더는 #cards 의 형제라 영향 없음.
           cards.insertAdjacentHTML("beforeend", html);
+          // 방금 추가된 조각 안의 광고 유닛을 초기화(SSR 광고는 data-ad-pushed 로 건너뜀).
+          initAds(cards);
           currentPage = nextPage;
           cards.dataset.page = String(currentPage);
 

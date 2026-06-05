@@ -23,6 +23,8 @@ SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 ADSENSE_PUB_ID = os.getenv("ADSENSE_PUB_ID", "")
 ADSENSE_SLOT_INARTICLE = os.getenv("ADSENSE_SLOT_INARTICLE", "")
+# 목록 그리드용 디스플레이 광고 슬롯 — 카드 6개마다 1개 삽입(없으면 미노출).
+ADSENSE_SLOT_LIST = os.getenv("ADSENSE_SLOT_LIST", "")
 SITE_ORIGIN = os.getenv("SITE_ORIGIN", "https://woo-hoo.kr").rstrip("/")
 PER_PAGE = int(os.getenv("PER_PAGE", "12"))
 CACHE_TTL = int(os.getenv("CACHE_TTL", "60"))
@@ -40,6 +42,7 @@ templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 templates.env.globals.update(
     adsense_pub_id=ADSENSE_PUB_ID,
     adsense_slot_inarticle=ADSENSE_SLOT_INARTICLE,
+    adsense_slot_list=ADSENSE_SLOT_LIST,
     site_origin=SITE_ORIGIN,
     blog_title="세상만사 구경만사",
 )
@@ -80,6 +83,8 @@ def blog_list(
         all_angles=[blog.angle_style(a) for a in all_angles],
         active_angle=angle or "",
         page=page,
+        # 광고를 '전역 카드 인덱스' 6배수마다 넣기 위한 시작 오프셋(이 페이지 앞에 쌓인 카드 수).
+        card_offset=(page - 1) * PER_PAGE,
         total=total,
         total_pages=total_pages,
         has_prev=page > 1,
@@ -172,7 +177,10 @@ def blog_cards(
         articles, _ = repo.list_articles(page=page, per_page=PER_PAGE, angle=angle)
     except Exception:
         return HTMLResponse(status_code=503)
-    return _render("_cards.html", request, articles=articles)
+    # card_offset: 이 페이지 앞에 이미 쌓인 카드 수 → 6배수 광고 위치를 전역 기준으로 맞춘다.
+    return _render(
+        "_cards.html", request, articles=articles, card_offset=(page - 1) * PER_PAGE
+    )
 
 
 @app.get("/blog/{article_id}", response_class=HTMLResponse)

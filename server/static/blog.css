@@ -210,6 +210,16 @@ body::after {
 .pager__btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
 .pager__btn.is-off { opacity: 0.4; pointer-events: none; }
 
+/* ═══ 목록 인피드 광고 (카드 6개마다) ═══ */
+/* 그리드 자식이지만 한 행 전체를 차지하도록 모든 열에 걸친다 */
+.ad-feed {
+  grid-column: 1 / -1;
+  display: flex; justify-content: center; align-items: center;
+  min-height: 90px; margin: var(--space-2) 0;
+  overflow: hidden;
+}
+.ad-feed .adsbygoogle { display: block; width: 100%; }
+
 /* ═══ 무한스크롤 ═══ */
 .infinite {
   display: flex; flex-direction: column; align-items: center; gap: var(--space-4);

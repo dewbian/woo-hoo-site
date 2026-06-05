@@ -1,4 +1,9 @@
-{# 파일 목적: 글 카드 반복 마크업 조각 — 목록 첫 렌더(list.html include)와 무한스크롤 추가 로드(/blog/cards)가 공유 #}
+{# 파일 목적: 글 카드 반복 마크업 조각 — 목록 첫 렌더(list.html include)와 무한스크롤 추가 로드(/blog/cards)가 공유.
+   카드 6개마다 디스플레이 광고(.ad-feed) 1개를 삽입한다.
+   - 광고 위치는 '전역 카드 인덱스'(card_offset + loop.index) 기준이라, 무한스크롤로 append 되는 페이지에서도 6의 배수 정렬이 유지된다.
+   - 광고 <ins> 는 inline <script> 없이 출력한다. SSR/append 모두 blog-infinite.js 가 adsbygoogle.push() 를 호출해 초기화한다
+     (innerHTML 로 삽입된 <script> 는 실행되지 않으므로, 일관되게 JS 에서 push 하여 중복/누락을 방지). #}
+{% set off = card_offset | default(0) %}
 {% for a in articles %}
 <a class="card" href="/blog/{{ a.id }}">
   <div class="card__body">
@@ -10,4 +15,12 @@
     <div class="card__meta">{{ a.date_display }}</div>
   </div>
 </a>
+{# 6개째 카드마다 광고 한 행(그리드 전체 폭). 슬롯 ID 가 설정된 경우에만 노출. #}
+{% if adsense_pub_id and adsense_slot_list and (loop.index + off) % 6 == 0 %}
+<div class="ad-feed">
+  <ins class="adsbygoogle" style="display:block;width:100%"
+       data-ad-client="{{ adsense_pub_id }}" data-ad-slot="{{ adsense_slot_list }}"
+       data-ad-format="auto" data-full-width-responsive="true"></ins>
+</div>
+{% endif %}
 {% endfor %}
