@@ -30,6 +30,15 @@
   border: var(--bd); border-radius: 6px; padding: 2px 8px; background: var(--white);
 }
 
+/* ── 작성 예정(draft) 안내 배너 — 본문 채우면 제거 ── */
+.post-draft {
+  max-width: 680px; margin: 0 0 28px;
+  border: 2px dashed #cdbf5a; border-radius: 14px;
+  background: #fffbe6; padding: 16px 20px;
+  font-size: 14px; font-weight: 700; color: #6b5e00;
+}
+.post-draft span { font-weight: 800; }
+
 /* ── 본문 ── */
 .post-body { padding: 52px 0 64px; }
 .post-prose { max-width: 680px; }

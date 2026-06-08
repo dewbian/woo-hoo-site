@@ -1,6 +1,24 @@
 <!-- 파일 목적: woo-hoo.kr 애드센스 작업 실행 결과 누적 기록 -->
 # CHANGELOG — woo-hoo.kr 애드센스 작업
 
+## 2026-06-08 · v0.4 — PHASE 3 스캐폴딩 완료
+
+### 완료
+- **draft 글 12편 일괄 생성** — 지시서 PHASE 3 목록 기준, 발행 3편이 커버하는 주제 제외한 나머지(self 3·money 3·googsky 2·회고 4). 총 devlog 15편 구조 확보.
+- 각 draft: 히어로(태그·제목·칩) + **5단계 작성 가이드 주석**(문제→시도→막힌지점→해결→배운것, 주제별 맞춤) + 관련 프로젝트 콜아웃 + 다른 개발기 보기.
+- **thin page 방지**: 본문 미작성 동안 `<meta robots=noindex>` + sitemap 제외 + 인덱스 미연결(draft) 처리. `.post-draft` 작성예정 배너 추가.
+- 발행 절차 문서화(PLAN.md): 본문 작성 → noindex 제거 → 인덱스/sitemap 연결.
+
+### 변경 파일
+`devlog/_post.css`, `devlog/{12 slugs}.html`(신규), `docs/PLAN.md`
+(생성기 `_gen_drafts.py` 는 1회 실행 후 삭제)
+
+### 다음 할 일
+- (사용자) draft 12편 본문 1,000자+ 작성 + 발행 3편 본문 확장.
+- 본문 완성분부터 발행 절차(noindex 제거·인덱스·sitemap) 진행 → PHASE 4 최종 점검.
+
+---
+
 ## 2026-06-07 · 블로그(server/) 단일 카테고리 하드 필터
 
 ### 배경

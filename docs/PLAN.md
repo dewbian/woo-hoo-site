@@ -3,9 +3,9 @@
 
 | | |
 |---|---|
-| **version** | 0.3 |
-| **updated** | 2026-06-07 |
-| **status** | 🟢 PHASE 1·2 완료 / PHASE 3(본문 작성) 대기 |
+| **version** | 0.4 |
+| **updated** | 2026-06-08 |
+| **status** | 🟢 PHASE 1·2 + PHASE 3 스캐폴딩 완료 / 본문 작성 대기 |
 | **근거 문서** | `docs/ADSENSE_TASK.md` (전략 A안) |
 | **거절 사유** | thin content — 고유 콘텐츠 + 신뢰성 페이지 부족 |
 
@@ -93,9 +93,39 @@
 - [ ] ⚠️ 본문은 현재 메모 요약 수준 — PHASE 3 에서 각 1,000자+ 로 확장 (사용자 작성)
 
 ## PHASE 3 — 콘텐츠 채우기 (본문은 사람 작성)
-> Claude: 페이지 스캐폴딩/마크업만. 본문 12~15개(각 1,000자+)는 사용자가 작성.
-- [ ] 스캐폴딩: 빈 글 페이지 12~15개 슬러그/메타 골격 생성 (제목 후보는 ADSENSE_TASK.md PHASE 3 목록)
-- [ ] (사용자) self-check-study 4편 / make-money 4편 / googSky 3편 / 회고 4편 본문 작성
+> Claude: 스캐폴딩 완료. **본문(각 1,000자+)은 사용자가 작성.**
+> draft = `noindex` + sitemap 제외 + 인덱스 미연결. 본문 채우면 발행 절차 진행.
+- [x] 스캐폴딩 — 총 15편 자리 확보(발행 3 + draft 12), 각 글에 5단계 작성 가이드(주석) 삽입
+
+### 발행 완료 (본문 메모 수준 → 확장 권장)
+| slug | 제목 | 프로젝트 | 상태 |
+|---|---|---|---|
+| stamp-interaction | 도장 마이크로 인터랙션 | self | ✅ 발행(짧음) |
+| persona-pipeline | 페르소나 5종 동시 생성 | money | ✅ 발행(짧음) |
+| stability-score | 안정·적정·도전의 경계 | googsky | ✅ 발행(짧음) |
+
+### draft (본문 작성 대기 — noindex)
+| slug | 제목 | 프로젝트 | 본문 |
+|---|---|---|---|
+| user-test-once-more | “한 번 더” 만든 0.4초 — 유저테스트 | self | [ ] |
+| kakao-og-image | 카톡 OG 이미지 튜닝 삽질기 | self | [ ] |
+| play-store-review | Play 스토어 심사 통과까지 | self | [ ] |
+| crawler-robots-block | 크롤러와 robots.txt 차단 | money | [ ] |
+| tistory-oauth-refresh | 티스토리 OAuth 자동 복구 | money | [ ] |
+| publish-queue-spacing | 30분 큐 분산 + AI양산 위험 | money | [ ] |
+| grade-data-normalize | 등급 데이터 정규화 | googsky | [ ] |
+| parent-interview | 학부모 인터뷰 8건 | googsky | [ ] |
+| solo-three-apps | 앱 3개 동시 운영 — 우선순위 | 회고 | [ ] |
+| coding-with-claude | Claude 코딩 좋았던/안통한 것 | 회고 | [ ] |
+| v2-redesign | v2 리디자인 — 회사사이트를 버린 이유 | 회고 | [ ] |
+| side-project-infra | 인프라 — 도메인·배포·비용 | 회고 | [ ] |
+
+### 글 발행 절차 (본문 작성 후, 글마다)
+1. `<head>` 의 `<meta name="robots" content="noindex">` 제거
+2. 본문 작성 가이드 주석 + `.post-draft` 배너 삭제, 작성 예정 날짜를 실제 날짜로
+3. `devlog.html` 인덱스 + (필요시 `index.html` `#devlog`)에 항목 추가
+4. `sitemap.xml` 에 URL 추가, 이전·다음 글 네비 연결
+> 본문이 채워지는 대로 위 1~4를 Claude 가 대행 가능(요청 시).
 
 ## PHASE 4 — 최종 점검 후 신청
 - [ ] devlog 완성글 12+ / 각 1,000자+ / 개별 URL 확인
