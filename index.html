@@ -721,7 +721,7 @@
   <!-- ─── 상단 네비게이션 ─────────────────────────────────────────────────── -->
   <nav class="nav">
     <div class="nav__row">
-      <a href="#" class="nav__brand" aria-label="woo-hoo.kr 홈">
+      <a href="/" class="nav__brand" aria-label="woo-hoo.kr 홈">
         <span class="nav__brand-mark">w</span>
         <span>woo-<i>hoo</i>.kr</span>
       </a>
@@ -729,8 +729,8 @@
         <a href="#projects">Projects</a>
         <a href="#building">Now building</a>
         <a href="#devlog">Devlog</a>
-        <a href="https://blog.woo-hoo.kr">세상만사 ↗</a>
-        <a href="#about">About</a>
+        <a href="https://blog.woo-hoo.kr" rel="nofollow">세상만사 ↗</a>
+        <a href="./about.html">About</a>
       </div>
       <a href="#subscribe" class="nav__cta">Subscribe →</a>
     </div>
@@ -831,12 +831,12 @@
                   </div>
                   <div class="card__links">
                     <!-- 앱별 스토어 등록용 공개 처리방침 (privacy/self-check-study.html) -->
-                    <a href="./privacy/self-check-study.html" class="card__link card__link--muted">
+                    <a href="./privacy.html" class="card__link card__link--muted">
                       Privacy
                     </a>
-                    <a href="#" class="card__link">
-                      Play 스토어 열기 <span class="arrow">↗</span>
-                    </a>
+                    <span class="card__link card__link--muted" aria-disabled="true">
+                      출시 예정 · 심사중
+                    </span>
                   </div>
                 </div>
               </div>
@@ -880,10 +880,10 @@
                 <span class="tag">티스토리 API</span>
               </div>
               <div class="card__links">
-                <a href="./privacy/make-money.html" class="card__link card__link--muted">
+                <a href="./privacy.html" class="card__link card__link--muted">
                   Privacy
                 </a>
-                <a href="#" class="card__link">
+                <a href="./devlog.html" class="card__link">
                   개발 로그 보기 <span class="arrow">→</span>
                 </a>
               </div>
@@ -915,11 +915,11 @@
                 <span class="tag">학부모 친화</span>
               </div>
               <div class="card__links">
-                <a href="./privacy/googsky.html" class="card__link card__link--muted">
+                <a href="./privacy.html" class="card__link card__link--muted">
                   Privacy
                 </a>
-                <a href="#" class="card__link">
-                  기능 명세 보기 <span class="arrow">→</span>
+                <a href="./devlog.html" class="card__link">
+                  개발 로그 보기 <span class="arrow">→</span>
                 </a>
               </div>
             </div>
@@ -946,7 +946,7 @@
           <li class="ticker-item">
             <span class="ticker-item__time">Today · 23:50</span>
             <span class="ticker-item__what">
-              <em>세상만사 구경만사</em> 블로그 오픈 — <a href="https://blog.woo-hoo.kr" style="color:#C8A8FF; text-decoration:underline;">blog.woo-hoo.kr</a> 동적 SSR 라이브 · 메인 메뉴 연결
+              <em>세상만사 구경만사</em> 블로그 오픈 — <a href="https://blog.woo-hoo.kr" rel="nofollow" style="color:#C8A8FF; text-decoration:underline;">blog.woo-hoo.kr</a> 동적 SSR 라이브 · 메인 메뉴 연결
             </span>
             <span class="ticker-item__tag">blog</span>
           </li>
@@ -1004,7 +1004,7 @@
             <div class="log-item__date">2026 · 05 · 22</div>
             <div>
               <h3 class="log-item__title">
-                도장(stamp) 마이크로 인터랙션 — <i>“해냈다”</i>는 감각의 시각화.
+                <a href="./devlog/stamp-interaction.html">도장(stamp) 마이크로 인터랙션 — <i>“해냈다”</i>는 감각의 시각화.</a>
               </h3>
               <p class="log-item__body">
                 체크가 끝난 순간 종이에 도장이 찍히는 듯한 0.4초의 모션을 추가.
@@ -1023,7 +1023,7 @@
             <div class="log-item__date">2026 · 05 · 18</div>
             <div>
               <h3 class="log-item__title">
-                make-money — <i>같은 뉴스, 다른 페르소나</i> 5종을 동시 생성.
+                <a href="./devlog/persona-pipeline.html">make-money — <i>같은 뉴스, 다른 페르소나</i> 5종을 동시 생성.</a>
               </h3>
               <p class="log-item__body">
                 하나의 원문 뉴스를 “ 경제 애널리스트 / 데이터 정리광 / 따뜻한 에세이스트 / 회의적 분석가 / 학부모 / Z세대 ” 의 시점으로 분기 생성하는 프롬프트 체인을 안정화.
@@ -1041,7 +1041,7 @@
             <div class="log-item__date">2026 · 05 · 11</div>
             <div>
               <h3 class="log-item__title">
-                googSky — “<i>안정·적정·도전</i>” 의 경계, 그 어딘가.
+                <a href="./devlog/stability-score.html">googSky — “<i>안정·적정·도전</i>” 의 경계, 그 어딘가.</a>
               </h3>
               <p class="log-item__body">
                 대학별 컷의 분산이 클수록 “적정” 의 범위가 모호해진다.
@@ -1142,26 +1142,25 @@
         <div class="foot__col">
           <div class="foot__col-head">Writing</div>
           <ul>
-            <li><a href="https://blog.woo-hoo.kr">세상만사 구경만사 ↗</a></li>
+            <li><a href="https://blog.woo-hoo.kr" rel="nofollow">세상만사 구경만사 ↗</a></li>
             <li><a href="#devlog">Devlog</a></li>
             <li><a href="#subscribe">Newsletter</a></li>
-            <li><a href="./privacy/">Privacy</a></li>
+            <li><a href="./privacy.html">Privacy</a></li>
           </ul>
         </div>
 
         <div class="foot__col">
           <div class="foot__col-head">Elsewhere</div>
           <ul>
-            <li><a href="#">GitHub ↗</a></li>
-            <li><a href="#">X / Twitter ↗</a></li>
             <li><a href="mailto:woohoo.dew1017@gmail.com">Email ↗</a></li>
+            <li><a href="./about.html">About</a></li>
           </ul>
         </div>
       </div>
 
       <div class="foot__bottom">
         <span>© 2026 woo-hoo.kr · Made with too much coffee.</span>
-        <span>Built solo in Seoul · <a href="./privacy/">Privacy</a></span>
+        <span>Built solo in Seoul · <a href="./privacy.html">Privacy</a></span>
       </div>
     </div>
   </footer>

@@ -81,9 +81,9 @@
       <a href="./" class="nav__logo">woo-hoo<span class="accent">.</span>lab</a>
       <button class="nav__toggle" aria-label="메뉴 열기" aria-expanded="false">☰</button>
       <div class="nav__links" id="navLinks">
-        <a href="./#products">실험실</a>
+        <a href="./#projects">실험실</a>
         <a href="./devlog.html">개발로그</a>
-        <a href="./#download">다운로드</a>
+        <a href="./about.html">About</a>
         <a href="./#subscribe" class="nav__cta">구독 →</a>
       </div>
     </div>
@@ -128,34 +128,37 @@
   <main class="timeline">
     <div class="wrap">
 
-      <!-- 항목은 최신순으로 직접 추가한다 (정적 작성) -->
+      <!-- 항목은 최신순. 각 글은 /devlog/{slug}.html 개별 페이지로 연결한다. -->
       <article class="entry reveal">
-        <div class="entry__date"><span class="entry__num">E.03</span>2026.05.20</div>
-        <span class="entry__tag entry__tag--googsky">googsky</span>
-        <h2 class="entry__title">등급 → 대학 매칭 로직 1차 완성</h2>
-        <p class="entry__body">
-          과목별 등급을 입력받아 안정·적정·도전권으로 분류하는 핵심 로직의 1차 버전을 완성했습니다.
-          아직 데이터셋이 거칠지만, 입력 → 분류 → 결과까지의 흐름이 한 번에 도는 걸 확인했어요.
-        </p>
-      </article>
-
-      <article class="entry reveal">
-        <div class="entry__date"><span class="entry__num">E.02</span>2026.05.12</div>
+        <div class="entry__date"><span class="entry__num">E.03</span>2026.05.22</div>
         <span class="entry__tag entry__tag--self">셀프체크</span>
-        <h2 class="entry__title">셀프체크 스터디 스토어 심사 제출</h2>
+        <h2 class="entry__title"><a href="./devlog/stamp-interaction.html">도장 마이크로 인터랙션 — “해냈다”는 감각의 시각화</a></h2>
         <p class="entry__body">
-          스케줄 등록·달성 체크·푸시 알림까지 기본 기능을 마무리하고 App Store / Google Play에 심사를 제출했습니다.
-          개인정보처리방침도 woo-hoo.kr에 올렸습니다.
+          체크가 끝난 순간 도장이 찍히는 0.4초의 모션. 햅틱·효과음·종이 그림자를 더하자
+          학생 테스트에서 “한 번 더 하고 싶다”는 반응이 늘었다.
+          <a href="./devlog/stamp-interaction.html" style="text-decoration:underline; font-weight:700;">자세히 →</a>
         </p>
       </article>
 
       <article class="entry reveal">
-        <div class="entry__date"><span class="entry__num">E.01</span>2026.05.01</div>
+        <div class="entry__date"><span class="entry__num">E.02</span>2026.05.18</div>
         <span class="entry__tag entry__tag--money">make-money</span>
-        <h2 class="entry__title">뉴스 크롤링 → 자동 포스팅 파이프라인 안정화</h2>
+        <h2 class="entry__title"><a href="./devlog/persona-pipeline.html">같은 뉴스, 다른 페르소나 5종을 동시 생성</a></h2>
         <p class="entry__body">
-          뉴스를 수집해 관점별 콘텐츠를 생성하고 광고를 붙여 블로그·티스토리에 자동 등록하는 파이프라인을
-          꾸준히 돌리며 안정화했습니다.
+          하나의 원문 뉴스를 5개 페르소나 시점으로 분기 생성하는 프롬프트 체인을 안정화하고,
+          티스토리 자동 발행을 30분 간격 큐로 분산했다.
+          <a href="./devlog/persona-pipeline.html" style="text-decoration:underline; font-weight:700;">자세히 →</a>
+        </p>
+      </article>
+
+      <article class="entry reveal">
+        <div class="entry__date"><span class="entry__num">E.01</span>2026.05.11</div>
+        <span class="entry__tag entry__tag--googsky">googsky</span>
+        <h2 class="entry__title"><a href="./devlog/stability-score.html">“안정·적정·도전”의 경계, 그 어딘가</a></h2>
+        <p class="entry__body">
+          대학 컷의 분산이 클수록 “적정”이 모호해진다. 절대 등급 차가 아니라 “안정성 점수”로 재정의 중.
+          학부모 인터뷰 8건의 공통 질문은 “그래서 진짜 안전한가요?”였다.
+          <a href="./devlog/stability-score.html" style="text-decoration:underline; font-weight:700;">자세히 →</a>
         </p>
       </article>
 
@@ -167,10 +170,8 @@
     <div class="footer__inner">
       <div>© 2026 woo-hoo.kr · <a href="./privacy.html" style="text-decoration: underline;">개인정보처리방침</a></div>
       <div class="footer__links">
-        <!-- TODO: 실제 프로필 URL로 교체 -->
-        <a href="#" aria-label="GitHub">GitHub</a>
-        <a href="#" aria-label="X (Twitter)">X</a>
-        <a href="mailto:dev@b-lot.co.kr">Email</a>
+        <a href="./about.html">About</a>
+        <a href="mailto:woohoo.dew1017@gmail.com">Email</a>
       </div>
     </div>
   </footer>

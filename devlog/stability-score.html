@@ -1,0 +1,146 @@
+<!--
+  파일 목적: devlog 개별 글 — googSky "안정·적정·도전" 안정성 점수 재정의 개발기
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>“안정·적정·도전”의 경계, 그 어딘가 | woo-hoo 개발로그</title>
+  <meta name="description" content="대학 컷의 분산을 어떻게 '안정성 점수'로 다시 정의했나 — googSky 입시 데이터 모델 개발기." />
+  <meta name="theme-color" content="#ffd60a" />
+  <meta name="google-adsense-account" content="ca-pub-1576424722880428">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="./_post.css" />
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1576424722880428"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <!-- ── 상단 내비 ── -->
+  <nav class="nav">
+    <div class="nav__inner">
+      <a href="../" class="nav__logo">woo-hoo<span class="accent">.</span>lab</a>
+      <button class="nav__toggle" aria-label="메뉴 열기" aria-expanded="false">☰</button>
+      <div class="nav__links" id="navLinks">
+        <a href="../#projects">실험실</a>
+        <a href="../devlog.html">개발로그</a>
+        <a href="../about.html">About</a>
+        <a href="../#subscribe" class="nav__cta">구독 →</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── 글 히어로 ── -->
+  <header class="post-hero">
+    <div class="wrap">
+      <div class="path path--ink" style="margin-bottom:10px;">
+        <a href="../" style="text-decoration:underline;">~/woo-hoo.lab</a>&nbsp;/&nbsp;<a href="../devlog.html" style="text-decoration:underline;">devlog</a>&nbsp;/&nbsp;stability-score<span class="path__cursor" aria-hidden="true" style="background:var(--ink);"></span>
+      </div>
+      <span class="post-hero__tag post-hero__tag--googsky">googSky</span>
+      <h1 class="post-hero__title">“<i>안정·적정·도전</i>”의 경계, 그 어딘가.</h1>
+      <div class="post-hero__meta">
+        <span>2026 · 05 · 11</span>
+        <span class="dot">·</span>
+        <span>googSky</span>
+      </div>
+      <div class="post-hero__chips">
+        <span class="chip-mono">googSky</span>
+        <span class="chip-mono">data-model</span>
+        <span class="chip-mono">interview</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── 본문 ── -->
+  <main class="post-body">
+    <div class="wrap">
+      <article class="post-prose">
+        <p>
+          대학별 컷의 분산이 클수록 “적정”의 범위가 모호해진다.
+          그래서 절대 등급 차이가 아니라 “안정성 점수”로 다시 정의하는 중이다.
+          학부모 인터뷰 8건에서 가장 흔한 질문은 “그래서 진짜 안전한가요?”였다.
+        </p>
+
+        <!--
+          ✍️ PHASE 3 — 본문 확장 가이드 (사람이 직접 작성, 1,000자+ 목표)
+          작성 후 이 주석은 지워주세요.
+
+          <h2>문제 상황</h2>
+          <p>"적정"이라는 단어가 사람마다 다르게 읽히던 문제 …</p>
+
+          <h2>시도</h2>
+          <p>등급 차이 기반 분류의 한계, 분산을 반영한 점수화 시도 …</p>
+
+          <h2>막힌 지점</h2>
+          <p>데이터가 거칠 때 점수가 흔들리던 케이스 …</p>
+
+          <h2>해결</h2>
+          <p>안정성 점수 정의식과 임계값을 정한 과정 …</p>
+
+          <h2>배운 것</h2>
+          <p>학부모가 진짜 원한 건 숫자가 아니라 "안심"이었다는 결론 …</p>
+        -->
+      </article>
+
+      <!-- 관련 프로젝트 -->
+      <div class="post-related">
+        <div class="post-related__label">관련 프로젝트</div>
+        <a href="../#projects">googSky — 등급만 입력하면 지원 가능한 대학 →</a>
+      </div>
+
+      <!-- 이전·다음 글 -->
+      <nav class="post-nav" aria-label="글 이동">
+        <span class="post-nav__item post-nav__empty">
+          <span class="post-nav__dir">← 이전 글</span>
+          <span class="post-nav__t">가장 오래된 글입니다</span>
+        </span>
+        <a class="post-nav__item post-nav__item--next" href="./persona-pipeline.html">
+          <span class="post-nav__dir">다음 글 →</span>
+          <span class="post-nav__t">같은 뉴스, 다른 페르소나 5종을 동시 생성</span>
+        </a>
+      </nav>
+
+      <!-- 다른 개발기 보기 -->
+      <section class="post-more">
+        <div class="post-more__head">다른 개발기 보기</div>
+        <ul class="post-more__list">
+          <li><span class="post-more__date">2026·05·22</span><a href="./stamp-interaction.html">도장 마이크로 인터랙션 — “해냈다”는 감각의 시각화</a></li>
+          <li><span class="post-more__date">2026·05·18</span><a href="./persona-pipeline.html">같은 뉴스, 다른 페르소나 5종을 동시 생성</a></li>
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <!-- ── 푸터 ── -->
+  <footer class="footer" style="border-top: var(--bd);">
+    <div class="footer__inner">
+      <div>© 2026 woo-hoo.kr · <a href="../privacy.html" style="text-decoration: underline;">개인정보처리방침</a></div>
+      <div class="footer__links">
+        <a href="../about.html">About</a>
+        <a href="mailto:woohoo.dew1017@gmail.com">Email</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var toggle = document.querySelector(".nav__toggle");
+      var links = document.getElementById("navLinks");
+      if (!toggle || !links) return;
+      toggle.addEventListener("click", function () {
+        var open = links.classList.toggle("open");
+        toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+    })();
+    (function () {
+      var nav = document.querySelector(".nav");
+      if (!nav) return;
+      function onScroll() { nav.classList.toggle("scrolled", window.scrollY > 8); }
+      onScroll();
+      window.addEventListener("scroll", onScroll, { passive: true });
+    })();
+  </script>
+</body>
+</html>

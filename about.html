@@ -1,0 +1,170 @@
+<!--
+  파일 목적: woo-hoo.kr 소개(About) 페이지 — 운영자·운영철학·연락처를 밝혀 사이트 신뢰성을 확보
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>소개 | woo-hoo.lab</title>
+  <meta name="description" content="woo-hoo.kr 소개 — 1인 개발자가 작은 앱을 직접 만들고 공개로 기록하는 실험실. 운영 철학과 연락처 안내." />
+  <meta name="theme-color" content="#ffd60a" />
+  <meta name="google-adsense-account" content="ca-pub-1576424722880428">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1576424722880428"
+     crossorigin="anonymous"></script>
+  <style>
+    /* ── 소개 페이지 전용 스타일 (devlog 히어로와 톤 통일) ── */
+    .about-hero {
+      border-bottom: var(--bd);
+      padding: 56px 0 64px;
+      background: var(--yellow);
+      position: relative;
+    }
+    .about-hero__title { font-family: var(--font-display-kr); font-weight: 400; font-size: 72px; letter-spacing: -1px; line-height: 0.98; }
+    .about-hero__sub { margin-top: 16px; font-weight: 600; max-width: 560px; font-size: 16px; }
+
+    .about-body { padding: 56px 0 72px; }
+    .about-section { max-width: 680px; margin: 0 0 44px; }
+    .about-section:last-child { margin-bottom: 0; }
+    .about-section h2 {
+      font-family: var(--font-display-kr); font-weight: 400;
+      font-size: 30px; letter-spacing: -0.5px; line-height: 1.15; margin-bottom: 14px;
+    }
+    .about-section p { color: #333; font-size: 15.5px; line-height: 1.75; margin-bottom: 12px; }
+    .about-section ul { margin: 6px 0 0 0; padding-left: 18px; }
+    .about-section li { color: #333; font-size: 15.5px; line-height: 1.7; margin-bottom: 8px; }
+    .about-contact {
+      border: var(--bd); border-radius: 14px; padding: 22px 24px;
+      background: var(--white); max-width: 680px;
+    }
+    .about-contact a { text-decoration: underline; font-weight: 700; }
+
+    @media (max-width: 720px) {
+      .about-hero__title { font-size: 40px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── 상단 내비 ── -->
+  <nav class="nav">
+    <div class="nav__inner">
+      <a href="./" class="nav__logo">woo-hoo<span class="accent">.</span>lab</a>
+      <button class="nav__toggle" aria-label="메뉴 열기" aria-expanded="false">☰</button>
+      <div class="nav__links" id="navLinks">
+        <a href="./#projects">실험실</a>
+        <a href="./devlog.html">개발로그</a>
+        <a href="./about.html">About</a>
+        <a href="./#subscribe" class="nav__cta">구독 →</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── 소개 히어로 ── -->
+  <header class="about-hero">
+    <div class="wrap">
+      <div class="path path--ink" style="margin-bottom:8px;">
+        <a href="./" style="text-decoration:underline;">~/woo-hoo.lab</a>&nbsp;/&nbsp;about<span class="path__cursor" aria-hidden="true" style="background:var(--ink);"></span>
+      </div>
+      <span class="chapter" style="margin-top:6px;">
+        <span class="chapter__num">§</span>
+        About · <em style="font-family:var(--font-display-en);font-style:italic;">who & why</em>
+      </span>
+      <h1 class="about-hero__title" style="margin-top: 10px;">작게, 계속 만듭니다.</h1>
+      <p class="about-hero__sub">woo-hoo.kr 은 1인 개발자가 직접 쓸 만한 작은 앱을 만들어 올리고, 그 과정을 공개로 기록하는 실험실입니다.</p>
+    </div>
+  </header>
+
+  <!-- ── 본문 ── -->
+  <main class="about-body">
+    <div class="wrap">
+
+      <section class="about-section">
+        <h2>누가 만드나요</h2>
+        <p>
+          woo-hoo.kr 은 <strong>1인 개발자</strong>가 기획·디자인·개발·운영을 혼자 맡아 굴리는 개인 실험실입니다.
+          크고 완성된 회사처럼 보이기보다, 한 사람이 실제로 손을 움직여 무엇을 만들고 있는지를
+          있는 그대로 보여 주는 쪽을 택했습니다.
+        </p>
+        <p>
+          그래서 화려한 마케팅 문구 대신, 지금 어떤 문제를 풀고 있고 무엇이 잘 안 풀렸는지를
+          <a href="./devlog.html" style="text-decoration:underline;">개발로그</a>에 꾸준히 적습니다.
+        </p>
+      </section>
+
+      <section class="about-section">
+        <h2>왜 만드나요</h2>
+        <p>
+          “내가 직접 매일 쓰고 싶은가”를 통과하지 못한 아이디어는 만들지 않는다는 기준 하나로 움직입니다.
+          좋은 도구는 거창한 기능이 아니라 <em>“해냈다”는 작은 감각</em>을 자주 만들어 준다고 믿습니다.
+          그 감각을 어떻게 설계하는지가 woo-hoo 의 모든 앱이 공통으로 붙드는 질문입니다.
+        </p>
+      </section>
+
+      <section class="about-section">
+        <h2>무엇을 만드나요</h2>
+        <p>한 번에 하나씩, 끝까지 굴려 보는 것을 원칙으로 합니다. 현재 진행 중인 프로젝트는 다음과 같습니다.</p>
+        <ul>
+          <li><strong>self-check-study</strong> — 중·고등학생이 공부 일정을 도장으로 완성하는 학습 일기 앱. (스토어 심사 중)</li>
+          <li><strong>make-money</strong> — 뉴스를 관점별 콘텐츠로 정리해 자동 발행하는 파이프라인. (개발 중)</li>
+          <li><strong>googSky</strong> — 등급만 입력하면 지원 가능 대학을 정리해 주는 입시 컨설팅 앱. (개발 중)</li>
+        </ul>
+      </section>
+
+      <section class="about-section">
+        <h2>어떻게 공개하나요</h2>
+        <p>
+          완벽한 첫 출시보다 <strong>매주 살아 움직이는 사이트</strong>를 지향합니다.
+          진행 상황은 <a href="./devlog.html" style="text-decoration:underline;">개발로그</a>에 시간순으로 기록하고,
+          새 앱·실험 소식은 뉴스레터로 가장 먼저 전합니다. 광고는 사이트 운영 비용을 충당하기 위한 것이며,
+          개인정보 처리 방식은 <a href="./privacy.html" style="text-decoration:underline;">개인정보처리방침</a>에 정리해 두었습니다.
+        </p>
+      </section>
+
+      <section class="about-section">
+        <h2>연락처</h2>
+        <div class="about-contact">
+          <p style="margin-bottom:6px;">제휴·문의·피드백은 언제든 환영합니다.</p>
+          <p style="margin:0;">이메일 · <a href="mailto:woohoo.dew1017@gmail.com">woohoo.dew1017@gmail.com</a></p>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ── 푸터 ── -->
+  <footer class="footer" style="border-top: var(--bd);">
+    <div class="footer__inner">
+      <div>© 2026 woo-hoo.kr · <a href="./privacy.html" style="text-decoration: underline;">개인정보처리방침</a></div>
+      <div class="footer__links">
+        <a href="./about.html">About</a>
+        <a href="mailto:woohoo.dew1017@gmail.com">Email</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* 모바일 내비 토글 (index.html과 동일 동작) */
+    (function () {
+      var toggle = document.querySelector(".nav__toggle");
+      var links = document.getElementById("navLinks");
+      if (!toggle || !links) return;
+      toggle.addEventListener("click", function () {
+        var open = links.classList.toggle("open");
+        toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+    })();
+
+    /* nav 스크롤 그림자 */
+    (function () {
+      var nav = document.querySelector(".nav");
+      if (!nav) return;
+      function onScroll() { nav.classList.toggle("scrolled", window.scrollY > 8); }
+      onScroll();
+      window.addEventListener("scroll", onScroll, { passive: true });
+    })();
+  </script>
+</body>
+</html>

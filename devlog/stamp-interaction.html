@@ -1,0 +1,148 @@
+<!--
+  파일 목적: devlog 개별 글 — self-check-study 도장 마이크로 인터랙션 개발기
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>도장 마이크로 인터랙션 — “해냈다”는 감각의 시각화 | woo-hoo 개발로그</title>
+  <meta name="description" content="체크가 끝난 순간 도장이 찍히는 0.4초 모션을 어떻게 설계했나 — self-check-study 도장 인터랙션 개발기." />
+  <meta name="theme-color" content="#ffd60a" />
+  <meta name="google-adsense-account" content="ca-pub-1576424722880428">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="./_post.css" />
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1576424722880428"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <!-- ── 상단 내비 ── -->
+  <nav class="nav">
+    <div class="nav__inner">
+      <a href="../" class="nav__logo">woo-hoo<span class="accent">.</span>lab</a>
+      <button class="nav__toggle" aria-label="메뉴 열기" aria-expanded="false">☰</button>
+      <div class="nav__links" id="navLinks">
+        <a href="../#projects">실험실</a>
+        <a href="../devlog.html">개발로그</a>
+        <a href="../about.html">About</a>
+        <a href="../#subscribe" class="nav__cta">구독 →</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── 글 히어로 ── -->
+  <header class="post-hero">
+    <div class="wrap">
+      <div class="path path--ink" style="margin-bottom:10px;">
+        <a href="../" style="text-decoration:underline;">~/woo-hoo.lab</a>&nbsp;/&nbsp;<a href="../devlog.html" style="text-decoration:underline;">devlog</a>&nbsp;/&nbsp;stamp-interaction<span class="path__cursor" aria-hidden="true" style="background:var(--ink);"></span>
+      </div>
+      <span class="post-hero__tag post-hero__tag--self">self-check-study</span>
+      <h1 class="post-hero__title">도장 마이크로 인터랙션 — <i>“해냈다”</i>는 감각의 시각화.</h1>
+      <div class="post-hero__meta">
+        <span>2026 · 05 · 22</span>
+        <span class="dot">·</span>
+        <span>self-check-study</span>
+      </div>
+      <div class="post-hero__chips">
+        <span class="chip-mono">self-check-study</span>
+        <span class="chip-mono">animation</span>
+        <span class="chip-mono">user-test</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── 본문 ── -->
+  <main class="post-body">
+    <div class="wrap">
+      <article class="post-prose">
+        <p>
+          체크가 끝난 순간 종이에 도장이 찍히는 듯한 0.4초의 모션을 추가했다.
+          햅틱 + 옅은 효과음 + 살짝의 종이 그림자. 학생 5명을 대상으로 한 테스트에서
+          “한 번 더 하고 싶다”는 반응이 명확히 늘었다.
+        </p>
+
+        <!--
+          ✍️ PHASE 3 — 본문 확장 가이드 (사람이 직접 작성, 1,000자+ 목표)
+          아래 구조로 풀어 쓰면 좋습니다. 작성 후 이 주석은 지워주세요.
+
+          <h2>문제 상황</h2>
+          <p>체크박스를 눌러도 "끝냈다"는 감각이 약했던 이유 …</p>
+
+          <h2>시도</h2>
+          <p>0.4초라는 길이를 고른 근거, 햅틱·효과음·그림자를 더한 과정 …</p>
+
+          <h2>막힌 지점</h2>
+          <p>모션이 과하면 오히려 방해가 됐던 케이스, 기기별 햅틱 차이 …</p>
+
+          <h2>해결</h2>
+          <p>최종 타이밍·이징·강도 값과 그 결정 과정 …</p>
+
+          <h2>배운 것</h2>
+          <p>성취감은 기능이 아니라 "마무리 0.4초"의 설계라는 결론 …</p>
+        -->
+      </article>
+
+      <!-- 관련 프로젝트 -->
+      <div class="post-related">
+        <div class="post-related__label">관련 프로젝트</div>
+        <a href="../#projects">self-check-study — 도장으로 쌓이는 학습 일기 →</a>
+      </div>
+
+      <!-- 이전·다음 글 -->
+      <nav class="post-nav" aria-label="글 이동">
+        <a class="post-nav__item" href="./persona-pipeline.html">
+          <span class="post-nav__dir">← 이전 글</span>
+          <span class="post-nav__t">같은 뉴스, 다른 페르소나 5종을 동시 생성</span>
+        </a>
+        <span class="post-nav__item post-nav__item--next post-nav__empty">
+          <span class="post-nav__dir">다음 글 →</span>
+          <span class="post-nav__t">최신 글입니다</span>
+        </span>
+      </nav>
+
+      <!-- 다른 개발기 보기 -->
+      <section class="post-more">
+        <div class="post-more__head">다른 개발기 보기</div>
+        <ul class="post-more__list">
+          <li><span class="post-more__date">2026·05·18</span><a href="./persona-pipeline.html">같은 뉴스, 다른 페르소나 5종을 동시 생성</a></li>
+          <li><span class="post-more__date">2026·05·11</span><a href="./stability-score.html">“안정·적정·도전”의 경계, 그 어딘가</a></li>
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <!-- ── 푸터 ── -->
+  <footer class="footer" style="border-top: var(--bd);">
+    <div class="footer__inner">
+      <div>© 2026 woo-hoo.kr · <a href="../privacy.html" style="text-decoration: underline;">개인정보처리방침</a></div>
+      <div class="footer__links">
+        <a href="../about.html">About</a>
+        <a href="mailto:woohoo.dew1017@gmail.com">Email</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* 모바일 내비 토글 */
+    (function () {
+      var toggle = document.querySelector(".nav__toggle");
+      var links = document.getElementById("navLinks");
+      if (!toggle || !links) return;
+      toggle.addEventListener("click", function () {
+        var open = links.classList.toggle("open");
+        toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+    })();
+    /* nav 스크롤 그림자 */
+    (function () {
+      var nav = document.querySelector(".nav");
+      if (!nav) return;
+      function onScroll() { nav.classList.toggle("scrolled", window.scrollY > 8); }
+      onScroll();
+      window.addEventListener("scroll", onScroll, { passive: true });
+    })();
+  </script>
+</body>
+</html>
