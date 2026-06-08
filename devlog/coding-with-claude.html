@@ -8,8 +8,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Claude로 코드 짜면서 좋았던 것 / 안 통한 것 | woo-hoo 개발로그</title>
   <meta name="description" content="AI 코딩에 기대한 것과 현실 — 어디에 썼고 어디서 안 통했나." />
-  <!-- 작성 예정: 본문 채우기 전까지 색인 제외(thin page 노출 방지). 발행 시 이 줄 제거. -->
-  <meta name="robots" content="noindex" />
   <meta name="theme-color" content="#ffd60a" />
   <meta name="google-adsense-account" content="ca-pub-1576424722880428">
   <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
@@ -41,7 +39,9 @@
       <span class="post-hero__tag">회고</span>
       <h1 class="post-hero__title">Claude로 코드 짜면서 <i>좋았던 것 / 안 통한 것</i></h1>
       <div class="post-hero__meta">
-        <span>작성 예정</span>
+        <span>2026 · 06 · 08</span>
+        <span class="dot">·</span>
+        <span>회고</span>
       </div>
       <div class="post-hero__chips">
         <span class="chip-mono">회고</span>
@@ -54,30 +54,44 @@
   <!-- ── 본문 ── -->
   <main class="post-body">
     <div class="wrap">
-      <div class="post-draft"><span>✍️ 작성 예정</span> — 이 글은 곧 채워집니다. (개요는 아래 작성 가이드 참고)</div>
-
       <article class="post-prose">
-        <!--
-          ✍️ PHASE 3 — 본문 작성 (사람이 직접, 1,000자+ 목표)
-          아래 구조로 풀어 쓰고, 작성 후 이 주석과 위의 작성예정 배너를 지우세요.
-          (발행 시: <head> 의 noindex 제거 → devlog.html 인덱스 + sitemap.xml 에 추가)
+        <h2>기대: 그냥 시키면 다 될 줄 알았다</h2>
+        <p>
+          AI 한테 코드를 맡기면 알아서 척척 될 거라 생각했다. woo-hoo.kr 의 애드센스 재정비도
+          “대충 정리해줘” 한마디면 끝날 줄 알았다. 막상 같이 일해보니, 잘 맡길 수 있는 지점과
+          절대 맡기면 안 되는 지점이 꽤 분명하게 갈렸다.
+        </p>
 
-          <h2>문제 상황</h2>
-          <p>AI 코딩에 기대한 것 vs 현실 …</p>
+        <h2>좋았던 것 — 추측 대신 ‘확인’</h2>
+        <p>
+          가장 인상적이었던 건 짐작으로 넘어가지 않는다는 점이었다. 블로그를 한 카테고리만 남기기로
+          했을 때, 처음엔 “경제 애널리스트”로 어림짐작하려다가 실제 DB를 직접 열어 값이 “주식소식”인
+          걸 확인하고 그 값으로 고쳤다. 거절 사유였던 ‘프롬프트 누수’도 말로만 설명하는 대신,
+          DB에서 “글만 출력하라는 요청이므로 바로 작성하겠습니다”로 시작하는 실제 글을 찾아냈다.
+          손으로 뒤졌으면 한참 걸렸을 일이다.
+        </p>
 
-          <h2>시도</h2>
-          <p>어디에 쓰고 어디에 안 썼나 …</p>
+        <h2>안 통한 것 — 데이터가 없으면 헛다리</h2>
+        <p>
+          반대로 한계도 봤다. 위에서 말한 “경제 애널리스트” 추측이 딱 그 예다. 근거 데이터가 없으면
+          그럴듯하지만 틀린 답을 자신 있게 내놓는다. 결국 “진짜 그런지 확인해” 하고 사람이 시켜야
+          정확해졌다.
+        </p>
 
-          <h2>막힌 지점</h2>
-          <p>잘 안 통한 케이스 …</p>
+        <h2>역할이 자연스럽게 갈렸다</h2>
+        <p>
+          깨진 링크 정리, 페이지 구조, 마크업, 반복 작업, 검증 — 이런 건 빠르고 정확했다. 반면
+          ‘무슨 경험을 쓸지’, ‘어떤 톤으로 갈지’ 같은 판단과 이 글의 본문 같은 진짜 경험은 내 몫이었다.
+          실제로 devlog 본문을 대신 써주려는 걸 일부러 멈추기도 했다 — AI가 양산한 글이 바로 우리가
+          피하려던 거였으니까.
+        </p>
 
-          <h2>해결</h2>
-          <p>좋았던 워크플로 정착 …</p>
-
-          <h2>배운 것</h2>
-          <p>AI는 대행이 아니라 페어 …</p>
-
-        -->
+        <h2>배운 것</h2>
+        <p>
+          AI 는 대행이 아니라 페어다. 맡길 건 확실히 맡기되, 사실과 경험은 내가 쥐고 있어야 한다.
+          잘 쓰면 손이 열 개로 늘어나는 느낌이고, 잘못 쓰면 그럴듯한 가짜를 빠르게 찍어낸다.
+          그 경계를 아는 게 결국 핵심이었다.
+        </p>
       </article>
 
       <!-- 관련 프로젝트 -->
@@ -85,6 +99,18 @@
         <div class="post-related__label">관련 프로젝트</div>
         <a href="../#projects">woo-hoo.lab — 실험실 전체 보기 →</a>
       </div>
+
+      <!-- 이전·다음 글 -->
+      <nav class="post-nav" aria-label="글 이동">
+        <a class="post-nav__item" href="./v2-redesign.html">
+          <span class="post-nav__dir">← 이전 글</span>
+          <span class="post-nav__t">woo-hoo.kr v2 리디자인 — 왜 “완성된 회사 사이트”를 버렸나</span>
+        </a>
+        <span class="post-nav__item post-nav__item--next post-nav__empty">
+          <span class="post-nav__dir">다음 글 →</span>
+          <span class="post-nav__t">최신 글입니다</span>
+        </span>
+      </nav>
 
       <!-- 다른 개발기 보기 -->
       <section class="post-more">

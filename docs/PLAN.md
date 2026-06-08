@@ -101,6 +101,7 @@
 | slug | 제목 | 프로젝트 | 상태 |
 |---|---|---|---|
 | publish-queue-spacing | 30분 큐 분산 + AI양산 위험 | money | ✅ 발행(본문 ~1,000자, DB 실제 누수 사례 id=208 인용) |
+| coding-with-claude | Claude 코딩 좋았던/안통한 것 | 회고 | ✅ 발행(~850자, 세션 실제 사건 기반) |
 | v2-redesign | v2 리디자인 — 회사사이트를 버린 이유 | 회고 | ✅ 발행(~800자, 디테일 보강 여지) |
 | stamp-interaction | 도장 마이크로 인터랙션 | self | ✅ 발행(짧음) |
 | persona-pipeline | 페르소나 5종 동시 생성 | money | ✅ 발행(짧음) |
@@ -117,7 +118,6 @@
 | grade-data-normalize | 등급 데이터 정규화 | googsky | [ ] |
 | parent-interview | 학부모 인터뷰 8건 | googsky | [ ] |
 | solo-three-apps | 앱 3개 동시 운영 — 우선순위 | 회고 | [ ] |
-| coding-with-claude | Claude 코딩 좋았던/안통한 것 | 회고 | [ ] |
 | side-project-infra | 인프라 — 도메인·배포·비용 | 회고 | [ ] |
 
 ### 글 발행 절차 (본문 작성 후, 글마다)
