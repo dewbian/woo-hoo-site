@@ -100,6 +100,7 @@
 ### 발행 완료 (본문 메모 수준 → 확장 권장)
 | slug | 제목 | 프로젝트 | 상태 |
 |---|---|---|---|
+| publish-queue-spacing | 30분 큐 분산 + AI양산 위험 | money | ✅ 발행(본문 ~1,000자, DB 실제 누수 사례 id=208 인용) |
 | stamp-interaction | 도장 마이크로 인터랙션 | self | ✅ 발행(짧음) |
 | persona-pipeline | 페르소나 5종 동시 생성 | money | ✅ 발행(짧음) |
 | stability-score | 안정·적정·도전의 경계 | googsky | ✅ 발행(짧음) |
@@ -112,7 +113,6 @@
 | play-store-review | Play 스토어 심사 통과까지 | self | [ ] |
 | crawler-robots-block | 크롤러와 robots.txt 차단 | money | [ ] |
 | tistory-oauth-refresh | 티스토리 OAuth 자동 복구 | money | [ ] |
-| publish-queue-spacing | 30분 큐 분산 + AI양산 위험 | money | [ ] |
 | grade-data-normalize | 등급 데이터 정규화 | googsky | [ ] |
 | parent-interview | 학부모 인터뷰 8건 | googsky | [ ] |
 | solo-three-apps | 앱 3개 동시 운영 — 우선순위 | 회고 | [ ] |

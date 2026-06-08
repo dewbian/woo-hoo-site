@@ -7,9 +7,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>자동발행 큐를 30분 간격으로 분산한 이유 — AI 양산이 위험한 이유 | woo-hoo 개발로그</title>
-  <meta name="description" content="한꺼번에 쏟아내던 자동발행을 30분 큐로 분산한 이유, 그리고 AI 양산이 애드센스에서 왜 위험한가." />
-  <!-- 작성 예정: 본문 채우기 전까지 색인 제외(thin page 노출 방지). 발행 시 이 줄 제거. -->
-  <meta name="robots" content="noindex" />
+  <meta name="description" content="손수 클릭 발행이 귀찮아 자동화했지만, 진짜 문제는 30분 간격이 아니라 'AI 양산'이었다 — 애드센스 거절로 배운 것." />
   <meta name="theme-color" content="#ffd60a" />
   <meta name="google-adsense-account" content="ca-pub-1576424722880428">
   <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
@@ -41,7 +39,9 @@
       <span class="post-hero__tag post-hero__tag--money">make-money</span>
       <h1 class="post-hero__title">자동발행 큐를 <i>30분 간격</i>으로 분산한 이유</h1>
       <div class="post-hero__meta">
-        <span>작성 예정</span>
+        <span>2026 · 06 · 08</span>
+        <span class="dot">·</span>
+        <span>make-money</span>
       </div>
       <div class="post-hero__chips">
         <span class="chip-mono">make-money</span>
@@ -54,30 +54,60 @@
   <!-- ── 본문 ── -->
   <main class="post-body">
     <div class="wrap">
-      <div class="post-draft"><span>✍️ 작성 예정</span> — 이 글은 곧 채워집니다. (개요는 아래 작성 가이드 참고)</div>
-
       <article class="post-prose">
-        <!--
-          ✍️ PHASE 3 — 본문 작성 (사람이 직접, 1,000자+ 목표)
-          아래 구조로 풀어 쓰고, 작성 후 이 주석과 위의 작성예정 배너를 지우세요.
-          (발행 시: <head> 의 noindex 제거 → devlog.html 인덱스 + sitemap.xml 에 추가)
+        <h2>매번 클릭해서 올리는 게 아까웠다</h2>
+        <p>
+          make-money 는 뉴스를 모아 글로 바꾸는 파이프라인이다. 처음엔 생성까지만 자동이었고,
+          발행은 내가 직접 했다. 글을 하나하나 열어 제목을 확인하고, 복사해 붙이고, 발행 버튼을
+          누르고 — 그걸 하루에도 몇 번씩. 별것 아닌 일 같지만 쌓이니 내 시간을 거기에 쓰는 게
+          아까웠다. “이건 사람이 굳이 붙어 있을 일이 아니다” 싶었고, 그래서 발행까지 자동으로 넘겼다.
+        </p>
 
-          <h2>문제 상황</h2>
-          <p>한꺼번에 쏟아내던 자동발행의 부작용 …</p>
+        <h2>30분 간격, 사실 그냥 정한 숫자</h2>
+        <p>
+          자동발행은 큐에 쌓아두고 일정 간격으로 하나씩 내보내게 했다. 간격은 30분.
+          솔직히 말하면 대단한 근거는 없었다. 한꺼번에 우르르 올라가면 보기 싫으니
+          “적당히 띄우자” 정도였고, 30분은 그냥 손에 잡힌 숫자였다. 돌아보면 이때 나는
+          ‘얼마나 자주 올릴까’만 고민했지, ‘무엇을 올리고 있나’는 거의 보지 않았다.
+        </p>
 
-          <h2>시도</h2>
-          <p>30분 간격 큐 분산 …</p>
+        <h2>진짜 문제는 간격이 아니라 ‘양산’이었다</h2>
+        <p>
+          자동화가 매끄럽게 돌수록 글은 빠르게 늘었다. 그리고 그게 애드센스 거절로 돌아왔다.
+          이유를 뜯어보니 세 가지가 전부 내 글 안에 있었다.
+        </p>
+        <ul>
+          <li><strong>프롬프트 누수</strong> — 생성 지시문 일부가 본문에 그대로 새어 나온 글이 있었다.</li>
+          <li><strong>뉴스 짜깁기</strong> — 원문을 적당히 섞어 다시 쓴, 고유한 가치가 없는 글.</li>
+          <li><strong>페르소나 중복발행</strong> — 같은 원문 하나를 여러 페르소나 시점으로 거의 같은 내용으로 여러 번 올린 것.</li>
+        </ul>
+        <p>
+          말로만 하면 와닿지 않으니 실제로 발행돼 있던 글 하나. 본문 맨 첫 줄이 이렇게 시작했다.
+        </p>
+        <blockquote>“글만 출력하라는 요청이므로 바로 작성하겠습니다.”</blockquote>
+        <p>
+          그리고 바로 다음 줄에 기사 제목이 붙어 있었다. 모델에게 준 지시(“글만 출력하라”)가
+          본문에 그대로 새어 나온 채, 아무도 못 보고 그대로 올라간 것이다. 한두 건이 아니었다.
+          나는 글이 자동으로 쌓이는 것만 봤지, 그 글이 무슨 꼴로 나가는지는 보지 않고 있었다.
+        </p>
+        <p>
+          ‘간격을 띄웠으니 괜찮겠지’는 착각이었다. 천천히 올리든 빨리 올리든, 읽을 가치가 없는 글을
+          양으로 찍어내고 있었다는 사실은 변하지 않았다.
+        </p>
 
-          <h2>막힌 지점</h2>
-          <p>양산 티가 나고 품질이 흔들리던 지점 …</p>
+        <h2>지금은 ‘사람이 쓴 티’를 되찾는 중</h2>
+        <p>
+          그래서 방향을 바꿨다. 여러 페르소나로 같은 글을 복제하던 구조를 접고, 블로그는 한 가지
+          카테고리(주식소식) 하나만 노출하도록 좁혔다. 남은 글도 ‘AI가 만들었다’는 느낌이 들지 않도록
+          하나씩 손보고 있다. 자동화는 시간을 아끼는 도구로만 쓰고, 무엇을 내보낼지는 다시 내가
+          책임지는 쪽으로.
+        </p>
 
-          <h2>해결</h2>
-          <p>간격 분산 + 품질 게이트 …</p>
-
-          <h2>배운 것</h2>
-          <p>‘AI 양산’이 애드센스에서 왜 위험한가 — 직접 겪은 결론(메타) …</p>
-
-        -->
+        <h2>배운 것</h2>
+        <p>
+          한마디로, 너무 쉽게 봤다. 자동으로 글이 쌓이는 걸 보며 ‘콘텐츠가 늘고 있다’고 착각했지만,
+          늘어난 건 글의 개수였지 가치가 아니었다. 양산은 빠르고, 그 대가는 늦게 그러나 확실하게 돌아온다.
+        </p>
       </article>
 
       <!-- 관련 프로젝트 -->
@@ -85,6 +115,18 @@
         <div class="post-related__label">관련 프로젝트</div>
         <a href="../#projects">make-money — 뉴스에서 콘텐츠로, 자동화 파이프라인 →</a>
       </div>
+
+      <!-- 이전·다음 글 -->
+      <nav class="post-nav" aria-label="글 이동">
+        <a class="post-nav__item" href="./stamp-interaction.html">
+          <span class="post-nav__dir">← 이전 글</span>
+          <span class="post-nav__t">도장 마이크로 인터랙션 — “해냈다”는 감각의 시각화</span>
+        </a>
+        <span class="post-nav__item post-nav__item--next post-nav__empty">
+          <span class="post-nav__dir">다음 글 →</span>
+          <span class="post-nav__t">최신 글입니다</span>
+        </span>
+      </nav>
 
       <!-- 다른 개발기 보기 -->
       <section class="post-more">
