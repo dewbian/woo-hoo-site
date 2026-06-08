@@ -28,10 +28,16 @@ ADSENSE_SLOT_LIST = os.getenv("ADSENSE_SLOT_LIST", "")
 SITE_ORIGIN = os.getenv("SITE_ORIGIN", "https://woo-hoo.kr").rstrip("/")
 PER_PAGE = int(os.getenv("PER_PAGE", "12"))
 CACHE_TTL = int(os.getenv("CACHE_TTL", "60"))
+# 단일 카테고리(angle) 하드 필터. 같은 원문을 여러 페르소나로 중복 발행한 것이
+# 애드센스 거절 사유였기에, 블로그는 이 angle 하나("주식소식")만 노출한다.
+# ("주식소식" 은 Supabase articles.angle 에 실재하는 값 — 발행 글 다수 확인됨.)
+# 다른 카테고리로 바꾸려면 .env 의 BLOG_ONLY_ANGLE 값을 DB 의 실제 angle 문자열로 설정.
+# 빈 값으로 두면 전체 페르소나 노출(기존 동작)로 복귀한다.
+BLOG_ONLY_ANGLE = os.getenv("BLOG_ONLY_ANGLE", "주식소식").strip()
 
 # Supabase 자격이 있을 때만 레포 생성(없으면 503 으로 안전 처리).
 repo = (
-    blog.BlogRepo(SUPABASE_URL, SUPABASE_KEY, ttl=CACHE_TTL)
+    blog.BlogRepo(SUPABASE_URL, SUPABASE_KEY, ttl=CACHE_TTL, only_angle=BLOG_ONLY_ANGLE or None)
     if SUPABASE_URL and SUPABASE_KEY
     else None
 )

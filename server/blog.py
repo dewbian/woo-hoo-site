@@ -265,10 +265,22 @@ PUBLISHED_STATUS = "완료"
 class BlogRepo:
     """Supabase articles 를 읽어 블로그용으로 제공한다(읽기 전용, 짧은 TTL 캐시)."""
 
-    def __init__(self, url: str, key: str, ttl: int = 60):
+    def __init__(self, url: str, key: str, ttl: int = 60, only_angle: Optional[str] = None):
+        """블로그 레포 초기화.
+
+        매개변수:
+            url/key: Supabase 접속 정보
+            ttl: 인메모리 캐시 TTL(초)
+            only_angle: 단일 페르소나 하드 필터.
+                값이 있으면 목록·상세·sitemap·feed 등 모든 조회가 이 angle 로 한정된다.
+                (이유: 같은 원문을 여러 페르소나로 중복 발행한 것이 애드센스 거절 사유였기에
+                 한 페르소나=한 카테고리만 노출하도록 전 영역에서 강제한다.)
+                None/빈 값이면 기존처럼 전체 페르소나를 노출한다.
+        """
         self._url = url
         self._key = key
         self._ttl = ttl
+        self._only_angle = (only_angle or "").strip() or None
         self._client = None
         self._cache: dict[tuple, tuple[float, object]] = {}
         self._lock = threading.Lock()
@@ -298,33 +310,38 @@ class BlogRepo:
 
         반환값: (Article 리스트, 전체 건수)
         """
+        # only_angle 이 설정되면 사용자가 넘긴 angle 을 무시하고 단일 페르소나로 강제한다.
+        effective_angle = self._only_angle or angle
+
         def produce():
             q = (
                 self.client.table("articles")
                 .select("id,angle,content,char_count,created_at,status", count="exact")
                 .eq("status", PUBLISHED_STATUS)
             )
-            if angle:
-                q = q.eq("angle", angle)
+            if effective_angle:
+                q = q.eq("angle", effective_angle)
             start = (page - 1) * per_page
             res = q.order("created_at", desc=True).range(start, start + per_page - 1).execute()
             rows = res.data or []
             total = res.count if res.count is not None else len(rows)
             return [build_article(r) for r in rows], total
 
-        return self._cached(("list", page, per_page, angle or ""), produce)
+        return self._cached(("list", page, per_page, effective_angle or ""), produce)
 
     def get_article(self, article_id: str) -> Optional[Article]:
         """단일 발행 글 상세를 반환한다(미존재/미완료 시 None). 원본 뉴스 링크는 베스트에포트로 부착."""
         def produce():
-            res = (
+            q = (
                 self.client.table("articles")
                 .select("*")
                 .eq("id", article_id)
                 .eq("status", PUBLISHED_STATUS)
-                .limit(1)
-                .execute()
             )
+            # 단일 페르소나 모드면 다른 페르소나 글의 상세 URL 직접 접근도 차단(→ None → 404).
+            if self._only_angle:
+                q = q.eq("angle", self._only_angle)
+            res = q.limit(1).execute()
             rows = res.data or []
             if not rows:
                 return None
@@ -355,7 +372,14 @@ class BlogRepo:
             return
 
     def angles(self) -> list[str]:
-        """발행 글의 distinct angle 목록(필터 칩용)."""
+        """발행 글의 distinct angle 목록(필터 칩용).
+
+        단일 페르소나 모드(only_angle)에서는 필터 칩이 의미가 없으므로 빈 목록을 반환해
+        목록 페이지의 칩 내비를 숨긴다.
+        """
+        if self._only_angle:
+            return []
+
         def produce():
             res = self.client.table("articles").select("angle").eq("status", PUBLISHED_STATUS).execute()
             seen: list[str] = []
@@ -370,14 +394,15 @@ class BlogRepo:
     def published_meta(self, limit: int = 5000) -> list[dict]:
         """sitemap/feed 용 발행 글 메타(id, created_at) 최신순."""
         def produce():
-            res = (
+            q = (
                 self.client.table("articles")
                 .select("id,created_at")
                 .eq("status", PUBLISHED_STATUS)
-                .order("created_at", desc=True)
-                .limit(limit)
-                .execute()
             )
+            # sitemap/feed 도 단일 페르소나로 한정(검색엔진에 비주식 글 URL 노출 방지).
+            if self._only_angle:
+                q = q.eq("angle", self._only_angle)
+            res = q.order("created_at", desc=True).limit(limit).execute()
             return res.data or []
 
-        return self._cached(("meta", limit), produce)
+        return self._cached(("meta", self._only_angle or "", limit), produce)
