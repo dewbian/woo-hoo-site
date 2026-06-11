@@ -10,24 +10,31 @@
   <meta name="description" content="수집이 중간에 막히던 문제 — robots 준수와 경계 안에서 안정화한 기록." />
   <!-- 작성 예정: 본문 채우기 전까지 색인 제외(thin page 노출 방지). 발행 시 이 줄 제거. -->
   <meta name="robots" content="noindex" />
-  <meta name="theme-color" content="#ffd60a" />
+  <meta name="theme-color" content="#F4F0FC" />
   <meta name="google-adsense-account" content="ca-pub-1576424722880428">
   <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="../styles.css" />
-  <link rel="stylesheet" href="./_post.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../site.css" />
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1576424722880428"
+     crossorigin="anonymous"></script>
 </head>
 <body>
 
-  <!-- ── 상단 내비 ── -->
+  <!-- ── 상단 내비 (메인 index 와 동일한 v2) ── -->
   <nav class="nav">
-    <div class="nav__inner">
-      <a href="../" class="nav__logo">woo-hoo<span class="accent">.</span>lab</a>
+    <div class="nav__row">
+      <a href="../" class="nav__brand" aria-label="woo-hoo.kr 홈">
+        <span class="nav__brand-mark">w</span>
+        <span>woo-<i>hoo</i>.kr</span>
+      </a>
       <button class="nav__toggle" aria-label="메뉴 열기" aria-expanded="false">☰</button>
-      <div class="nav__links" id="navLinks">
-        <a href="../#projects">실험실</a>
-        <a href="../devlog.html">개발로그</a>
+      <div class="nav__menu" id="navLinks">
+        <a href="../#projects">Projects</a>
+        <a href="../devlog.html">Devlog</a>
         <a href="../about.html">About</a>
-        <a href="../#subscribe" class="nav__cta">구독 →</a>
+        <a href="../#subscribe" class="nav__cta">Subscribe →</a>
       </div>
     </div>
   </nav>
@@ -35,8 +42,8 @@
   <!-- ── 글 히어로 ── -->
   <header class="post-hero">
     <div class="wrap">
-      <div class="path path--ink" style="margin-bottom:10px;">
-        <a href="../" style="text-decoration:underline;">~/woo-hoo.lab</a>&nbsp;/&nbsp;<a href="../devlog.html" style="text-decoration:underline;">devlog</a>&nbsp;/&nbsp;crawler-robots-block<span class="path__cursor" aria-hidden="true" style="background:var(--ink);"></span>
+      <div class="path" style="margin-bottom:10px;">
+        <a href="../">~/woo-hoo.kr</a>&nbsp;/&nbsp;<a href="../devlog.html">devlog</a>&nbsp;/&nbsp;crawler-robots-block<span class="path__cursor" aria-hidden="true"></span>
       </div>
       <span class="post-hero__tag post-hero__tag--money">make-money</span>
       <h1 class="post-hero__title">뉴스 크롤러와 <i>robots.txt</i> — 차단 이슈</h1>
@@ -98,13 +105,12 @@
     </div>
   </main>
 
-  <!-- ── 푸터 ── -->
-  <footer class="footer" style="border-top: var(--bd);">
-    <div class="footer__inner">
-      <div>© 2026 woo-hoo.kr · <a href="../privacy.html" style="text-decoration: underline;">개인정보처리방침</a></div>
-      <div class="footer__links">
-        <a href="../about.html">About</a>
-        <a href="mailto:woohoo.dew1017@gmail.com">Email</a>
+  <!-- ── 푸터 (v2 슬림) ── -->
+  <footer>
+    <div class="wrap">
+      <div class="foot__bottom" style="border-top:none; padding-top:0;">
+        <span>© 2026 woo-hoo.kr · <a href="../privacy.html">개인정보처리방침</a></span>
+        <span><a href="../about.html">About</a> &nbsp; <a href="mailto:woohoo.dew1017@gmail.com">Email</a></span>
       </div>
     </div>
   </footer>
