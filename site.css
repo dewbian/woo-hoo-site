@@ -88,6 +88,8 @@ body::after {
   transition: all var(--dur-fast) var(--ease-out);
 }
 .nav__cta:hover { background: var(--ink-2); transform: translateY(-1px); }
+/* .nav__menu a (명시도 0,1,1)가 .nav__cta 의 color 를 덮어써 어두운 글자/어두운 배경이 되던 버그 수정 — 더 높은 명시도로 cream 강제 */
+.nav__menu a.nav__cta { color: var(--cream); }
 .nav__toggle {
   display: none; background: none; border: 0; font-size: 22px; color: var(--fg-1); padding: 4px 8px;
 }
