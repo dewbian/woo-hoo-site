@@ -16,10 +16,16 @@
   <meta property="og:url" content="https://woo-hoo.kr/apps/self-check-study.html" />
   <meta property="og:image" content="https://woo-hoo.kr/apps/self-check-study/feature-graphic.png" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="theme-color" content="#fff4d6" />
+  <meta name="theme-color" content="#F4F0FC" />
   <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="../styles.css" />
   <style>
+    /* ── v2(Stash) 팔레트 리맵 — 구조/컴포넌트(styles.css)는 그대로 두고 색만 보라/크림 v2 로 통일 ── */
+    :root {
+      --paper: #F4F0FC; --ink: #1A1230; --white: #FFFFFF; --muted: rgba(26,18,48,0.55);
+      --pink: #7C3AED; --yellow: #F1EAFD; --blue: #6929D4;
+      --green: #A78BFA; --green-deep: #6929D4; --sky: #F1EAFD;
+    }
     /* ───── 페이지 전용 스타일 ───── */
 
     /* 히어로 — 워암 페이퍼 + 미세 라인 패턴 */
@@ -27,9 +33,9 @@
       position: relative;
       border-bottom: var(--bd);
       background:
-        radial-gradient(60% 80% at 100% 0%, rgba(255, 214, 10, 0.55) 0%, transparent 60%),
-        radial-gradient(70% 70% at 0% 100%, rgba(255, 77, 166, 0.18) 0%, transparent 60%),
-        linear-gradient(180deg, #fff4d6 0%, #f6ecc6 100%);
+        radial-gradient(60% 80% at 100% 0%, rgba(124, 58, 237, 0.18) 0%, transparent 60%),
+        radial-gradient(70% 70% at 0% 100%, rgba(217, 169, 92, 0.12) 0%, transparent 60%),
+        linear-gradient(180deg, #F4F0FC 0%, #F9F5EE 100%);
       overflow: hidden;
     }
     .app-hero::after {
@@ -88,8 +94,8 @@
       border: 3px solid var(--ink);
       border-radius: 38px;
       box-shadow:
-        10px 10px 0 rgba(255, 77, 166, 0.55),
-        22px 22px 0 rgba(0, 0, 0, 0.28);
+        10px 10px 0 rgba(124, 58, 237, 0.45),
+        22px 22px 0 rgba(26, 18, 48, 0.22);
     }
     .device::before {
       content: "";
@@ -162,7 +168,7 @@
     .pillar__shot--tilt-r { transform: rotate(3deg); }
 
     /* ───── 핵심 기능 그리드 ───── */
-    .features { padding: 80px 0; border-bottom: var(--bd); background: #faf6e7; position: relative; }
+    .features { padding: 80px 0; border-bottom: var(--bd); background: #F9F5EE; position: relative; }
     .features::before {
       /* 미세 도트 그리드 (잉크) */
       content: ""; position: absolute; inset: 0;
@@ -272,7 +278,7 @@
     .close__back { display: block; margin-top: 28px; font-family: var(--font-mono); font-size: 13px; color: var(--muted); text-decoration: underline; }
 
     /* 마퀴 톤 변형 */
-    .marquee--cream { background: #fff4d6; color: var(--ink); }
+    .marquee--cream { background: #F1EAFD; color: var(--ink); }
 
     /* ───── 모바일 ───── */
     @media (max-width: 860px) {
@@ -560,7 +566,7 @@
     /* 클릭 pop (woo!/hoo!/✶) — 메인 페이지와 동일한 인터랙션 */
     (function () {
       var words = ["woo!", "hoo!", "✶", "✅", "yay!"];
-      var colors = ["#ff4da6", "#0a84ff", "#16a34a", "#111", "#e0a800"];
+      var colors = ["#7C3AED", "#6929D4", "#1F8A5B", "#1A1230", "#D9A95C"];
       document.addEventListener("click", function (e) {
         var w = words[(Math.random() * words.length) | 0];
         var el = document.createElement("span");
