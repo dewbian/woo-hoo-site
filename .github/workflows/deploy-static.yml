@@ -1,0 +1,44 @@
+# 파일 목적: 정적 사이트(woo-hoo.kr) 변경 push 시 VPS docroot 로 자동 동기화.
+# blog 배포(deploy.yml, server/** → :8001 재시작)와 분리 — 이 워크플로는 정적 파일만 rsync 하고
+# 서비스 재시작은 하지 않는다. docroot = /home/www/woo-hoo.kr/html (nginx 가 직접 서빙).
+name: Deploy static site
+
+on:
+  push:
+    branches: [main]
+    # server/ 등 비정적 경로만 바뀐 경우엔 정적 재배포 불필요.
+    paths-ignore:
+      - "server/**"
+      - "docs/**"
+      - "design/**"
+      - ".claude/**"
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-static
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # deploy.yml 과 동일한 SSH Secrets 재사용 (SSH_HOST/USER/KEY/PORT).
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          ssh-keyscan -p "${{ secrets.SSH_PORT || '22' }}" -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+
+      # 정적 파일만 docroot 로 동기화. dev/tooling·server·문서·디자인 원본은 제외.
+      # --delete 로 docroot 를 레포 정적 상태와 정확히 일치시킴(레포에 있는 watch-notes/* 포함).
+      - name: Rsync static site to docroot
+        run: |
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/id_deploy -p ${{ secrets.SSH_PORT || '22' }}" \
+            --exclude '.git' --exclude '.github' --exclude '.claude' --exclude '.gstack' \
+            --exclude '.superpowers' --exclude '.design-kit' --exclude 'server' \
+            --exclude 'docs' --exclude 'design' --exclude 'jobkorea' --exclude '.gitignore' \
+            ./ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/www/woo-hoo.kr/html/"
