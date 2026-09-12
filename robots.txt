@@ -1,4 +1,33 @@
 User-agent: *
 Allow: /
 
+# ─── AI / 생성형 검색 크롤러 : 검색·인용 목적 전면 허용 ───
+# 인디 앱 홍보 목적상 AI 답변에 사이트가 인용되는 것이 유리하므로 명시적으로 허용한다.
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
 Sitemap: https://woo-hoo.kr/sitemap.xml

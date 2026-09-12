@@ -8,6 +8,30 @@
 <meta name="description" content="살아있는 개발자 사이트. 작은 앱을 계속 만들고, 만드는 과정을 그대로 보여주는 1인 실험실." />
 <meta name="google-adsense-account" content="ca-pub-1576424722880428">
 
+<!-- ─── SEO : canonical · robots · author ─────────────────────────────── -->
+<link rel="canonical" href="https://woo-hoo.kr/" />
+<meta name="robots" content="index, follow, max-image-preview:large" />
+<meta name="author" content="woo-hoo.kr" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+<!-- ─── Open Graph ─────────────────────────────────────────────────────── -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="woo-hoo.kr" />
+<meta property="og:locale" content="ko_KR" />
+<meta property="og:url" content="https://woo-hoo.kr/" />
+<meta property="og:title" content="woo-hoo.kr — 1인 개발자의 살아있는 앱 실험실" />
+<meta property="og:description" content="1인 개발자가 작은 앱을 직접 만들어 올리고, 만드는 과정을 공개로 기록하는 실험실. 진행 중: self-check-study · make-money · googSky." />
+<meta property="og:image" content="https://woo-hoo.kr/og-default.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="woo-hoo.kr — 1인 개발자 앱 실험실" />
+
+<!-- ─── Twitter Card ───────────────────────────────────────────────────── -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="woo-hoo.kr — 1인 개발자의 살아있는 앱 실험실" />
+<meta name="twitter:description" content="1인 개발자가 작은 앱을 직접 만들어 올리고, 그 과정을 공개로 기록하는 실험실." />
+<meta name="twitter:image" content="https://woo-hoo.kr/og-default.png" />
+
 <!-- ─── 폰트 : Stash 디자인 시스템 + 한글 본문용 Pretendard ─────────────── -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -157,7 +181,7 @@
     box-shadow: var(--shadow-cta);
   }
   .nav__brand i { font-style: italic; }
-  .nav__menu { display: flex; gap: var(--space-8); }
+  .nav__menu { display: flex; align-items: center; gap: var(--space-8); }
   .nav__menu a {
     font-size: var(--text-sm); color: var(--fg-2); font-weight: 500;
     transition: color var(--dur-fast) var(--ease-out);
@@ -172,7 +196,26 @@
     box-shadow: var(--shadow-2);
   }
   .nav__cta:hover { background: var(--ink-2); transform: translateY(-1px); }
-  @media (max-width: 720px) { .nav__menu { display: none; } }
+  /* .nav__menu a 의 명시도가 .nav__cta color 를 덮어써 어두운 글자가 되는 것 방지 */
+  .nav__menu a.nav__cta { color: var(--cream); }
+  /* 모바일 햄버거 토글 (서브페이지 site.css 와 동일 패턴) */
+  .nav__toggle {
+    display: none; background: none; border: 0; font-size: 22px;
+    color: var(--fg-1); padding: 4px 8px;
+  }
+  @media (max-width: 720px) {
+    .nav__toggle { display: block; }
+    .nav__menu {
+      display: none; position: absolute; top: 64px; left: 0; right: 0;
+      flex-direction: column; align-items: flex-start; gap: 0;
+      padding: var(--space-2) var(--space-8) var(--space-6);
+      background: var(--cream); border-bottom: 0.5px solid var(--border-1);
+      box-shadow: var(--shadow-3);
+    }
+    .nav__menu.open { display: flex; }
+    .nav__menu a { padding: 12px 0; width: 100%; font-size: var(--text-md); }
+    .nav__menu .nav__cta { margin-top: var(--space-2); }
+  }
 
   /* ═══════════════════════════════════════════════════════════════════════
    * 히어로 섹션
@@ -713,7 +756,144 @@
     }
     .reveal { opacity: 1; transform: none; }
   }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+   * FAQ (AEO) — 질문형 h3 + 직답. 자기완결 단락으로 발췌 친화.
+   * ═══════════════════════════════════════════════════════════════════════ */
+  .faq { padding: var(--space-20) 0; }
+  .faq__list { margin-top: var(--space-10); display: grid; gap: var(--space-6); }
+  .faq__item {
+    padding: var(--space-6) var(--space-8);
+    background: var(--cream-2); border: 1px solid var(--border-1);
+    border-radius: var(--r-lg); box-shadow: var(--shadow-1);
+  }
+  .faq__q {
+    margin: 0 0 var(--space-2); font-family: var(--font-ui);
+    font-size: var(--text-md); font-weight: 600; color: var(--fg-1);
+    letter-spacing: var(--track-snug);
+  }
+  .faq__a { margin: 0; color: var(--fg-2); font-size: var(--text-base); line-height: 1.6; }
+  .faq__a a { color: var(--accent); text-decoration: underline; }
 </style>
+
+<!-- ─── 구조화 데이터 (SEO/GEO) : Organization · WebSite · 앱 ItemList ──── -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://woo-hoo.kr/#org",
+      "name": "woo-hoo.kr",
+      "alternateName": "우후 앱 스튜디오",
+      "url": "https://woo-hoo.kr/",
+      "logo": "https://woo-hoo.kr/favicon.svg",
+      "description": "1인 개발자가 작은 앱을 직접 만들어 올리고, 만드는 과정을 공개로 기록하는 앱 실험실.",
+      "email": "woohoo.dew1017@gmail.com",
+      "foundingDate": "2025",
+      "sameAs": [
+        "https://blog.woo-hoo.kr"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://woo-hoo.kr/#website",
+      "url": "https://woo-hoo.kr/",
+      "name": "woo-hoo.kr",
+      "inLanguage": "ko-KR",
+      "publisher": { "@id": "https://woo-hoo.kr/#org" }
+    },
+    {
+      "@type": "ItemList",
+      "@id": "https://woo-hoo.kr/#apps",
+      "name": "woo-hoo.kr 진행 중인 앱",
+      "itemListOrder": "https://schema.org/ItemListOrderAscending",
+      "numberOfItems": 3,
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item": {
+            "@type": "SoftwareApplication",
+            "name": "self-check-study",
+            "applicationCategory": "EducationalApplication",
+            "operatingSystem": "Android",
+            "url": "https://play.google.com/store/apps/details?id=kr.woohoo.self_check_study",
+            "downloadUrl": "https://play.google.com/store/apps/details?id=kr.woohoo.self_check_study",
+            "description": "중·고등학생이 공부 일정을 도장으로 완성하는 학습 일기 앱. (구글플레이 출시)"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "item": {
+            "@type": "SoftwareApplication",
+            "name": "make-money",
+            "applicationCategory": "NewsApplication",
+            "description": "뉴스를 관점별 콘텐츠로 정리해 자동 발행하는 파이프라인. (개발 중)"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "item": {
+            "@type": "SoftwareApplication",
+            "name": "googSky",
+            "applicationCategory": "EducationalApplication",
+            "description": "등급만 입력하면 지원 가능 대학을 정리해 주는 입시 컨설팅 앱. (개발 중)"
+          }
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://woo-hoo.kr/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "woo-hoo.kr은 무엇을 하는 곳인가요?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "1인 개발자가 직접 쓸 작은 앱을 만들어 올리는 개인 앱 스튜디오입니다. 현재 self-check-study·make-money·googSky 세 개를 진행 중입니다."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "self-check-study는 어떤 앱인가요?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "중·고등학생이 공부 일정을 도장으로 완성하는 학습 일기 앱입니다. 구글플레이에서 내려받을 수 있습니다."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "앱은 어디서 받을 수 있나요?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "self-check-study는 구글플레이에서 받을 수 있습니다: https://play.google.com/store/apps/details?id=kr.woohoo.self_check_study . 새 앱 소식은 뉴스레터로 가장 먼저 전합니다."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "개발 과정도 볼 수 있나요?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "네. 만들며 겪은 문제와 실패까지 개발로그(https://woo-hoo.kr/devlog.html)에 시간순으로 기록합니다."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "문의나 제휴는 어떻게 하나요?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "이메일 woohoo.dew1017@gmail.com 으로 연락하면 됩니다."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
 </head>
 
 <body>
@@ -725,15 +905,16 @@
         <span class="nav__brand-mark">w</span>
         <span>woo-<i>hoo</i>.kr</span>
       </a>
-      <div class="nav__menu">
+      <button class="nav__toggle" aria-label="메뉴 열기" aria-expanded="false" aria-controls="navLinks">☰</button>
+      <div class="nav__menu" id="navLinks">
         <a href="#projects">Projects</a>
         <a href="#building">Now building</a>
         <a href="#devlog">Devlog</a>
         <a href="./watch-notes.html">Watch</a>
         <a href="https://blog.woo-hoo.kr" rel="nofollow">세상만사 ↗</a>
         <a href="./about.html">About</a>
+        <a href="#subscribe" class="nav__cta">Subscribe →</a>
       </div>
-      <a href="#subscribe" class="nav__cta">Subscribe →</a>
     </div>
   </nav>
 
@@ -811,7 +992,7 @@
                       </h3>
                     </div>
                   </div>
-                  <span class="status status--live">Live · 심사중</span>
+                  <span class="status status--live">Live · Google Play</span>
                 </div>
 
                 <p class="card__tagline">
@@ -835,9 +1016,10 @@
                     <a href="./privacy.html" class="card__link card__link--muted">
                       Privacy
                     </a>
-                    <span class="card__link card__link--muted" aria-disabled="true">
-                      출시 예정 · 심사중
-                    </span>
+                    <a href="https://play.google.com/store/apps/details?id=kr.woohoo.self_check_study"
+                       class="card__link" target="_blank" rel="noopener">
+                      Google Play →
+                    </a>
                   </div>
                 </div>
               </div>
@@ -1061,6 +1243,39 @@
       </div>
     </section>
 
+    <!-- ─── FAQ (AEO) ─────────────────────────────────────────────────── -->
+    <section id="faq" class="faq">
+      <div class="wrap-narrow">
+        <div class="section__head reveal">
+          <div class="chapter">§ 04 — FAQ</div>
+          <h2 class="section__title">자주 묻는 <i>질문</i>.</h2>
+        </div>
+
+        <div class="faq__list reveal">
+          <article class="faq__item">
+            <h3 class="faq__q">woo-hoo.kr은 무엇을 하는 곳인가요?</h3>
+            <p class="faq__a">1인 개발자가 직접 쓸 작은 앱을 만들어 올리는 개인 앱 스튜디오입니다. 현재 self-check-study·make-money·googSky 세 개를 진행 중입니다.</p>
+          </article>
+          <article class="faq__item">
+            <h3 class="faq__q">self-check-study는 어떤 앱인가요?</h3>
+            <p class="faq__a">중·고등학생이 공부 일정을 도장으로 완성하는 학습 일기 앱입니다. <a href="https://play.google.com/store/apps/details?id=kr.woohoo.self_check_study" target="_blank" rel="noopener">구글플레이</a>에서 내려받을 수 있습니다.</p>
+          </article>
+          <article class="faq__item">
+            <h3 class="faq__q">앱은 어디서 받을 수 있나요?</h3>
+            <p class="faq__a">self-check-study는 <a href="https://play.google.com/store/apps/details?id=kr.woohoo.self_check_study" target="_blank" rel="noopener">구글플레이</a>에서 받을 수 있습니다. 새 앱 소식은 뉴스레터로 가장 먼저 전합니다.</p>
+          </article>
+          <article class="faq__item">
+            <h3 class="faq__q">개발 과정도 볼 수 있나요?</h3>
+            <p class="faq__a">네. 만들며 겪은 문제와 실패까지 <a href="./devlog.html">개발로그</a>에 시간순으로 기록합니다.</p>
+          </article>
+          <article class="faq__item">
+            <h3 class="faq__q">문의나 제휴는 어떻게 하나요?</h3>
+            <p class="faq__a">이메일 <a href="mailto:woohoo.dew1017@gmail.com">woohoo.dew1017@gmail.com</a> 으로 연락하면 됩니다.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
     <!-- ─── 이메일 구독 ───────────────────────────────────────────────── -->
     <section id="subscribe" class="subscribe">
       <div class="wrap">
@@ -1234,6 +1449,27 @@
         });
       }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
       targets.forEach(function (el) { io.observe(el); });
+    })();
+
+    /**
+     * 모바일 내비 토글 (서브페이지와 동일 동작)
+     * - 햄버거 클릭 시 .nav__menu.open 토글 + aria-expanded 동기화
+     * - 메뉴 링크 클릭(앵커 이동) 시 자동 닫힘
+     */
+    (function initNavToggle() {
+      const toggle = document.querySelector('.nav__toggle');
+      const menu   = document.getElementById('navLinks');
+      if (!toggle || !menu) return;
+      toggle.addEventListener('click', function () {
+        const open = menu.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      menu.querySelectorAll('a').forEach(function (a) {
+        a.addEventListener('click', function () {
+          menu.classList.remove('open');
+          toggle.setAttribute('aria-expanded', 'false');
+        });
+      });
     })();
   </script>
 
