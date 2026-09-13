@@ -1,21 +1,25 @@
 # woo-hoo.kr
 
-> 1인 개발자가 직접 쓸 만한 작은 앱을 만들어 올리고, 만드는 과정을 공개로 기록하는 앱 실험실(app studio). 2025년부터 운영 중이며, 완성된 회사 사이트보다 "매주 살아 움직이는 사이트"를 지향한다. 정적 사이트(GitHub Pages)로 운영된다.
+> 1인 개발자가 직접 쓸 만한 작은 앱·서비스를 만들어 올리고, 만드는 과정을 공개로 기록하는 앱 실험실(app studio). 2025년부터 운영 중이며, 완성된 회사 사이트보다 "매주 살아 움직이는 사이트"를 지향한다. 정적 사이트로 운영된다.
 
 ## 소개
 - woo-hoo.kr은 기획·디자인·개발·운영을 한 사람이 맡는 개인 앱 스튜디오다.
 - 운영 원칙: "내가 직접 매일 쓰고 싶은가"를 통과한 아이디어만 만든다. 한 번에 하나씩 끝까지 굴린다.
+- 만드는 모든 앱·서비스는 내 일상의 불편에서 출발해 AI로 만든다.
 - 연락처: woohoo.dew1017@gmail.com
 
-## 진행 중인 앱
-- **self-check-study** — 중·고등학생이 공부 일정을 도장으로 완성하는 학습 일기 앱. (Android, 구글플레이 출시: https://play.google.com/store/apps/details?id=kr.woohoo.self_check_study )
-- **make-money** — 뉴스를 관점별 콘텐츠로 정리해 자동 발행하는 파이프라인. (개발 중)
-- **googSky** — 등급만 입력하면 지원 가능 대학을 정리해 주는 입시 컨설팅 앱. (개발 중)
+## 프로젝트 (앱·서비스)
+- **gatherThinks** — 저장만 하고 넘긴 유튜브 영상을 AI로 요약해 디스코드로 전달하고 블로그(영상노트)에 아카이브하는 자동 파이프라인. (Live) 결과: https://woo-hoo.kr/watch.html
+- **googSky** — 과목별 등급만 입력하면 안정·적정·도전권으로 지원 가능 대학을 정리해 주는 입시 컨설팅 서비스. 등급은 로컬에만 저장. (Live: https://googsky.woo-hoo.kr )
+- **self-check-study** — 중·고등학생이 공부 일정을 도장으로 완성해 카톡으로 자랑하는 학습 일기 앱. (Android, 구글플레이 출시: https://play.google.com/store/apps/details?id=kr.woohoo.self_check_study )
+- **make-money** — 하나의 원문 뉴스를 관점별 페르소나로 분기 생성해 자동 발행하는 콘텐츠 파이프라인. (개발 중)
 
 ## 핵심 페이지
-- [홈](https://woo-hoo.kr/): 진행 중인 앱·개발로그·구독 안내
+- [홈](https://woo-hoo.kr/): 스튜디오 소개·프로젝트·구독 안내
+- [프로젝트](https://woo-hoo.kr/projects.html): 만든 앱·서비스 4종과 각각을 만든 이유
+- [개발로그](https://woo-hoo.kr/devlog.html): 앱을 만들며 내린 결정과 시행착오 기록
+- [영상노트](https://woo-hoo.kr/watch.html): 유튜브 영상을 AI로 요약해 정리한 아카이브(gatherThinks 발행물)
 - [소개](https://woo-hoo.kr/about.html): 운영자·운영 철학·연락처
-- [개발로그](https://woo-hoo.kr/devlog.html): 앱을 만들며 겪은 과정과 문제 해결 기록
 - [개인정보처리방침](https://woo-hoo.kr/privacy.html): self-check-study 앱 개인정보 처리방침
 
 ## 관련 사이트
