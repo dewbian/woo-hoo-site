@@ -1,0 +1,312 @@
+<!-- @template name="Watch-notes (v3)" description="woo-hoo.kr 영상노트 큐레이션 아카이브 — v3. AI 검색 최적화(ItemList/VideoObject·Organization schema, Summary, 전체요약 인라인+모달). FAQ 미사용. -->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>영상노트 — woo-hoo.kr</title>
+<meta name="description" content="유튜브 영상을 AI로 요약해 정리한 영상노트 아카이브. 경제·투자·기술 영상의 핵심을 자기완결 요약으로 제공합니다." />
+<link rel="canonical" href="https://woo-hoo.kr/watch-notes.html" />
+<meta name="robots" content="index,follow" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="영상노트 — woo-hoo.kr" />
+<meta property="og:description" content="유튜브 영상을 AI로 요약해 정리한 영상노트 아카이브." />
+<meta property="og:url" content="https://woo-hoo.kr/watch-notes.html" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Montserrat:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+__JSONLD__
+</script>
+<style>
+:root{
+  --color-bg:#fef7ec; --color-surface:#f8ead7; --color-text:#14100e;
+  --color-accent:#f76b9f; --color-divider:color-mix(in srgb,#14100e 40%, transparent);
+  --color-neutral-100:#fdf6ea; --color-neutral-300:#d8cfc4; --color-neutral-500:#97908a;
+  --color-accent-400:#fb96ba; --color-accent-500:#f76b9f; --color-accent-600:#e04681;
+  --color-accent-700:#b92e63; --color-accent-800:#8c2049; --color-accent-2-900:#100e0d;
+  --font-heading:"Montserrat","IBM Plex Sans KR","Malgun Gothic",system-ui,sans-serif;
+  --font-body:"Montserrat","IBM Plex Sans KR","Malgun Gothic",system-ui,sans-serif;
+  --space-2:8px; --space-3:12px; --space-4:16px; --space-6:24px; --space-8:32px;
+  --shadow-lg:0 12px 32px color-mix(in srgb,#211e1c 22%, transparent);
+  --edge: clamp(20px, 5vw, 72px);
+  --ink-deep: var(--color-accent-2-900);
+  --display: "Fredoka", var(--font-heading);
+}
+*,*::before,*::after{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+@media (prefers-reduced-motion:reduce){ html{ scroll-behavior:auto; } *{ animation:none !important; } }
+body{ margin:0; background:var(--color-bg); color:var(--color-text); font-family:var(--font-body);
+  font-size:15px; line-height:1.55; text-wrap:pretty; overflow-x:hidden; }
+body.wn-lock{ overflow:hidden; }
+h1,h2,h3,h4{ font-family:var(--font-heading); font-weight:700; }
+:lang(ko) h1,:lang(ko) h2,:lang(ko) h3{ font-weight:700; word-break:keep-all; }
+:lang(ko) p{ word-break:keep-all; }
+img{ display:block; max-width:100%; }
+a{ color:inherit; }
+::selection{ background:color-mix(in srgb,var(--color-accent) 30%, transparent); }
+.wrap{ max-width:1280px; margin:0 auto; padding:0 var(--edge); }
+
+/* NAV */
+.nav3{ position:sticky; top:0; z-index:50; background:var(--ink-deep); color:var(--color-neutral-100); }
+.nav3__row{ max-width:1280px; margin:0 auto; padding:14px var(--edge);
+  display:flex; align-items:center; justify-content:space-between; gap:var(--space-6); }
+.nav3__brand{ display:inline-flex; align-items:center; gap:10px; color:#fff;
+  font-family:var(--display); font-weight:700; font-size:20px; text-decoration:none; }
+.nav3__mark{ width:26px; height:26px; background:var(--color-accent-500); color:var(--ink-deep);
+  display:grid; place-items:center; font-family:var(--display); font-weight:700; font-size:15px; }
+.nav3__menu{ display:flex; align-items:center; gap:var(--space-8); }
+.nav3__menu a{ color:var(--color-neutral-300); font-size:13px; font-weight:600;
+  letter-spacing:.06em; text-transform:uppercase; text-decoration:none; }
+.nav3__menu a:hover,.nav3__menu a[aria-current="page"]{ color:#fff; }
+.nav3__menu a[aria-current="page"]{ color:var(--color-accent-400); }
+.nav3__cta{ background:var(--color-accent-500); color:var(--ink-deep)!important;
+  font-family:var(--font-heading); font-weight:800; font-size:13px; padding:9px 18px; }
+.nav3__cta:hover{ background:var(--color-accent-400); }
+.nav3__toggle{ display:none; background:none; border:0; color:#fff; font-size:22px; padding:4px 6px; }
+@media (max-width:760px){
+  .nav3__menu{ display:none; }
+  .nav3__toggle{ display:block; }
+  .nav3__menu.is-open{ display:flex; flex-direction:column; align-items:flex-start;
+    position:absolute; left:0; right:0; top:100%; background:var(--ink-deep);
+    padding:16px var(--edge) 22px; gap:16px; box-shadow:var(--shadow-lg); }
+}
+
+/* HERO */
+.phero{ position:relative; overflow:hidden; background:var(--ink-deep); color:var(--color-neutral-100);
+  padding: clamp(28px,4vw,52px) 0; }
+.phero::before{ content:""; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(50% 90% at 20% 50%, color-mix(in srgb,var(--color-accent-500) 38%, transparent), transparent 72%); }
+.phero__in{ position:relative; z-index:3; }
+.phero__eyebrow{ display:block; font-size:13px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--color-accent-400); font-weight:600; margin-bottom:12px; }
+.phero__title{ font-family:var(--display); font-weight:700; color:var(--color-accent-500);
+  font-size:clamp(44px,7vw,92px); line-height:.95; margin:0 0 16px;
+  text-shadow:0 5px 0 color-mix(in srgb,var(--color-accent-800) 55%, transparent); }
+.phero__summary{ margin:0; max-width:62ch; color:var(--color-neutral-100);
+  font-size:clamp(15px,1.5vw,18px); line-height:1.7; }
+.phero__summary b{ color:var(--color-accent-400); }
+
+/* LIST */
+.wnotes{ padding: clamp(40px,6vw,80px) 0; }
+.wnotes__count{ margin:0 0 clamp(20px,3vw,32px); font-size:14px; letter-spacing:.04em;
+  color:color-mix(in srgb,var(--color-text) 60%, transparent); font-weight:600; }
+.wnotes__count b{ color:var(--color-accent-700); }
+.wn-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:20px; }
+.wn-card{ display:flex; flex-direction:column; background:var(--color-surface);
+  border:2px solid var(--ink-deep); border-radius:0; overflow:hidden;
+  transition:transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .18s; }
+.wn-card:hover{ transform:translateY(-4px); box-shadow:8px 8px 0 var(--color-accent-500); }
+.wn-card__thumb{ position:relative; display:block; width:100%; aspect-ratio:16/9; background:#000;
+  overflow:hidden; border:0; padding:0; cursor:pointer; }
+.wn-card__thumb img{ width:100%; height:100%; object-fit:cover; transition:transform .3s; }
+.wn-card__thumb:hover img{ transform:scale(1.05); }
+.wn-card__play{ position:absolute; inset:0; margin:auto; width:54px; height:54px; display:grid; place-items:center;
+  background:color-mix(in srgb,var(--ink-deep) 72%, transparent); color:#fff; border-radius:50%;
+  font-size:18px; padding-left:4px; transition:background .18s; }
+.wn-card__thumb:hover .wn-card__play{ background:var(--color-accent-500); }
+.wn-card__body{ display:flex; flex-direction:column; gap:10px; padding:clamp(16px,2vw,22px); flex:1; }
+.wn-card__meta{ display:flex; align-items:center; gap:10px; font-size:12px; font-weight:600;
+  color:color-mix(in srgb,var(--color-text) 55%, transparent); }
+.wn-card__num{ font-family:var(--display); color:var(--color-accent-700); font-weight:700; }
+.wn-card__tag{ margin-left:auto; background:var(--color-bg); color:var(--color-accent-700);
+  padding:3px 10px; border-radius:999px; letter-spacing:.02em; }
+.wn-card__title{ margin:0; font-size:clamp(16px,1.5vw,18px); line-height:1.4; }
+.wn-card__titlebtn{ font:inherit; color:inherit; background:none; border:0; padding:0; text-align:left;
+  cursor:pointer; font-weight:700; }
+.wn-card__titlebtn:hover{ color:var(--color-accent-700); }
+.wn-card__summary{ margin:0; font-size:14px; line-height:1.65;
+  color:color-mix(in srgb,var(--color-text) 78%, transparent); }
+.wn-card__more{ margin-top:auto; align-self:flex-start; font-family:var(--font-heading); font-weight:700; font-size:13px;
+  color:var(--color-accent-700); background:none; border:0; padding:0; cursor:pointer; }
+.wn-card__more:hover{ color:var(--color-accent-800); text-decoration:underline; }
+@media (max-width:520px){ .wn-grid{ grid-template-columns:1fr; } }
+
+/* MODAL — 전체요약 인라인 표시 */
+.wn-modal{ position:fixed; inset:0; z-index:100; display:none; }
+.wn-modal.is-open{ display:block; }
+.wn-modal__backdrop{ position:absolute; inset:0; background:color-mix(in srgb,var(--ink-deep) 68%, transparent);
+  backdrop-filter:blur(2px); }
+.wn-modal__box{ position:relative; z-index:1; max-width:760px; margin:clamp(24px,6vh,72px) auto;
+  max-height:calc(100dvh - clamp(48px,12vh,144px)); overflow:auto;
+  background:var(--color-bg); border:2px solid var(--ink-deep); box-shadow:12px 12px 0 var(--color-accent-500);
+  padding:clamp(24px,4vw,44px); width:calc(100% - 2*var(--edge)); }
+.wn-modal__close{ position:sticky; top:0; float:right; margin:-6px -6px 0 12px; width:40px; height:40px;
+  display:grid; place-items:center; font-size:22px; line-height:1; cursor:pointer;
+  background:var(--ink-deep); color:#fff; border:0; }
+.wn-modal__close:hover{ background:var(--color-accent-600); }
+.wn-modal__eyebrow{ display:block; font-size:12px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--color-accent-700); font-weight:700; margin-bottom:8px; }
+.wn-modal__title{ margin:0 0 18px; font-size:clamp(20px,2.6vw,28px); line-height:1.35; color:var(--ink-deep); }
+.wn-modal__prose p{ margin:0 0 14px; font-size:15px; line-height:1.8;
+  color:color-mix(in srgb,var(--color-text) 88%, transparent); }
+.wn-modal__sub{ margin:22px 0 10px; font-family:var(--font-heading); font-weight:800; font-size:16px;
+  color:var(--color-accent-700); display:inline-flex; align-items:center; gap:8px; }
+.wn-modal__sub::before{ content:""; width:16px; height:2px; background:var(--color-accent-500); }
+.wn-modal__prose > .wn-modal__sub:first-child{ margin-top:0; }
+.wn-modal__actions{ display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; padding-top:20px;
+  border-top:2px solid var(--color-divider); }
+.wn-modal__btn{ display:inline-flex; align-items:center; gap:8px; font-family:var(--font-heading); font-weight:800;
+  font-size:13px; padding:11px 20px; border-radius:999px; text-decoration:none; cursor:pointer; border:0; }
+.wn-modal__btn--yt{ background:var(--color-accent-500); color:var(--ink-deep); }
+.wn-modal__btn--yt:hover{ background:var(--color-accent-400); }
+.wn-modal__btn--note{ background:none; color:var(--color-accent-700); border:2px solid color-mix(in srgb,var(--color-accent-700) 40%, transparent); }
+.wn-modal__btn--note:hover{ color:var(--color-accent-800); }
+
+/* 리빌 */
+.r-up{ opacity:0; transform:translateY(28px); transition:opacity .7s ease, transform .8s cubic-bezier(.22,1,.36,1); }
+.is-in{ opacity:1 !important; transform:none !important; }
+@media (prefers-reduced-motion:reduce){ .r-up{ opacity:1; transform:none; transition:none; } }
+
+/* FOOTER */
+.icon{ width:20px; height:20px; flex:none; display:block; fill:currentColor; stroke:none; }
+.icon-sm{ width:16px; height:16px; }
+.foot3{ background:var(--color-bg); }
+.foot3 .wrap{ padding: clamp(48px,7vw,96px) var(--edge); }
+.foot3__top{ display:grid; grid-template-columns:auto 1fr; gap:clamp(24px,5vw,72px); align-items:start; }
+.foot3__mark{ width:110px; height:64px; position:relative; flex:none; }
+.foot3__mark::before,.foot3__mark::after{ content:""; position:absolute; top:0; height:64px; background:#000; border-radius:50%; }
+.foot3__mark::before{ left:0; width:52px; }
+.foot3__mark::after{ left:44px; width:64px; }
+.foot3__list{ display:grid; gap:0; }
+.foot3__item{ text-align:right; padding:var(--space-4) 0; border-bottom:2px solid var(--color-divider); }
+.foot3__item:first-child{ border-top:2px solid var(--color-divider); }
+.foot3__item h3{ margin:0 0 6px; font-family:var(--font-heading); font-weight:700; font-size:clamp(16px,1.92vw,22.4px);
+  color:var(--ink-deep); display:inline-flex; align-items:center; gap:10px; }
+.foot3__item h3 .bx{ width:18px; height:18px; color:var(--color-accent-500); }
+.foot3__item p{ margin:0; color:color-mix(in srgb,var(--color-text) 66%, transparent); font-size:11.2px; line-height:1.6; }
+.foot3__contact{ margin-top:clamp(32px,5vw,56px); }
+.foot3__contact h4{ margin:0 0 12px; font-family:var(--font-heading); font-weight:800; font-size:19.5px;
+  letter-spacing:.06em; text-transform:uppercase; }
+.foot3__contact p{ margin:4px 0; display:flex; align-items:center; gap:8px; font-size:18.2px; }
+.foot3__contact a{ color:var(--color-accent-700); text-decoration:none; }
+.foot3__contact a:hover{ color:var(--color-accent-800); }
+.foot3__copy{ margin-top:var(--space-4); font-size:12px; color:color-mix(in srgb,var(--color-text) 55%, transparent); }
+@media (max-width:640px){ .foot3__top{ grid-template-columns:1fr; } .foot3__item{ text-align:left; } }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav3">
+  <div class="nav3__row">
+    <a href="./" class="nav3__brand"><span class="nav3__mark">w</span>woo-hoo</a>
+    <button class="nav3__toggle" aria-label="메뉴 열기" aria-expanded="false">&#9776;</button>
+    <div class="nav3__menu">
+      <a href="./projects.html">Projects</a>
+      <a href="./devlog.html">Dev-log</a>
+      <a href="./watch-notes.html" aria-current="page">Watch-notes</a>
+      <a href="mailto:dewbian1017@gmail.com" class="nav3__cta">Talk to me</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO + Summary(TL;DR) -->
+<header class="phero">
+  <div class="wrap phero__in">
+    <span class="phero__eyebrow">Watch &middot; 영상노트 아카이브</span>
+    <h1 class="phero__title">Watch-notes</h1>
+    <p class="phero__summary"><b>영상노트</b>는 유튜브 영상을 AI로 요약해 정리한 woo-hoo.kr의 아카이브입니다. 경제·투자·기술 영상 <b>__COUNT__편</b>의 핵심을, 영상을 다시 보지 않아도 되도록 <b>자기완결 요약</b>으로 남깁니다. 저장만 하고 넘긴 영상을 실제로 소화하기 위해 만든 <b>gatherThinks</b> 자동 파이프라인의 결과물입니다.</p>
+  </div>
+</header>
+
+<!-- LIST -->
+<main class="wnotes">
+  <div class="wrap">
+    <p class="wnotes__count">총 <b>__COUNT__편</b>의 영상노트 &middot; 최신순 &middot; 카드를 누르면 전체 요약</p>
+    <div class="wn-grid">
+__CARDS__
+    </div>
+  </div>
+</main>
+
+<!-- MODAL -->
+<div class="wn-modal" id="wnModal" role="dialog" aria-modal="true" aria-labelledby="wnModalTitle" aria-hidden="true">
+  <div class="wn-modal__backdrop" data-close></div>
+  <div class="wn-modal__box">
+    <button type="button" class="wn-modal__close" data-close aria-label="닫기">&times;</button>
+    <span class="wn-modal__eyebrow">영상노트 · 전체 요약</span>
+    <h2 class="wn-modal__title" id="wnModalTitle"></h2>
+    <div class="wn-modal__prose" id="wnModalProse"></div>
+    <div class="wn-modal__actions">
+      <a class="wn-modal__btn wn-modal__btn--yt" id="wnModalYt" href="#" target="_blank" rel="noopener">유튜브에서 원본 영상 보기 →</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="foot3" id="talk">
+  <div class="wrap">
+    <div class="foot3__top">
+      <div class="foot3__mark" aria-hidden="true"></div>
+      <div class="foot3__list">
+        <div class="foot3__item">
+          <h3>Clear Communication <svg class="bx" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21 11l-6.6 2.1L12 20l-2.4-6.9L3 11l6.6-2.1L12 2z"/></svg></h3>
+          <p>Friendly, seamless dialogue that captures every nuance of your requirements.</p>
+        </div>
+        <div class="foot3__item">
+          <h3>Extensive Experience <svg class="bx" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21 11l-6.6 2.1L12 20l-2.4-6.9L3 11l6.6-2.1L12 2z"/></svg></h3>
+          <p>High-performance PHP architecture, modern refactoring, and smooth app packaging.</p>
+        </div>
+        <div class="foot3__item">
+          <h3>Reliable &amp; Scalable <svg class="bx" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21 11l-6.6 2.1L12 20l-2.4-6.9L3 11l6.6-2.1L12 2z"/></svg></h3>
+          <p>Bulletproof backend and fast troubleshooting built to last for years to come.</p>
+        </div>
+      </div>
+    </div>
+    <div class="foot3__contact">
+      <h4>Contact</h4>
+      <p><svg class="icon icon-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2h10a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm5 17a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/></svg> 010-3054-1538</p>
+      <p><svg class="icon icon-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M2 5h20v14H2V5zm2 2v.4l8 5 8-5V7H4zm16 2.6-8 5-8-5V17h16V9.6z"/></svg> <a href="mailto:dewbian1017@gmail.com">dewbian1017@gmail.com</a></p>
+    </div>
+    <p class="foot3__copy">&copy; 2026 woo-hoo.kr</p>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var t=document.querySelector('.nav3__toggle'), m=document.querySelector('.nav3__menu');
+    if(t&&m){ t.addEventListener('click',function(){ var o=m.classList.toggle('is-open'); t.setAttribute('aria-expanded',o?'true':'false'); });
+      m.querySelectorAll('a').forEach(function(a){ a.addEventListener('click',function(){ m.classList.remove('is-open'); }); }); }
+  })();
+  (function(){
+    var els=document.querySelectorAll('.r-up');
+    if(!els.length) return;
+    if(!('IntersectionObserver' in window)||matchMedia('(prefers-reduced-motion: reduce)').matches){ els.forEach(function(e){e.classList.add('is-in');}); return; }
+    var io=new IntersectionObserver(function(en){ en.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('is-in'); io.unobserve(e.target); } }); }, { threshold:0.12, rootMargin:'0px 0px -8% 0px' });
+    els.forEach(function(e){ io.observe(e); });
+  })();
+  /* MODAL: 카드의 hidden 전체요약을 모달로 표시 */
+  (function(){
+    var modal=document.getElementById('wnModal');
+    var mTitle=document.getElementById('wnModalTitle'), mProse=document.getElementById('wnModalProse');
+    var mYt=document.getElementById('wnModalYt');
+    var box=modal.querySelector('.wn-modal__box'), lastFocus=null;
+    function open(vid){
+      var full=document.getElementById('full-'+vid);
+      if(!full) return;
+      mTitle.textContent=full.getAttribute('data-title')||'';
+      mProse.innerHTML=full.innerHTML;
+      mYt.href=full.getAttribute('data-yt')||'#';
+      modal.classList.add('is-open'); modal.setAttribute('aria-hidden','false');
+      document.body.classList.add('wn-lock');
+      lastFocus=document.activeElement; box.scrollTop=0;
+      modal.querySelector('.wn-modal__close').focus();
+    }
+    function close(){
+      modal.classList.remove('is-open'); modal.setAttribute('aria-hidden','true');
+      document.body.classList.remove('wn-lock');
+      if(lastFocus&&lastFocus.focus) lastFocus.focus();
+    }
+    document.addEventListener('click',function(e){
+      var trig=e.target.closest('[data-vid]');
+      if(trig){ open(trig.getAttribute('data-vid')); return; }
+      if(e.target.closest('[data-close]')) close();
+    });
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&modal.classList.contains('is-open')) close(); });
+  })();
+</script>
+</body>
+</html>

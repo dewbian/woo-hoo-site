@@ -1,0 +1,68 @@
+# 파일 목적: gatherThinks 봇이 watch-notes.html / watch-notes/*.html 을 push 하면
+#   v3 큐레이션 페이지(watch.html)를 자동 재생성 → 커밋 → VPS docroot 배포.
+# 봇 발행이 손대지 않아도 /watch.html 에 실시간(약 1분) 반영되게 하는 자동화.
+name: Rebuild watch.html
+
+on:
+  push:
+    branches: [main]
+    # 봇이 건드리는 경로만 트리거. watch.html/design 변경(이 워크플로의 커밋)은 미매칭 → 무한루프 없음.
+    paths:
+      - "watch-notes.html"
+      - "watch-notes/**"
+  workflow_dispatch: {}
+
+concurrency:
+  group: rebuild-watch
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Rebuild watch.html from bot notes
+        run: python scripts/build_watch.py
+
+      - name: Commit if changed
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add watch.html design/template-editorial-v3/watch-notes2.html
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "no watch.html change"
+          else
+            # [skip ci] 로 deploy-static 재트리거 방지(배포는 아래 스텝이 직접 수행)
+            git commit -m "build(watch): auto-regenerate from gatherThinks notes [skip ci]"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # deploy-static.yml 과 동일한 SSH Secrets 재사용. 변경이 있을 때만 배포.
+      - name: Setup SSH
+        if: steps.commit.outputs.changed == 'true'
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          ssh-keyscan -p "${{ secrets.SSH_PORT || '22' }}" -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Rsync static site to docroot
+        if: steps.commit.outputs.changed == 'true'
+        run: |
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/id_deploy -p ${{ secrets.SSH_PORT || '22' }}" \
+            --exclude '.git' --exclude '.github' --exclude '.claude' --exclude '.gstack' \
+            --exclude '.superpowers' --exclude '.design-kit' --exclude 'server' \
+            --exclude 'docs' --exclude 'design' --exclude 'jobkorea' --exclude '.gitignore' \
+            ./ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/www/woo-hoo.kr/html/"
