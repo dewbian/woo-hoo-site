@@ -8,3 +8,8 @@ Thumbs.db
 
 .design-kit/
 .gstack/
+
+# 디자인 작업 원본(무겁고 라이브 배포엔 불필요 — 프로덕션은 루트 /assets 사용)
+design/template-editorial-v3/assets/
+design/Pink/
+design/피그마디자인/
