@@ -92,18 +92,15 @@ a{ color:inherit; }
   padding: clamp(28px,4vw,52px) 0; }
 .phero::before{ content:""; position:absolute; inset:0; pointer-events:none;
   background:radial-gradient(50% 90% at 20% 50%, color-mix(in srgb,var(--color-accent-500) 38%, transparent), transparent 72%); }
-.phero__in{ position:relative; z-index:3; display:grid;
-  grid-template-columns:auto 1fr; gap:clamp(24px,5vw,64px); align-items:center; }
+.phero__in{ position:relative; z-index:3; }
 .phero__eyebrow{ display:block; font-size:13px; letter-spacing:.14em; text-transform:uppercase;
   color:var(--color-accent-400); font-weight:600; margin-bottom:12px; }
 .phero__title{ font-family:var(--display); font-weight:700; color:var(--color-accent-500);
-  font-size:clamp(44px,7vw,92px); line-height:.95; margin:0;
+  font-size:clamp(44px,7vw,92px); line-height:.95; margin:0 0 16px;
   text-shadow:0 5px 0 color-mix(in srgb,var(--color-accent-800) 55%, transparent); }
-.phero__sub{ margin:0; max-width:42ch; color:var(--color-neutral-300);
-  font-size:clamp(15px,1.4vw,17px); line-height:1.7; }
-@media (max-width:720px){
-  .phero__in{ grid-template-columns:1fr; gap:16px; }
-}
+.phero__summary{ margin:0; max-width:62ch; color:var(--color-neutral-100);
+  font-size:clamp(15px,1.5vw,18px); line-height:1.7; }
+.phero__summary b{ color:var(--color-accent-400); }
 
 /* PROJECT LNB (서브내비) */
 .plnb{ position:sticky; top:66px; z-index:40; background:var(--color-bg);
@@ -250,14 +247,10 @@ a{ color:inherit; }
 
 <!-- HERO -->
 <header class="phero">
-  <span class="star" style="bottom:12%; left:6%;"><img src="assets/heart.png" alt="" style="--s:46px;"></span>
-  <span class="star" style="top:22%; right:9%;"><img src="assets/heart.png" alt="" style="--s:56px;"></span>
   <div class="wrap phero__in">
-    <div class="phero__left">
-      <span class="phero__eyebrow">내가 직접 매일 쓰고 싶은가</span>
-      <h1 class="phero__title">Projects</h1>
-    </div>
-    <p class="phero__sub">작게, 계속 만드는 1인 스튜디오의 앱.<br><b>“내가 직접 매일 쓰고 싶은가”</b>를 통과한 아이디어만 만듭니다.<br>한 번에 하나씩, <b>끝까지 굴려 보는</b> 것을 원칙으로 합니다.</p>
+    <span class="phero__eyebrow">Projects · 내가 직접 매일 쓰고 싶은가</span>
+    <h1 class="phero__title">Projects</h1>
+    <p class="phero__summary">woo-hoo.kr의 <b>프로젝트</b>는 내 일상의 불편에서 출발해 <b>AI로</b> 만든 앱·서비스입니다. “내가 직접 매일 쓰고 싶은가”를 통과한 아이디어만, 한 번에 하나씩 <b>끝까지 굴려</b> 봅니다.</p>
   </div>
 </header>
 
