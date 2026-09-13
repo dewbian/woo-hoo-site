@@ -13,3 +13,10 @@ Thumbs.db
 design/template-editorial-v3/assets/
 design/Pink/
 design/피그마디자인/
+
+# 테스트·로컬 도구 아티팩트
+.playwright-mcp/
+
+# 개인 파일(사이트와 무관 — 레포에 커밋 금지)
+jobkorea/
+인터랙션요청.txt
