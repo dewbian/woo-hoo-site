@@ -165,6 +165,14 @@ a{ color:inherit; }
   .btile--img.order-first{ order:-1; }
 }
 
+/* googSky CRT 목업 — 웹 브라우저 녹화 영상을 모니터 화면에 원근 매핑 */
+.btile--crt{ aspect-ratio:1/1; background:transparent; overflow:hidden; display:grid; place-items:center; }
+.btile--crt .crt{ position:relative; width:100%; }
+.btile--crt .crt__frame{ width:100%; height:auto; display:block; }
+.btile--crt .crt__screen{ position:absolute; inset:0; }
+.btile--crt .crt__video{ position:absolute; top:0; left:0; transform-origin:0 0;
+  object-fit:cover; object-position:center; background:#e9e9ee; border-radius:2%; }
+
 /* 리빌 */
 .r-up{ opacity:0; transform:translateY(34px); }
 .r-left{ opacity:0; transform:translateX(-60px) rotate(-4deg); }
@@ -292,7 +300,17 @@ a{ color:inherit; }
         <div class="b-tags"><span class="b-tag">안정성 점수</span><span class="b-tag">로컬 저장</span><span class="b-tag">입시 데이터</span></div>
         <a class="b-cta" href="https://googsky.woo-hoo.kr" target="_blank" rel="noopener">googSky 열기 →</a>
       </div>
-      <div class="btile btile--img r-slR"><video src="assets/googsky.mp4" autoplay muted loop playsinline preload="metadata" aria-label="googSky 데모 영상 — 과목별 등급 입력 후 안정·적정·도전권 대학 안내"></video></div>
+      <div class="btile btile--crt r-slR">
+        <div class="crt" role="img" aria-label="googSky 데모 — 웹 브라우저에서 접속해 화면을 훑는 녹화. 실제 입결 데이터 기반 대학 추천 화면.">
+          <img class="crt__frame" src="assets/googsky-monitor.png" alt="" aria-hidden="true">
+          <div class="crt__screen">
+            <video class="crt__video" poster="assets/googsky-web-poster.jpg" autoplay muted loop playsinline preload="auto">
+              <source src="assets/googsky-web.mp4" type="video/mp4">
+              <source src="assets/googsky-web.webm" type="video/webm">
+            </video>
+          </div>
+        </div>
+      </div>
 
       <!-- 3. make-money (Dev) -->
       <div class="btile btile--img order-first r-slL"><img src="assets/makemoney_t.png" alt="동전·돈주머니가 흐르는 파이프라인 일러스트 — make-money 자동 발행 파이프라인" loading="lazy"></div>
@@ -377,6 +395,37 @@ a{ color:inherit; }
       });
     }, { rootMargin:'-120px 0px -55% 0px', threshold:0 });
     secs.forEach(function(s){ io.observe(s); });
+  })();
+  /* googSky CRT — 웹 녹화 영상을 모니터 화면 4꼭짓점에 matrix3d 원근 매핑 */
+  (function(){
+    var IMG=1254, C={tl:[300,148],tr:[947,148],br:[947,598],bl:[300,598]};
+    function mat(w,h,d){
+      var from=[[0,0],[w,0],[w,h],[0,h]], to=[d.tl,d.tr,d.br,d.bl];
+      function adj(m){return[m[4]*m[8]-m[5]*m[7],m[2]*m[7]-m[1]*m[8],m[1]*m[5]-m[2]*m[4],
+        m[5]*m[6]-m[3]*m[8],m[0]*m[8]-m[2]*m[6],m[2]*m[3]-m[0]*m[5],
+        m[3]*m[7]-m[4]*m[6],m[1]*m[6]-m[0]*m[7],m[0]*m[4]-m[1]*m[3]];}
+      function mul(a,b){var c=[];for(var i=0;i<3;i++)for(var j=0;j<3;j++){var s=0;for(var k=0;k<3;k++)s+=a[3*i+k]*b[3*k+j];c[3*i+j]=s;}return c;}
+      function mv(m,v){return[m[0]*v[0]+m[1]*v[1]+m[2]*v[2],m[3]*v[0]+m[4]*v[1]+m[5]*v[2],m[6]*v[0]+m[7]*v[1]+m[8]*v[2]];}
+      function basis(p){var m=[p[0][0],p[1][0],p[2][0],p[0][1],p[1][1],p[2][1],1,1,1];
+        var v=mv(adj(m),[p[3][0],p[3][1],1]);return mul(m,[v[0],0,0,0,v[1],0,0,0,v[2]]);}
+      var A=basis(from),B=basis(to),Cm=mul(B,adj(A)),i;
+      for(i=0;i<9;i++)Cm[i]/=Cm[8];
+      return [Cm[0],Cm[3],0,Cm[6],Cm[1],Cm[4],0,Cm[7],0,0,1,0,Cm[2],Cm[5],0,Cm[8]];
+    }
+    function apply(root){
+      var f=root.querySelector('.crt__frame'), v=root.querySelector('.crt__video');
+      if(!f||!v) return; var s=f.clientWidth/IMG; if(!s) return;
+      var d={},k; for(k in C) d[k]=[C[k][0]*s,C[k][1]*s];
+      var sw=Math.hypot(d.tr[0]-d.tl[0],d.tr[1]-d.tl[1]);
+      var sh=Math.hypot(d.bl[0]-d.tl[0],d.bl[1]-d.tl[1]);
+      v.style.width=sw+'px'; v.style.height=sh+'px';
+      v.style.transform='matrix3d('+mat(sw,sh,d).join(',')+')';
+    }
+    function all(){ Array.prototype.forEach.call(document.querySelectorAll('.crt'),apply); }
+    Array.prototype.forEach.call(document.querySelectorAll('.crt__frame'),function(f){
+      if(f.complete) apply(f.closest('.crt')); else f.addEventListener('load',function(){apply(f.closest('.crt'));});
+    });
+    addEventListener('resize',all); addEventListener('load',all);
   })();
 </script>
 </body>
