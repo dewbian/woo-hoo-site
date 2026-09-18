@@ -243,7 +243,8 @@ body{ margin:0; text-wrap:pretty; overflow-x:hidden; }
   background: linear-gradient(90deg,
     rgba(244,240,252,.96) 0%, rgba(244,240,252,.86) 38%,
     rgba(244,240,252,.36) 64%, rgba(244,240,252,0) 82%); }
-.faq3 .wrap{ position:relative; z-index:1; }
+.faq3 .wrap{ position:relative; z-index:1;
+  padding-left:var(--edge); padding-right:var(--edge); }  /* .section 이 0으로 덮은 좌우 여백 복구 → nav와 정렬 */
 .faq3__col{ max-width:600px; }
 @media (max-width:760px){
   .faq3{ background-position:right -60px center; }
