@@ -585,7 +585,7 @@ body{ margin:0; text-wrap:pretty; overflow-x:hidden; }
     var gl = canvas.getContext('webgl', {alpha:true, premultipliedAlpha:false, antialias:true});
     if(!gl) return;
 
-    var strength=0.08, smooth=0.90;
+    var strength=0.12, smooth=0.90;
     var tx=0, ty=0, x=0, y=0, active=false, raf=null, ready=false;
 
     var VS='attribute vec2 aPos; varying vec2 vUv; void main(){ vUv=aPos*0.5+0.5; gl_Position=vec4(aPos,0.0,1.0); }';
