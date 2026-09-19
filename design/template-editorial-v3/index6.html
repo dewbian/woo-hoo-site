@@ -1,0 +1,44 @@
+<!-- @template name="스크롤 배경색 전환 — 방법1: IntersectionObserver(스냅+transition)" description="섹션마다 data-bg/data-fg 지정 → 뷰포트 중앙선 통과 시 <html> 배경색·본문색 교체, CSS transition으로 0.6s 페이드. luckygrab와 동일 방식. -->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>배경 전환 · 방법1 IntersectionObserver</title>
+<meta name="robots" content="noindex, nofollow" />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+html{ transition: background-color .6s ease, color .6s ease; background:#fef7ec; }
+@media (prefers-reduced-motion:reduce){ html{ transition:none; } }
+body{ margin:0; color:var(--fg,#14100e); font-family:"Archivo","IBM Plex Sans KR",system-ui,sans-serif; }
+section{ min-height:100vh; display:grid; place-items:center; text-align:center; padding:0 6vw; background:transparent; }
+.eyebrow{ font-size:13px; letter-spacing:.16em; text-transform:uppercase; opacity:.7; margin-bottom:16px; }
+h2{ font-family:"Archivo"; font-weight:800; font-size:clamp(32px,7vw,84px); line-height:1.05; margin:0; letter-spacing:-.03em; }
+p{ max-width:52ch; margin:20px auto 0; font-size:clamp(15px,1.6vw,19px); line-height:1.7; opacity:.85; word-break:keep-all; }
+.badge{ position:fixed; left:16px; top:16px; z-index:10; font:12px/1 "IBM Plex Sans KR"; background:rgba(0,0,0,.35); color:#fff; padding:8px 12px; border-radius:999px; }
+</style>
+</head>
+<body>
+<div class="badge">방법1 · IntersectionObserver (스냅 + transition)</div>
+
+<section data-bg="#fef7ec" data-fg="#14100e"><div><span class="eyebrow">Scroll ↓</span><h2>배경이 바뀝니다</h2><p>스크롤을 내리면 각 섹션이 화면 중앙을 지날 때 배경색이 0.6초 페이드로 전환됩니다.</p></div></section>
+<section data-bg="#fb96ba" data-fg="#14100e"><div><span class="eyebrow">Partner</span><h2>말하면 바로<br>통하는 파트너</h2><p>섹션마다 data-bg·data-fg만 지정하면 됩니다.</p></div></section>
+<section data-bg="#f76b9f" data-fg="#ffffff"><div><span class="eyebrow">Lab</span><h2>매일 자라는<br>개인 실험실</h2><p>어두운 배경에선 본문색도 함께 밝게 바뀝니다.</p></div></section>
+<section data-bg="#100e0d" data-fg="#fef7ec"><div><span class="eyebrow">Craft</span><h2>탄탄한 기술력</h2><p>html 요소의 배경색을 교체하고 CSS transition이 부드럽게 이어줍니다.</p></div></section>
+<section data-bg="#f8ead7" data-fg="#14100e"><div><span class="eyebrow">Talk</span><h2>가장 단순하고<br>안정적인 방식</h2><p>지원 범위 넓음 · 구현 간단 · 스냅 전환.</p></div></section>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){
+      root.style.backgroundColor=e.target.dataset.bg;
+      root.style.setProperty('--fg', e.target.dataset.fg);
+    }});
+  }, { rootMargin:'-50% 0px -50% 0px', threshold:0 });   // 섹션이 화면 중앙 통과 시 전환
+  document.querySelectorAll('section[data-bg]').forEach(function(s){ io.observe(s); });
+})();
+</script>
+</body>
+</html>

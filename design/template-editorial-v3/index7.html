@@ -1,0 +1,64 @@
+<!-- @template name="스크롤 배경색 전환 — 방법2: 스크롤 보간(연속 lerp)" description="스크롤 진행도에 따라 인접 섹션 색을 실시간 RGB 보간 → 색이 섞이며 연속으로 흐름. 배경·본문색 모두 lerp. -->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>배경 전환 · 방법2 스크롤 보간</title>
+<meta name="robots" content="noindex, nofollow" />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=IBM+Plex+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+html,body{ margin:0; }
+body{ color:var(--fg,#14100e); font-family:"Archivo","IBM Plex Sans KR",system-ui,sans-serif;
+  background:var(--bg,#fef7ec); }
+section{ min-height:100vh; display:grid; place-items:center; text-align:center; padding:0 6vw; background:transparent; }
+.eyebrow{ font-size:13px; letter-spacing:.16em; text-transform:uppercase; opacity:.7; margin-bottom:16px; }
+h2{ font-family:"Archivo"; font-weight:800; font-size:clamp(32px,7vw,84px); line-height:1.05; margin:0; letter-spacing:-.03em; }
+p{ max-width:52ch; margin:20px auto 0; font-size:clamp(15px,1.6vw,19px); line-height:1.7; opacity:.85; word-break:keep-all; }
+.badge{ position:fixed; left:16px; top:16px; z-index:10; font:12px/1 "IBM Plex Sans KR"; background:rgba(0,0,0,.35); color:#fff; padding:8px 12px; border-radius:999px; }
+</style>
+</head>
+<body>
+<div class="badge">방법2 · 스크롤 보간 (연속 lerp)</div>
+
+<section data-bg="#fef7ec" data-fg="#14100e"><div><span class="eyebrow">Scroll ↓</span><h2>색이 섞이며<br>흐릅니다</h2><p>스냅이 아니라 스크롤 진행도에 따라 인접 섹션 색을 실시간으로 섞습니다.</p></div></section>
+<section data-bg="#fb96ba" data-fg="#14100e"><div><span class="eyebrow">Partner</span><h2>말하면 바로<br>통하는 파트너</h2><p>크림 → 라이트핑크로 서서히 물듭니다.</p></div></section>
+<section data-bg="#f76b9f" data-fg="#ffffff"><div><span class="eyebrow">Lab</span><h2>매일 자라는<br>개인 실험실</h2><p>본문색도 함께 보간되어 대비를 유지합니다.</p></div></section>
+<section data-bg="#100e0d" data-fg="#fef7ec"><div><span class="eyebrow">Craft</span><h2>탄탄한 기술력</h2><p>핑크에서 다크로 그라데이션처럼 넘어갑니다.</p></div></section>
+<section data-bg="#f8ead7" data-fg="#14100e"><div><span class="eyebrow">Talk</span><h2>가장 부드러운<br>연속 전환</h2><p>몰입감 높음 · 계산 약간 더 · rAF로 최적화.</p></div></section>
+
+<script>
+(function(){
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var secs=[].slice.call(document.querySelectorAll('section[data-bg]'));
+  if(!secs.length) return;
+  function hex(h){ h=h.replace('#',''); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
+  var bg=secs.map(function(s){return hex(s.dataset.bg);});
+  var fg=secs.map(function(s){return hex(s.dataset.fg);});
+  function lerp(a,b,t){ return Math.round(a+(b-a)*t); }
+  function mix(c1,c2,t){ return 'rgb('+lerp(c1[0],c2[0],t)+','+lerp(c1[1],c2[1],t)+','+lerp(c1[2],c2[2],t)+')'; }
+  var raf=null, root=document.documentElement;
+  function apply(color, fgc){ document.body.style.setProperty('--bg',color); document.body.style.setProperty('--fg',fgc); }
+  function update(){ raf=null;
+    var vh=window.innerHeight;
+    // 각 섹션 중앙의 문서상 위치를 기준으로 현재 스크롤(뷰포트 중앙)이 어느 구간인지 계산
+    var mid=window.scrollY + vh/2;
+    var centers=secs.map(function(s){ var r=s.getBoundingClientRect(); return window.scrollY + r.top + r.height/2; });
+    var i=0; while(i<centers.length-1 && mid>=centers[i+1]) i++;
+    var t=0;
+    if(mid<=centers[0]) { i=0; t=0; }
+    else if(mid>=centers[centers.length-1]) { i=centers.length-1; t=0; }
+    else { t=(mid-centers[i])/(centers[i+1]-centers[i]); }
+    var j=Math.min(i+1,secs.length-1);
+    apply(mix(bg[i],bg[j],t), mix(fg[i],fg[j],t));
+  }
+  function onScroll(){ if(!raf) raf=requestAnimationFrame(update); }
+  if(reduce){ update(); return; }   // 정적: 현재 위치 색만
+  window.addEventListener('scroll', onScroll, {passive:true});
+  window.addEventListener('resize', onScroll);
+  update();
+})();
+</script>
+</body>
+</html>

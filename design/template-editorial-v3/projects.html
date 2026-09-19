@@ -1,0 +1,333 @@
+<!-- @template name="Projects (v3)" description="woo-hoo.kr 프로젝트 목록 서브페이지 — v3 Developer Persian 톤. 다크 히어로 + 앱 3종 상세(교차 레이아웃) + 스크롤 리빌. 초안. -->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Projects — woo-hoo.kr</title>
+<meta name="description" content="woo-hoo.kr이 만드는 앱 — self-check-study(구글플레이 출시), make-money, googSky. 작게, 계속 만드는 1인 스튜디오의 프로젝트." />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Archivo:wght@400;600;800&family=IBM+Plex+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --color-bg:#fef7ec; --color-surface:#f8ead7; --color-text:#14100e;
+  --color-accent:#f76b9f; --color-divider:color-mix(in srgb,#14100e 40%, transparent);
+  --color-neutral-100:#fdf6ea; --color-neutral-300:#d8cfc4; --color-neutral-500:#97908a;
+  --color-accent-400:#fb96ba; --color-accent-500:#f76b9f; --color-accent-600:#e04681;
+  --color-accent-700:#b92e63; --color-accent-800:#8c2049; --color-accent-2-900:#100e0d;
+  --success:#1f8a5b;
+  --font-heading:"Archivo","IBM Plex Sans KR",system-ui,sans-serif;
+  --font-body:"Archivo","IBM Plex Sans KR",system-ui,sans-serif;
+  --space-2:8px; --space-3:12px; --space-4:16px; --space-6:24px; --space-8:32px;
+  --shadow-lg:0 12px 32px color-mix(in srgb,#211e1c 22%, transparent);
+  --edge: clamp(20px, 5vw, 72px);
+  --ink-deep: var(--color-accent-2-900);
+  --display: "Fredoka", var(--font-heading);
+}
+*,*::before,*::after{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+@media (prefers-reduced-motion:reduce){ html{ scroll-behavior:auto; } *{ animation:none !important; } }
+body{ margin:0; background:var(--color-bg); color:var(--color-text); font-family:var(--font-body);
+  font-size:15px; line-height:1.55; text-wrap:pretty; overflow-x:hidden; }
+h1,h2,h3,h4{ font-family:var(--font-heading); font-weight:800; }
+:lang(ko) h1,:lang(ko) h2,:lang(ko) h3{ font-weight:700; word-break:keep-all; }
+:lang(ko) p{ word-break:keep-all; }
+img{ display:block; max-width:100%; }
+a{ color:inherit; }
+::selection{ background:color-mix(in srgb,var(--color-accent) 30%, transparent); }
+.wrap{ max-width:1280px; margin:0 auto; padding:0 var(--edge); }
+.star{ position:absolute; pointer-events:none; z-index:2; filter:drop-shadow(0 4px 10px rgba(0,0,0,.18)); }
+.star img{ width:var(--s,48px); height:auto; display:block; }
+
+/* NAV */
+.nav3{ position:sticky; top:0; z-index:50; background:var(--ink-deep); color:var(--color-neutral-100); }
+.nav3__row{ max-width:1280px; margin:0 auto; padding:14px var(--edge);
+  display:flex; align-items:center; justify-content:space-between; gap:var(--space-6); }
+.nav3__brand{ display:inline-flex; align-items:center; gap:10px; color:#fff;
+  font-family:var(--display); font-weight:700; font-size:20px; text-decoration:none; }
+.nav3__mark{ width:26px; height:26px; background:var(--color-accent-500); color:var(--ink-deep);
+  display:grid; place-items:center; font-family:var(--display); font-weight:700; font-size:15px; }
+.nav3__menu{ display:flex; align-items:center; gap:var(--space-8); }
+.nav3__menu a{ color:var(--color-neutral-300); font-size:13px; font-weight:600;
+  letter-spacing:.06em; text-transform:uppercase; text-decoration:none; }
+.nav3__menu a:hover,.nav3__menu a[aria-current="page"]{ color:#fff; }
+.nav3__menu a[aria-current="page"]{ color:var(--color-accent-400); }
+.nav3__cta{ background:var(--color-accent-500); color:var(--ink-deep)!important;
+  font-family:var(--font-heading); font-weight:800; font-size:13px; padding:9px 18px; }
+.nav3__cta:hover{ background:var(--color-accent-400); }
+.nav3__toggle{ display:none; background:none; border:0; color:#fff; font-size:22px; padding:4px 6px; }
+@media (max-width:760px){
+  .nav3__menu{ display:none; }
+  .nav3__toggle{ display:block; }
+  .nav3__menu.is-open{ display:flex; flex-direction:column; align-items:flex-start;
+    position:absolute; left:0; right:0; top:100%; background:var(--ink-deep);
+    padding:16px var(--edge) 22px; gap:16px; box-shadow:var(--shadow-lg); }
+}
+
+/* HERO */
+.phero{ position:relative; overflow:hidden; background:var(--ink-deep); color:var(--color-neutral-100);
+  padding: clamp(28px,4vw,52px) 0; }
+.phero::before{ content:""; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(50% 90% at 20% 50%, color-mix(in srgb,var(--color-accent-500) 38%, transparent), transparent 72%); }
+.phero__in{ position:relative; z-index:3; display:grid;
+  grid-template-columns:auto 1fr; gap:clamp(24px,5vw,64px); align-items:center; }
+.phero__eyebrow{ display:block; font-size:13px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--color-accent-400); font-weight:600; margin-bottom:12px; }
+.phero__title{ font-family:var(--display); font-weight:700; color:var(--color-accent-500);
+  font-size:clamp(44px,7vw,92px); line-height:.95; margin:0;
+  text-shadow:0 5px 0 color-mix(in srgb,var(--color-accent-800) 55%, transparent); }
+.phero__sub{ margin:0; max-width:42ch; color:var(--color-neutral-300);
+  font-size:clamp(15px,1.4vw,17px); line-height:1.7; }
+@media (max-width:720px){
+  .phero__in{ grid-template-columns:1fr; gap:16px; }
+}
+
+/* PROJECT LNB (서브내비) */
+.plnb{ position:sticky; top:53px; z-index:40; background:var(--color-bg);
+  border-bottom:2px solid var(--color-divider); }
+.plnb__row{ max-width:1280px; margin:0 auto; padding:0 var(--edge);
+  display:flex; align-items:center; gap:clamp(12px,3vw,32px); height:52px; overflow-x:auto; }
+.plnb__label{ font-family:var(--font-heading); font-weight:800; font-size:13px;
+  letter-spacing:.08em; text-transform:uppercase; color:var(--color-accent-700); white-space:nowrap; }
+.plnb__links{ display:flex; gap:clamp(10px,2vw,26px); }
+.plnb__links a{ font-size:14px; font-weight:600; white-space:nowrap; text-decoration:none;
+  color:color-mix(in srgb,var(--color-text) 58%, transparent);
+  padding:6px 2px; border-bottom:2px solid transparent; transition:color .15s, border-color .15s; }
+.plnb__links a:hover{ color:var(--color-text); }
+.plnb__links a.active{ color:var(--color-accent-700); border-bottom-color:var(--color-accent-500); }
+
+/* PROJECT BENTO (격자) */
+.projects{ padding: clamp(40px,6vw,80px) 0; }
+.projects__intro{ max-width:52ch; margin:0 0 clamp(24px,4vw,44px); font-size:clamp(16px,1.6vw,19px);
+  line-height:1.7; color:color-mix(in srgb,var(--color-text) 78%, transparent); }
+.projects__intro b{ color:var(--color-text); }
+.bento{ display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+.btile{ position:relative; border-radius:24px; overflow:hidden; min-height:clamp(280px,30vw,400px);
+  scroll-margin-top:120px; }
+.btile--img img{ width:100%; height:100%; object-fit:cover; display:block; }
+.btile--text{ display:flex; flex-direction:column; justify-content:center; padding:clamp(26px,3vw,48px); }
+.btile--pink{ background:var(--color-accent-500); --tcol:#fff; --tmut:rgba(255,255,255,.92); --tkick:rgba(255,255,255,.8); }
+.btile--cream{ background:var(--color-surface); --tcol:var(--ink-deep); --tmut:color-mix(in srgb,var(--color-text) 76%, transparent); --tkick:var(--color-accent-700); }
+.b-badge{ display:inline-flex; align-items:center; gap:7px; font-size:12px; font-weight:800;
+  letter-spacing:.04em; padding:6px 13px; border-radius:999px; margin-bottom:16px; width:max-content; }
+.btile--pink .b-badge{ background:rgba(255,255,255,.22); color:#fff; }
+.btile--pink .b-badge--live::before{ content:""; width:7px; height:7px; border-radius:50%; background:#fff; }
+.btile--cream .b-badge--live{ background:color-mix(in srgb,var(--success) 16%, transparent); color:var(--success); }
+.btile--cream .b-badge--live::before{ content:""; width:7px; height:7px; border-radius:50%; background:var(--success); }
+.btile--cream .b-badge--dev{ background:color-mix(in srgb,var(--color-text) 8%, transparent); color:color-mix(in srgb,var(--color-text) 60%, transparent); }
+.b-kicker{ display:block; font-size:12px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--tkick); font-weight:700; margin-bottom:8px; }
+.b-name{ font-family:var(--font-heading); font-weight:800; font-size:clamp(26px,3vw,40px);
+  letter-spacing:-.02em; margin:0 0 12px; color:var(--tcol); }
+.b-copy{ margin:0 0 18px; font-size:clamp(14px,1.4vw,16px); line-height:1.7; color:var(--tmut); max-width:42ch; }
+.b-tags{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; }
+.b-tag{ font-size:12px; font-weight:600; padding:5px 11px; border-radius:999px; }
+.btile--pink .b-tag{ background:rgba(255,255,255,.18); color:#fff; }
+.btile--cream .b-tag{ background:var(--color-bg); color:color-mix(in srgb,var(--color-text) 68%, transparent); }
+.b-cta{ display:inline-flex; align-items:center; gap:8px; width:max-content; font-family:var(--font-heading);
+  font-weight:800; font-size:14px; padding:12px 22px; border-radius:999px; text-decoration:none;
+  background:var(--ink-deep); color:#fff; transition:transform .15s cubic-bezier(.34,1.56,.64,1), background .15s; }
+.b-cta:hover{ transform:translateY(-2px); background:var(--color-accent-600); }
+.btile--pink .b-cta{ background:#fff; color:var(--ink-deep); }
+.btile--pink .b-cta:hover{ background:var(--ink-deep); color:#fff; }
+.b-cta--ghost{ background:none; color:var(--tcol); border:2px solid color-mix(in srgb,var(--tcol) 35%, transparent); }
+.b-cta--ghost:hover{ background:none; transform:translateY(-2px); }
+@media (max-width:760px){
+  .bento{ grid-template-columns:1fr; gap:12px; }
+  .btile{ min-height:0; }
+  .btile--img{ aspect-ratio:4/3; }
+  .btile--img.order-first{ order:-1; }
+}
+
+/* 리빌 */
+.r-up{ opacity:0; transform:translateY(34px); }
+.r-left{ opacity:0; transform:translateX(-60px) rotate(-4deg); }
+.r-right{ opacity:0; transform:translateX(60px) rotate(4deg); }
+.r-slL{ opacity:0; transform:translateX(-72px); }   /* 왼쪽→오른쪽 슬라이드(회전없음) */
+.r-slR{ opacity:0; transform:translateX(72px); }    /* 오른쪽→왼쪽 슬라이드(회전없음) */
+.r-up,.r-left,.r-right,.r-slL,.r-slR{ transition:opacity .8s ease, transform .9s cubic-bezier(.22,1,.36,1); }
+.is-in{ opacity:1 !important; transform:none !important; }
+@media (prefers-reduced-motion:reduce){ .r-up,.r-left,.r-right,.r-slL,.r-slR{ opacity:1; transform:none; transition:none; } }
+
+/* FOOTER (index 와 동일 — 크림 flush) */
+.icon{ width:20px; height:20px; flex:none; display:block; fill:currentColor; stroke:none; }
+.icon-sm{ width:16px; height:16px; }
+.foot3{ background:var(--color-bg); }
+.foot3 .wrap{ padding: clamp(48px,7vw,96px) var(--edge); }
+.foot3__top{ display:grid; grid-template-columns:auto 1fr; gap:clamp(24px,5vw,72px); align-items:start; }
+.foot3__mark{ width:110px; height:64px; position:relative; flex:none; }
+.foot3__mark::before,.foot3__mark::after{ content:""; position:absolute; top:0; height:64px; background:#000; border-radius:50%; }
+.foot3__mark::before{ left:0; width:52px; }
+.foot3__mark::after{ left:44px; width:64px; }
+.foot3__list{ display:grid; gap:0; }
+.foot3__item{ text-align:right; padding:var(--space-4) 0; border-bottom:2px solid var(--color-divider); }
+.foot3__item:first-child{ border-top:2px solid var(--color-divider); }
+.foot3__item h3{ margin:0 0 6px; font-family:var(--font-heading); font-weight:800; font-size:clamp(20px,2.4vw,28px);
+  color:var(--ink-deep); display:inline-flex; align-items:center; gap:10px; }
+.foot3__item h3 .bx{ width:18px; height:18px; color:var(--color-accent-500); }
+.foot3__item p{ margin:0; color:color-mix(in srgb,var(--color-text) 66%, transparent); font-size:14px; line-height:1.6; }
+.foot3__contact{ margin-top:clamp(32px,5vw,56px); }
+.foot3__contact h4{ margin:0 0 12px; font-family:var(--font-heading); font-weight:800; font-size:15px;
+  letter-spacing:.06em; text-transform:uppercase; }
+.foot3__contact p{ margin:4px 0; display:flex; align-items:center; gap:8px; font-size:14px; }
+.foot3__contact a{ color:var(--color-accent-700); text-decoration:none; }
+.foot3__contact a:hover{ color:var(--color-accent-800); }
+.foot3__links{ margin-top:clamp(28px,4vw,44px); font-size:13px; color:color-mix(in srgb,var(--color-text) 66%, transparent); }
+.foot3__links a{ color:var(--color-accent-700); text-decoration:none; }
+.foot3__links a:hover{ color:var(--color-accent-800); text-decoration:underline; }
+.foot3__copy{ margin-top:var(--space-4); font-size:12px; color:color-mix(in srgb,var(--color-text) 55%, transparent); }
+@media (max-width:640px){
+  .foot3__top{ grid-template-columns:1fr; }
+  .foot3__item{ text-align:left; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav3">
+  <div class="nav3__row">
+    <a href="./" class="nav3__brand"><span class="nav3__mark">w</span>woo-hoo</a>
+    <button class="nav3__toggle" aria-label="메뉴 열기" aria-expanded="false">☰</button>
+    <div class="nav3__menu">
+      <a href="./projects.html" aria-current="page">Projects</a>
+      <a href="./devlog.html">Dev-log</a>
+      <a href="./watch-notes.html">Watch-notes</a>
+      <a href="mailto:dewbian1017@gmail.com" class="nav3__cta">Talk to me</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="phero">
+  <span class="star" style="bottom:12%; left:6%;"><img src="assets/heart.png" alt="" style="--s:46px;"></span>
+  <span class="star" style="top:22%; right:9%;"><img src="assets/heart.png" alt="" style="--s:56px;"></span>
+  <div class="wrap phero__in">
+    <div class="phero__left">
+      <span class="phero__eyebrow">내가 직접 매일 쓰고 싶은가</span>
+      <h1 class="phero__title">Projects</h1>
+    </div>
+    <p class="phero__sub">작게, 계속 만드는 1인 스튜디오의 앱.<br><b>“내가 직접 매일 쓰고 싶은가”</b>를 통과한 아이디어만 만듭니다.<br>한 번에 하나씩, <b>끝까지 굴려 보는</b> 것을 원칙으로 합니다.</p>
+  </div>
+</header>
+
+<!-- PROJECT LNB -->
+<nav class="plnb" aria-label="프로젝트 목록">
+  <div class="plnb__row"> 
+    <div class="plnb__links">
+      <a href="#self-check-study">self-check-study</a>
+      <a href="#make-money">make-money</a>
+      <a href="#googsky">googSky</a>
+    </div>
+  </div>
+</nav>
+
+<!-- LIST -->
+<main class="projects">
+  <div class="wrap">
+    <p class="projects__intro r-up">“내가 직접 매일 쓰고 싶은가”를 통과한 아이디어만 만듭니다. 한 번에 하나씩, <b>끝까지 굴려 보는</b> 것을 원칙으로 합니다.</p>
+
+    <div class="bento">
+      <!-- 1. self-check-study (Live) -->
+      <div class="btile btile--text btile--pink r-up" id="self-check-study">
+        <span class="b-badge b-badge--live">Live · Google Play</span>
+        <span class="b-kicker">Android · 교육 · 학습 일기</span>
+        <h2 class="b-name">self-check-study</h2>
+        <p class="b-copy">중·고등학생이 스스로 공부 일정을 등록하고, 체크리스트를 <b>도장</b>으로 완성해 카톡으로 자랑하는 학습 일기 앱.</p>
+        <div class="b-tags"><span class="b-tag">도장 인터랙션</span><span class="b-tag">공유 카드</span><span class="b-tag">오프라인 100%</span></div>
+        <a class="b-cta" href="https://play.google.com/store/apps/details?id=kr.woohoo.self_check_study" target="_blank" rel="noopener">구글플레이에서 받기 →</a>
+      </div>
+      <div class="btile btile--img r-slR"><img src="assets/card2.png" alt="선물상자를 든 페르시안 고양이 — self-check-study" loading="lazy"></div>
+
+      <!-- 2. make-money (Dev) -->
+      <div class="btile btile--img order-first r-slL"><img src="assets/card1.png" alt="데이터를 건져 올리는 페르시안 고양이 — make-money" loading="lazy"></div>
+      <div class="btile btile--text btile--cream r-up" id="make-money">
+        <span class="b-badge b-badge--dev">개발 중</span>
+        <span class="b-kicker">Pipeline · 뉴스 · 자동 발행</span>
+        <h2 class="b-name">make-money</h2>
+        <p class="b-copy">하나의 원문 뉴스를 <b>관점별 페르소나</b>로 분기 생성해 자동 발행하는 콘텐츠 파이프라인. LLM 프롬프트 체인 + 큐 기반 분산 발행이 핵심.</p>
+        <div class="b-tags"><span class="b-tag">LLM 파이프라인</span><span class="b-tag">페르소나 분기</span><span class="b-tag">자동 발행</span></div>
+        <a class="b-cta b-cta--ghost" href="./devlog.html">개발로그 보기 →</a>
+      </div>
+
+      <!-- 3. googSky (Dev) -->
+      <div class="btile btile--text btile--pink r-up" id="googsky">
+        <span class="b-badge">개발 중</span>
+        <span class="b-kicker">Android · 교육 · 입시</span>
+        <h2 class="b-name">googSky</h2>
+        <p class="b-copy">과목별 <b>등급만 입력</b>하면 안정·적정·도전권으로 지원 가능 대학을 정리해 주는 입시 컨설팅 앱. 등급은 로컬에만 저장합니다.</p>
+        <div class="b-tags"><span class="b-tag">안정성 점수</span><span class="b-tag">로컬 저장</span><span class="b-tag">입시 데이터</span></div>
+        <a class="b-cta b-cta--ghost" href="./devlog.html">개발로그 보기 →</a>
+      </div>
+      <div class="btile btile--img r-slR"><img src="assets/card3.png" alt="터미널 앞의 페르시안 고양이 — googSky" loading="lazy"></div>
+    </div>
+
+  </div>
+</main>
+
+<!-- FOOTER (index 와 동일) -->
+<footer class="foot3" id="talk">
+  <div class="wrap">
+    <div class="foot3__top">
+      <div class="foot3__mark" aria-hidden="true"></div>
+      <div class="foot3__list">
+        <div class="foot3__item">
+          <h3>Clear Communication <svg class="bx" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21 11l-6.6 2.1L12 20l-2.4-6.9L3 11l6.6-2.1L12 2z"/></svg></h3>
+          <p>Friendly, seamless dialogue that captures every nuance of your requirements.</p>
+        </div>
+        <div class="foot3__item">
+          <h3>Extensive Experience <svg class="bx" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21 11l-6.6 2.1L12 20l-2.4-6.9L3 11l6.6-2.1L12 2z"/></svg></h3>
+          <p>High-performance PHP architecture, modern refactoring, and smooth app packaging.</p>
+        </div>
+        <div class="foot3__item">
+          <h3>Reliable &amp; Scalable <svg class="bx" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.9L21 11l-6.6 2.1L12 20l-2.4-6.9L3 11l6.6-2.1L12 2z"/></svg></h3>
+          <p>Bulletproof backend and fast troubleshooting built to last for years to come.</p>
+        </div>
+      </div>
+    </div>
+    <div class="foot3__contact">
+      <h4>Contact</h4>
+      <p><svg class="icon icon-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2h10a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm5 17a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/></svg> 010-3054-1538</p>
+      <p><svg class="icon icon-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M2 5h20v14H2V5zm2 2v.4l8 5 8-5V7H4zm16 2.6-8 5-8-5V17h16V9.6z"/></svg> <a href="mailto:dewbian1017@gmail.com">dewbian1017@gmail.com</a></p>
+    </div>
+    <p class="foot3__links">
+      <a href="./">Home</a> · <a href="./about.html">About</a> · <a href="./devlog.html">Dev-log</a> · <a href="./watch-notes.html">Watch-notes</a> · <a href="./privacy.html">개인정보처리방침</a>
+    </p>
+    <p class="foot3__copy">© 2026 woo-hoo.kr</p>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var t=document.querySelector('.nav3__toggle'), m=document.querySelector('.nav3__menu');
+    if(t&&m){ t.addEventListener('click',function(){ var o=m.classList.toggle('is-open'); t.setAttribute('aria-expanded',o?'true':'false'); });
+      m.querySelectorAll('a').forEach(function(a){ a.addEventListener('click',function(){ m.classList.remove('is-open'); }); }); }
+  })();
+  (function(){
+    var els=document.querySelectorAll('.r-up,.r-left,.r-right,.r-slL,.r-slR');
+    if(!els.length) return;
+    if(!('IntersectionObserver' in window)||matchMedia('(prefers-reduced-motion: reduce)').matches){ els.forEach(function(e){e.classList.add('is-in');}); return; }
+    var io=new IntersectionObserver(function(en){ en.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('is-in'); io.unobserve(e.target); } }); }, { threshold:0.2, rootMargin:'0px 0px -10% 0px' });
+    els.forEach(function(e){ io.observe(e); });
+  })();
+  /* LNB 스크롤스파이 — 현재 보이는 프로젝트 링크 활성화 */
+  (function(){
+    var links=[].slice.call(document.querySelectorAll('.plnb__links a'));
+    if(!links.length) return;
+    var map={}; links.forEach(function(a){ map[a.getAttribute('href').slice(1)]=a; });
+    var secs=[].slice.call(document.querySelectorAll('.btile[id]'));
+    var io=new IntersectionObserver(function(en){
+      en.forEach(function(e){
+        if(e.isIntersecting){
+          links.forEach(function(a){ a.classList.remove('active'); });
+          if(map[e.target.id]) map[e.target.id].classList.add('active');
+        }
+      });
+    }, { rootMargin:'-120px 0px -55% 0px', threshold:0 });
+    secs.forEach(function(s){ io.observe(s); });
+  })();
+</script>
+</body>
+</html>

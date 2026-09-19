@@ -1,0 +1,284 @@
+<!-- @template name="Developer Persian (v3) — C+: depth-map + 선글라스 리빌 + 액티브 모션" description="히어로 마스코트를 WebGL depth displacement로 렌더. landonorris.com 무드의 액티브 커서 모션(캔버스 3D틸트+하트 시차+스포트라이트) + 커서가 고양이에 가까워지면 선글라스를 벗은 미소 얼굴로 크로스페이드. 뎁스맵 자동 생성. 테스트 컨트롤 포함. -->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>woo-hoo.kr — Developer Persian (C+ reveal)</title>
+<meta name="description" content="depth-map WebGL 시차 + 선글라스 리빌 + 액티브 커서 모션 테스트." />
+<meta name="robots" content="noindex, nofollow" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Archivo:wght@400;600;800&family=IBM+Plex+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --color-bg:#fef7ec; --color-text:#14100e;
+  --color-accent-400:#fb96ba; --color-accent-500:#f76b9f; --color-accent-700:#b92e63;
+  --color-neutral-100:#fdf6ea; --color-neutral-300:#d8cfc4; --color-accent-2-900:#100e0d;
+  --font-heading:"Archivo","IBM Plex Sans KR",system-ui,sans-serif;
+  --font-body:"Archivo","IBM Plex Sans KR",system-ui,sans-serif;
+  --display:"Fredoka",var(--font-heading);
+  --edge:clamp(20px,5vw,72px); --ink-deep:var(--color-accent-2-900);
+  --shadow-lg:0 12px 32px color-mix(in srgb,#211e1c 22%, transparent);
+}
+*,*::before,*::after{ box-sizing:border-box; }
+body{ margin:0; background:var(--color-bg); color:var(--color-text);
+  font-family:var(--font-body); font-size:15px; line-height:1.55; overflow-x:hidden; text-wrap:pretty; }
+h1,h2{ font-family:var(--font-heading); font-weight:800; }
+:lang(ko) h1,:lang(ko) h2{ font-weight:700; word-break:keep-all; }
+html{ scroll-behavior:smooth; }
+@media (prefers-reduced-motion:reduce){ *{ animation:none !important; } }
+.wrap{ max-width:1280px; margin:0 auto; padding:0 var(--edge); }
+.sr-only{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
+
+/* ═══ NAV ═══ */
+.nav3{ position:sticky; top:0; z-index:50; background:var(--ink-deep); color:var(--color-neutral-100); }
+.nav3__row{ max-width:1280px; margin:0 auto; padding:14px var(--edge); display:flex; align-items:center; justify-content:space-between; }
+.nav3__brand{ display:inline-flex; align-items:center; gap:10px; color:#fff; font-family:var(--display); font-weight:700; font-size:20px; text-decoration:none; }
+.nav3__mark{ width:26px; height:26px; background:var(--color-accent-500); color:var(--ink-deep); display:grid; place-items:center; font-family:var(--display); font-weight:700; font-size:15px; }
+.nav3__menu{ display:flex; gap:24px; }
+.nav3__menu a{ color:var(--color-neutral-300); font-size:13px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; text-decoration:none; }
+.nav3__menu a:hover{ color:#fff; }
+
+/* ═══ HERO ═══ */
+.hero3{ position:relative; background:var(--ink-deep); overflow:hidden; padding:clamp(36px,5vw,72px) 0 0; }
+.hero3::before{ content:""; position:absolute; inset:0; pointer-events:none;
+  background:
+    radial-gradient(58% 55% at 80% 32%, color-mix(in srgb,var(--color-accent-500) 45%, transparent), transparent 70%),
+    radial-gradient(50% 45% at 12% 88%, color-mix(in srgb,var(--color-accent-700) 32%, transparent), transparent 70%); }
+/* landonorris식 커서 스포트라이트 */
+.hero3__spot{ position:absolute; z-index:1; width:520px; height:520px; left:0; top:0; margin:-260px 0 0 -260px;
+  pointer-events:none; border-radius:50%; opacity:0; transition:opacity .4s ease;
+  background:radial-gradient(circle, rgba(251,150,186,.28) 0%, rgba(247,107,159,.12) 40%, transparent 70%);
+  mix-blend-mode:screen; will-change:transform; }
+.hero3.is-live .hero3__spot{ opacity:1; }
+.hero3__stage{ position:relative; z-index:3; text-align:center; }
+.hero3__eyebrow{ display:block; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--color-accent-400); font-weight:600; margin-bottom:20px; animation:fadeUp .6s ease .1s both; }
+.stage{ position:relative; margin:0 auto; max-width:900px; padding-bottom:clamp(48px,8vw,130px); }
+.stage__title{ margin:0; position:relative; z-index:1; }
+.hero3__title-wrap{ display:inline-block; }
+.hero3__title{ display:block; width:100%; max-width:clamp(340px,68vw,800px); height:auto; margin:0 auto; will-change:transform; }
+.stage__cat{ position:absolute; left:50%; bottom:0; transform:translateX(-50%); width:clamp(220px,34vw,420px); z-index:5; }
+.hero3__mascot-wrap{ display:block; position:relative; }
+.hero3__mascot{ display:block; width:100%; height:auto; filter:drop-shadow(0 22px 46px rgba(247,107,159,.42)); }
+.hero3__mascot-canvas{ aspect-ratio:1/1; will-change:transform; transform-origin:50% 60%; }
+/* 리빌 힌트 배지 */
+.hero3__hint{ position:absolute; left:50%; bottom:calc(100% + 6px); transform:translateX(-50%) translateY(6px);
+  font-size:11px; letter-spacing:.06em; color:#fff; background:rgba(247,107,159,.9); padding:5px 12px; border-radius:999px;
+  white-space:nowrap; opacity:0; transition:opacity .3s ease, transform .3s ease; pointer-events:none; }
+.hero3__mascot-wrap:hover .hero3__hint{ opacity:0; }
+.hero3.is-live .hero3__hint{ opacity:0; }
+@media (max-width:600px){ .stage{ padding-bottom:clamp(120px,40vw,200px); } .stage__cat{ width:52vw; } }
+
+@keyframes titleEnter{ 0%{ opacity:0; transform:scale(.5) translateY(12px) } 65%{ opacity:1; transform:scale(1.05) } 100%{ opacity:1; transform:scale(1) } }
+@keyframes catEnter{ 0%{ opacity:0; transform:translateY(84px) scale(.7) } 60%{ opacity:1; transform:translateY(-12px) scale(1.06) } 100%{ opacity:1; transform:translateY(0) scale(1) } }
+@keyframes fadeUp{ from{ opacity:0; transform:translateY(16px) } to{ opacity:1; transform:translateY(0) } }
+@keyframes floatY{ 0%,100%{ transform:translateY(0) rotate(0) } 50%{ transform:translateY(-12px) rotate(-1deg) } }
+.hero3__title-wrap{ animation:titleEnter 1s cubic-bezier(.34,1.56,.64,1) .25s both, floatY 5.5s ease-in-out 1.4s infinite; }
+.hero3__mascot-wrap{ animation:catEnter 1s cubic-bezier(.34,1.56,.64,1) .8s both; }
+
+/* 하트 (커서 시차 대상) */
+.star{ position:absolute; width:var(--s,40px); height:var(--s,40px); pointer-events:none; z-index:2; will-change:transform;
+  filter:drop-shadow(0 4px 10px rgba(0,0,0,.18)); }
+.star img{ width:100%; height:100%; display:block; object-fit:contain; }
+@keyframes heartPop{ 0%{ opacity:0; transform:scale(0) rotate(var(--r,0)) } 55%{ opacity:1; transform:scale(1.28) rotate(var(--r,0)) } 78%{ transform:scale(.92) rotate(var(--r,0)) } 100%{ opacity:1; transform:scale(1) rotate(var(--r,0)) } }
+.hpop{ opacity:0; transform-origin:center; animation:heartPop .7s cubic-bezier(.34,1.56,.64,1) var(--d,.4s) both; }
+
+/* 컨트롤 패널 */
+.cdev{ position:fixed; right:16px; bottom:16px; z-index:80; width:252px; background:rgba(16,14,13,.92); color:#fdf6ea;
+  border:1px solid rgba(255,255,255,.14); border-radius:14px; padding:14px 16px; font:12px/1.5 var(--font-body); backdrop-filter:blur(8px); box-shadow:0 12px 32px rgba(0,0,0,.4); }
+.cdev h4{ margin:0 0 10px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--color-accent-400); }
+.cdev .row{ margin:9px 0; }
+.cdev .rh{ display:flex; justify-content:space-between; margin-bottom:4px; }
+.cdev .rh b{ color:#fff; }
+.cdev input[type=range]{ width:100%; accent-color:var(--color-accent-500); }
+.cdev label.ck{ display:flex; align-items:center; gap:8px; margin-top:6px; cursor:pointer; }
+.cdev .st{ margin-top:10px; padding:8px 10px; border-radius:8px; background:rgba(255,255,255,.06); color:#cfc7be; font-size:11px; }
+.cdev .st b{ color:var(--color-accent-400); }
+</style>
+</head>
+<body>
+
+<nav class="nav3">
+  <div class="nav3__row">
+    <a href="#top" class="nav3__brand"><span class="nav3__mark">w</span>woo-hoo</a>
+    <div class="nav3__menu">
+      <a href="./index.html">A</a>
+      <a href="./index2.html">C</a>
+      <a href="#top">C+ reveal</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero3" id="top">
+  <div class="hero3__spot" id="spot"></div>
+  <span class="star hpop" data-depth="46" style="--s:168px; top:9%; left:33%; --r:-12deg; --d:.4s;"><img src="assets/heart.png" alt="" onerror="this.style.display='none'"></span>
+  <span class="star hpop" data-depth="30" style="--s:116px; bottom:10%; left:28%; --r:10deg; --d:.9s;"><img src="assets/heart.png" alt="" onerror="this.style.display='none'"></span>
+  <span class="star hpop" data-depth="54" style="--s:152px; top:17%; right:9%; --r:8deg; --d:.55s;"><img src="assets/heart.png" alt="" onerror="this.style.display='none'"></span>
+  <span class="star hpop" data-depth="24" style="--s:104px; top:50%; left:12%; --r:-8deg; --d:.75s;"><img src="assets/heart.png" alt="" onerror="this.style.display='none'"></span>
+  <div class="wrap hero3__stage">
+    <span class="hero3__eyebrow">C+ · depth reveal · active cursor motion</span>
+    <div class="stage">
+      <h1 class="stage__title"><span class="hero3__title-wrap">
+        <img class="hero3__title" id="titleImg" src="assets/hero-title.png" alt="Developer Persian — woo-hoo.kr">
+      </span></h1>
+      <span class="stage__cat">
+        <span class="hero3__mascot-wrap">
+          <span class="hero3__hint" id="hint">👆 다가가면 선글라스를 벗어요</span>
+          <img class="hero3__mascot" id="catImg" src="assets/hero-cat.png" alt="핑크 후드 페르시안 고양이 개발자 마스코트">
+          <canvas class="hero3__mascot hero3__mascot-canvas" id="catCanvas" width="540" height="540" hidden></canvas>
+        </span>
+      </span>
+    </div>
+  </div>
+</header>
+
+<section class="wrap" style="padding:48px 0 80px; text-align:center; color:#666">
+  <p style="max-width:60ch; margin:0 auto">
+    <b>C+ 테스트</b> · 히어로에서 마우스를 움직이면 뎁스맵 시차 + 캔버스 3D 틸트 + 하트 시차 + 스포트라이트가 함께 반응.
+    커서가 고양이에 <b>가까워질수록 선글라스를 벗은 미소 얼굴</b>로 크로스페이드.
+  </p>
+</section>
+
+<aside class="cdev" id="cdev" hidden>
+  <h4>C+ · Reveal Test</h4>
+  <div class="row"><div class="rh"><span>Depth strength</span><b id="vStr">11.0%</b></div><input id="ctStr" type="range" min="0" max="22" step="0.5" value="11"></div>
+  <div class="row"><div class="rh"><span>Reveal radius</span><b id="vRad">45%</b></div><input id="ctRad" type="range" min="15" max="80" step="1" value="45"></div>
+  <div class="row"><div class="rh"><span>Smoothing</span><b id="vSm">88%</b></div><input id="ctSm" type="range" min="50" max="97" step="1" value="88"></div>
+  <label class="ck"><input id="ctForce" type="checkbox"> 선글라스 벗김 고정</label>
+  <label class="ck"><input id="ctDepth" type="checkbox"> 뎁스맵 미리보기</label>
+  <div class="st" id="cStatus">initializing…</div>
+</aside>
+
+<script>
+(function(){
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hero=document.querySelector('.hero3');
+  var canvas=document.getElementById('catCanvas');
+  var catImg=document.getElementById('catImg');
+  if(reduce||!hero||!canvas) return;
+
+  var cdev=document.getElementById('cdev'), cStatus=document.getElementById('cStatus');
+  var ctStr=document.getElementById('ctStr'), ctRad=document.getElementById('ctRad'), ctSm=document.getElementById('ctSm');
+  var ctForce=document.getElementById('ctForce'), ctDepth=document.getElementById('ctDepth');
+  var vStr=document.getElementById('vStr'), vRad=document.getElementById('vRad'), vSm=document.getElementById('vSm');
+  var spot=document.getElementById('spot');
+  var titleImg=document.getElementById('titleImg');
+  var stars=[].slice.call(hero.querySelectorAll('.star'));
+
+  var gl=canvas.getContext('webgl',{alpha:true,premultipliedAlpha:false,antialias:true});
+  if(!gl){ if(cStatus)cStatus.textContent='WebGL 미지원 → 정적 이미지'; return; }
+
+  // 상태
+  var strength=0.11, revealRad=0.45, smooth=0.88, showDepth=false, force=false;
+  var tx=0,ty=0, x=0,y=0, mix=0, mixT=0, active=false, raf=null, ready=false;
+
+  // ── 셰이더: 두 텍스처(glasses/smile) depth 변위 후 mix ──
+  var VS='attribute vec2 aPos; varying vec2 vUv; void main(){ vUv=aPos*0.5+0.5; gl_Position=vec4(aPos,0.0,1.0); }';
+  var FS='precision mediump float;'
+    +'uniform sampler2D uA,uB,uDepth; uniform vec2 uMouse; uniform float uStrength,uMix,uShow; varying vec2 vUv;'
+    +'void main(){'
+    +'  float d=texture2D(uDepth,vUv).r;'
+    +'  vec2 off=uMouse*d*uStrength;'
+    +'  vec4 a=texture2D(uA,vUv+off);'
+    +'  vec4 b=texture2D(uB,vUv+off);'
+    +'  vec4 c=mix(a,b,uMix);'
+    +'  if(uShow>0.5){ gl_FragColor=vec4(vec3(d)*c.a,c.a); return; }'
+    +'  gl_FragColor=c;'
+    +'}';
+  function sh(t,s){ var o=gl.createShader(t); gl.shaderSource(o,s); gl.compileShader(o);
+    if(!gl.getShaderParameter(o,gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(o)); return o; }
+  var prog=gl.createProgram(); gl.attachShader(prog,sh(gl.VERTEX_SHADER,VS)); gl.attachShader(prog,sh(gl.FRAGMENT_SHADER,FS));
+  gl.linkProgram(prog); gl.useProgram(prog);
+  var buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+  var aPos=gl.getAttribLocation(prog,'aPos'); gl.enableVertexAttribArray(aPos); gl.vertexAttribPointer(aPos,2,gl.FLOAT,false,0,0);
+  var uA=gl.getUniformLocation(prog,'uA'), uB=gl.getUniformLocation(prog,'uB'), uD=gl.getUniformLocation(prog,'uDepth');
+  var uMouse=gl.getUniformLocation(prog,'uMouse'), uStrength=gl.getUniformLocation(prog,'uStrength'),
+      uMix=gl.getUniformLocation(prog,'uMix'), uShow=gl.getUniformLocation(prog,'uShow');
+
+  function mkTex(u){ var t=gl.createTexture(); gl.activeTexture(gl.TEXTURE0+u); gl.bindTexture(gl.TEXTURE_2D,t);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR); return t; }
+  var texA=mkTex(0), texB=mkTex(1), texD=mkTex(2);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,false);
+
+  function boxBlur(src,W,H,r){ var tmp=new Float32Array(W*H),o=new Float32Array(W*H),n=2*r+1,x,y,k,acc,ix;
+    for(y=0;y<H;y++)for(x=0;x<W;x++){acc=0;for(k=-r;k<=r;k++){ix=x+k;if(ix<0)ix=0;else if(ix>=W)ix=W-1;acc+=src[y*W+ix];}tmp[y*W+x]=acc/n;}
+    for(x=0;x<W;x++)for(y=0;y<H;y++){acc=0;for(k=-r;k<=r;k++){ix=y+k;if(ix<0)ix=0;else if(ix>=H)ix=H-1;acc+=tmp[ix*W+x];}o[y*W+x]=acc/n;} return o; }
+  function buildDepth(img){ var W=192,H=192,c=document.createElement('canvas'); c.width=W;c.height=H;
+    var cx=c.getContext('2d'); cx.drawImage(img,0,0,W,H); var d=cx.getImageData(0,0,W,H).data, a=new Float32Array(W*H),i;
+    for(i=0;i<W*H;i++)a[i]=d[i*4+3]/255; a=boxBlur(a,W,H,10); a=boxBlur(a,W,H,10);
+    var out=cx.createImageData(W,H),px,py,j,nx,ny,rad,v,g;
+    for(py=0;py<H;py++)for(px=0;px<W;px++){ j=py*W+px; nx=px/W-0.5; ny=py/H-0.52;
+      rad=1-Math.min(1,Math.sqrt(nx*nx+ny*ny)*1.35); v=a[j]*(0.55+0.45*Math.max(0,rad)); v=Math.pow(Math.max(0,Math.min(1,v)),0.8);
+      g=Math.round(v*255); out.data[j*4]=g;out.data[j*4+1]=g;out.data[j*4+2]=g;out.data[j*4+3]=255; }
+    cx.putImageData(out,0,0); return c; }
+
+  function loadImg(src){ return new Promise(function(res,rej){ var im=new Image(); im.crossOrigin='anonymous';
+    im.onload=function(){res(im);}; im.onerror=function(){rej(src);}; im.src=src; }); }
+
+  Promise.all([loadImg('assets/hero-cat.png'), loadImg('assets/cat-nogl.png')]).then(function(r){
+    var a=r[0], b=r[1];
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,texA); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,a);
+    gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D,texB); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,b);
+    gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D,texD); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,buildDepth(a));
+    ready=true; catImg.style.display='none'; canvas.hidden=false; if(cdev)cdev.hidden=false;
+    if(cStatus)cStatus.innerHTML='textures: <b>glasses + smile</b> · depth auto · ready';
+    kick();
+  }).catch(function(e){ if(cStatus)cStatus.textContent='이미지 로드 실패: '+e; });
+
+  function render(){
+    var k=1-smooth;
+    x+=(tx-x)*k; y+=(ty-y)*k;
+    mixT = force?1:mixT;
+    mix+=(mixT-mix)*0.12;
+
+    // WebGL: depth 변위 + 크로스페이드
+    gl.viewport(0,0,canvas.width,canvas.height); gl.clearColor(0,0,0,0); gl.clear(gl.COLOR_BUFFER_BIT); gl.useProgram(prog);
+    gl.uniform1i(uA,0); gl.uniform1i(uB,1); gl.uniform1i(uD,2);
+    gl.uniform2f(uMouse,x,-y); gl.uniform1f(uStrength,strength); gl.uniform1f(uMix,mix); gl.uniform1f(uShow,showDepth?1:0);
+    gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+
+    // 캔버스 전체 3D 틸트(액티브 모션) + 리빌 시 미세 팝
+    var s=1+mix*0.05;
+    canvas.style.transform='perspective(760px) rotateY('+(x*14).toFixed(2)+'deg) rotateX('+(-y*10).toFixed(2)+'deg) scale('+s.toFixed(3)+')';
+    // 타이틀 반대 시차
+    if(titleImg) titleImg.style.transform='perspective(1200px) rotateY('+(x*7).toFixed(2)+'deg) rotateX('+(-y*4.5).toFixed(2)+'deg) translate('+(-x*12).toFixed(1)+'px,'+(-y*7).toFixed(1)+'px)';
+    // 하트 시차(깊이별)
+    for(var i=0;i<stars.length;i++){ var el=stars[i], d=+el.dataset.depth||30;
+      el.style.transform='translate('+(-x*d).toFixed(1)+'px,'+(-y*d).toFixed(1)+'px)'; }
+
+    if(active||Math.abs(tx-x)>0.0004||Math.abs(ty-y)>0.0004||Math.abs(mixT-mix)>0.002){ raf=requestAnimationFrame(render); } else { raf=null; }
+  }
+  function kick(){ if(ready&&!raf) raf=requestAnimationFrame(render); }
+
+  hero.addEventListener('mouseenter', function(){ hero.classList.add('is-live'); });
+  hero.addEventListener('mousemove', function(e){
+    var r=hero.getBoundingClientRect();
+    tx=(e.clientX-r.left)/r.width-0.5; ty=(e.clientY-r.top)/r.height-0.5;
+    // 스포트라이트
+    if(spot) spot.style.transform='translate('+(e.clientX-r.left)+'px,'+(e.clientY-r.top)+'px)';
+    // 커서-고양이 근접도 → 리빌 mix 타깃
+    if(!force){
+      var cr=canvas.getBoundingClientRect();
+      var cx=cr.left+cr.width*0.5, cy=cr.top+cr.height*0.52;
+      var dist=Math.hypot(e.clientX-cx, e.clientY-cy)/Math.hypot(r.width,r.height);
+      mixT=Math.max(0,Math.min(1,1-dist/revealRad));
+    }
+    active=true; kick();
+  });
+  hero.addEventListener('mouseleave', function(){ tx=0; ty=0; if(!force)mixT=0; active=false; hero.classList.remove('is-live'); kick(); });
+
+  // 컨트롤
+  if(ctStr)ctStr.addEventListener('input',function(){ strength=ctStr.value/100; vStr.textContent=Number(ctStr.value).toFixed(1)+'%'; kick(); });
+  if(ctRad)ctRad.addEventListener('input',function(){ revealRad=ctRad.value/100; vRad.textContent=ctRad.value+'%'; });
+  if(ctSm)ctSm.addEventListener('input',function(){ smooth=ctSm.value/100; vSm.textContent=ctSm.value+'%'; });
+  if(ctForce)ctForce.addEventListener('change',function(){ force=ctForce.checked; mixT=force?1:0; kick(); });
+  if(ctDepth)ctDepth.addEventListener('change',function(){ showDepth=ctDepth.checked; kick(); });
+})();
+</script>
+</body>
+</html>

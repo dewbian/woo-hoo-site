@@ -1,0 +1,60 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>screen mock test</title>
+<style>
+  body{margin:0;background:#222;display:grid;place-items:center;min-height:100vh}
+  .mock{position:relative;width:640px;max-width:92vw}
+  .mock__frame{display:block;width:100%;height:auto;position:relative;z-index:1;pointer-events:none}
+  .mock__screen{position:absolute;inset:0;z-index:2;overflow:hidden}
+  .mock__video{position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform;
+    object-fit:cover;                 /* 화면 꽉 채움 */
+    object-position:center;background:#e9e9ee;
+    border-radius:2%}                 /* CRT 모서리 곡률 흉내 */
+</style>
+
+<div class="mock" id="mock">
+  <div class="mock__screen">
+    <video class="mock__video" id="vid"
+           poster="assets/googsky-web-poster.jpg" autoplay muted loop playsinline preload="auto">
+      <source src="assets/googsky-web.mp4" type="video/mp4">
+      <source src="assets/googsky-web.webm" type="video/webm">
+    </video>
+  </div>
+  <img class="mock__frame" id="frame" src="assets/googsky-monitor.png" alt="googSky 데모">
+</div>
+
+<script>
+const IMG = 1254;                       // googsky-monitor.png natural size (square)
+const CORNERS = {                       // CRT screen inner corners in image px (TL,TR,BR,BL)
+  tl:[300,148], tr:[947,148], br:[947,598], bl:[300,598]
+};
+
+function computeMatrix(w,h,dst){        // maps rect(w,h) -> quad, as matrix3d
+  const from=[[0,0],[w,0],[w,h],[0,h]];
+  const to=[dst.tl,dst.tr,dst.br,dst.bl];
+  function adj(m){return[m[4]*m[8]-m[5]*m[7],m[2]*m[7]-m[1]*m[8],m[1]*m[5]-m[2]*m[4],
+    m[5]*m[6]-m[3]*m[8],m[0]*m[8]-m[2]*m[6],m[2]*m[3]-m[0]*m[5],
+    m[3]*m[7]-m[4]*m[6],m[1]*m[6]-m[0]*m[7],m[0]*m[4]-m[1]*m[3]];}
+  function mul(a,b){const c=[];for(let i=0;i<3;i++)for(let j=0;j<3;j++){let s=0;for(let k=0;k<3;k++)s+=a[3*i+k]*b[3*k+j];c[3*i+j]=s;}return c;}
+  function mv(m,v){return[m[0]*v[0]+m[1]*v[1]+m[2]*v[2],m[3]*v[0]+m[4]*v[1]+m[5]*v[2],m[6]*v[0]+m[7]*v[1]+m[8]*v[2]];}
+  function basis(p){const m=[p[0][0],p[1][0],p[2][0],p[0][1],p[1][1],p[2][1],1,1,1];
+    const v=mv(adj(m),[p[3][0],p[3][1],1]);return mul(m,[v[0],0,0,0,v[1],0,0,0,v[2]]);}
+  const A=basis(from),B=basis(to),C=mul(B,adj(A));
+  for(let i=0;i<9;i++)C[i]/=C[8];
+  return [C[0],C[3],0,C[6], C[1],C[4],0,C[7], 0,0,1,0, C[2],C[5],0,C[8]];
+}
+
+function apply(){
+  const frame=document.getElementById('frame'), vid=document.getElementById('vid');
+  const scale=frame.clientWidth/IMG;
+  const d={}; for(const k in CORNERS) d[k]=[CORNERS[k][0]*scale,CORNERS[k][1]*scale];
+  // video box = screen's own aspect so object-fit:cover centers without distortion
+  const sw=Math.hypot(d.tr[0]-d.tl[0], d.tr[1]-d.tl[1]);
+  const sh=Math.hypot(d.bl[0]-d.tl[0], d.bl[1]-d.tl[1]);
+  vid.style.width=sw+'px'; vid.style.height=sh+'px';
+  vid.style.transform='matrix3d('+computeMatrix(sw,sh,d).join(',')+')';
+}
+const vid=document.getElementById('vid');
+vid.addEventListener('loadedmetadata',apply);
+addEventListener('resize',apply); addEventListener('load',apply); apply();
+</script>

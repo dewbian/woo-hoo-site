@@ -1,0 +1,493 @@
+<!-- @template name="스크롤 배경전환(방법1) + 첫섹션 타이포 스크럽 데모" description="히어로(다크)→S1(라이트핑크)→S2(액센트)→S3(라이트핑크)→FAQ(서페이스)→풋터(다크) 스크롤 배경전환(IntersectionObserver+transition). S1은 핀 스크럽으로 문구 1~4 순차 등장 → 헤드라인 '말하면 바로 통하는 파트너' → 좌우로 갈라지며 중앙 이미지 작→큰 확대. -->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>배경전환 + 첫섹션 타이포 스크럽</title>
+<meta name="robots" content="noindex, nofollow" />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Archivo:wght@600;800;900&family=IBM+Plex+Sans+KR:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{ --fg:#fef7ec; }
+*{box-sizing:border-box}
+html{ background:#100e0d; color:var(--fg); transition:background-color .6s ease, color .6s ease; }
+@media (prefers-reduced-motion:reduce){ html{ transition:none; } }
+body{ margin:0; font-family:"Archivo","IBM Plex Sans KR",system-ui,sans-serif; color:var(--fg); }
+h1,h2{ font-family:"Archivo"; font-weight:800; letter-spacing:-.02em; }
+:lang(ko) h1,:lang(ko) h2{ word-break:keep-all; }
+.sec{ min-height:100vh; display:grid; place-items:center; text-align:center; padding:0 6vw; background:transparent; }
+.eyebrow{ font-size:13px; letter-spacing:.16em; text-transform:uppercase; opacity:.7; margin-bottom:16px; }
+.big{ font-size:clamp(30px,6vw,72px); line-height:1.08; margin:0; }
+.sub{ max-width:52ch; margin:20px auto 0; font-size:clamp(15px,1.6vw,19px); line-height:1.7; opacity:.85; }
+.badge{ position:fixed; left:16px; top:16px; z-index:30; font:12px/1 "IBM Plex Sans KR"; background:rgba(0,0,0,.4); color:#fff; padding:8px 12px; border-radius:999px; }
+
+/* 히어로(간이) */
+.s-hero .mark{ font-family:"Fredoka"; font-weight:700; font-size:clamp(40px,9vw,110px); }
+
+/* ═══ S1: 핀 스크럽 타이포 ═══ */
+.s1{ position:relative; }
+.s1-track{ height:340vh; position:relative; }        /* 스크럽 구간 */
+.s1-stick{ position:sticky; top:0; height:100vh; overflow:hidden; }
+.s1-dots{ position:absolute; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; }   /* 인터랙티브 도트 배경 */
+.s1-stage{ position:absolute; inset:0; display:grid; place-items:center; z-index:1; }
+/* 순차 문구 1~4 */
+.lines{ position:absolute; z-index:3; display:flex; flex-direction:column; align-items:flex-start; text-align:left;
+  gap:clamp(8px,1.6vw,20px); width:min(1120px,92vw); }
+.ln{ font-family:"Archivo"; font-weight:800; line-height:1.1; opacity:0; white-space:nowrap; will-change:transform,opacity; }
+/* 크기 제각각 + 벽돌 계단식 들여쓰기 */
+.ln:nth-child(1){ font-size:clamp(20px,3.2vw,40px); margin-left:0;   font-weight:700; }
+.ln:nth-child(2){ font-size:clamp(28px,5.4vw,68px); margin-left:9%; }
+.ln:nth-child(3){ font-size:clamp(22px,3.8vw,48px); margin-left:3%;  font-weight:700; }
+.ln:nth-child(4){ font-size:clamp(34px,6.8vw,88px); margin-left:16%; }
+@media (max-width:600px){
+  .ln:nth-child(2){ margin-left:6%; } .ln:nth-child(4){ margin-left:10%; }
+}
+/* 헤드라인(갈라짐) */
+.headline{ position:absolute; z-index:4; display:flex; align-items:center; justify-content:center;
+  gap:clamp(10px,2vw,26px); white-space:nowrap; margin:0; font-size:clamp(28px,6vw,80px); }
+.headline .h-left,.headline .h-right{ display:inline-block; opacity:0; will-change:transform,opacity; }
+/* 중앙 이미지 */
+.center-img{ position:absolute; z-index:2; width:clamp(200px,26vw,360px); height:auto;
+  opacity:0; transform:scale(.15); will-change:transform,opacity;
+  filter:drop-shadow(0 26px 48px rgba(40,8,32,.32)); }
+
+@media (prefers-reduced-motion:reduce){
+  .s1-track{ height:auto; }
+  .s1-stick{ position:static; height:auto; padding:14vh 0; }
+  .lines{ display:none; }
+  .headline .h-left,.headline .h-right{ opacity:1 !important; transform:none !important; }
+  .center-img{ opacity:1 !important; transform:none !important; position:relative; margin-top:24px; }
+}
+
+/* ═══ S2: 키네틱 타입 릴 (레퍼런스 배치 재현) ═══ */
+.s2{ position:relative; }
+.reel-track{ position:relative; height:780vh; }                 /* 4 씬 + 파이널(길게, 선물 체류) */
+.reel-stick{ position:sticky; top:0; height:100vh; overflow:hidden; }
+.reel-noise{ position:absolute; inset:0; pointer-events:none; opacity:.5; z-index:0;
+  background-image:radial-gradient(rgba(255,255,255,.14) 1px, transparent 1px); background-size:16px 16px; }
+.reel-scenes{ position:absolute; inset:0; }
+.scene{ position:absolute; inset:0; display:grid; place-items:center; opacity:0; visibility:hidden; will-change:opacity; }
+.layer-bg{ position:absolute; inset:0; display:grid; place-items:center; z-index:1;
+  font-family:"Archivo",sans-serif; font-weight:900; text-transform:uppercase;
+  font-size:clamp(120px,32vw,460px); line-height:.8; color:rgba(255,255,255,.10);
+  white-space:nowrap; letter-spacing:-.02em; pointer-events:none; user-select:none; will-change:transform; }
+.layer-main{ position:relative; z-index:3; padding:0 4vw; text-align:center; will-change:transform; }
+.word{ margin:0; font-family:"Archivo",system-ui,sans-serif; font-weight:800;   /* S1과 동일 폰트 */
+  font-size:clamp(76px,20vw,300px); line-height:.84; letter-spacing:-.03em; white-space:nowrap; color:#fff; }
+.word.is-long{ font-size:clamp(40px,8vw,140px); line-height:.96; letter-spacing:-.02em; white-space:normal; max-width:92vw; }
+.word.v-out{ color:transparent; -webkit-text-stroke:clamp(1.5px,.3vw,3px) #fff; }
+.word.v-ink{ color:#fff; }
+.layer-accent{ position:absolute; z-index:4; pointer-events:none; will-change:transform,opacity;
+  font-family:"Space Mono",ui-monospace,monospace; font-weight:700; color:rgba(255,255,255,.9);
+  font-size:clamp(11px,1.3vw,18px); letter-spacing:.2em; text-transform:uppercase; }
+.layer-accent.pos-tl{ top:20vh; left:7vw; } .layer-accent.pos-tr{ top:16vh; right:7vw; }
+.layer-accent.pos-bl{ bottom:20vh; left:8vw; } .layer-accent.pos-br{ bottom:18vh; right:8vw; }
+.reel-img{ position:absolute; z-index:2; width:clamp(200px,26vw,360px); height:auto;
+  will-change:transform,opacity; filter:drop-shadow(0 26px 48px rgba(40,8,32,.32)); }
+/* 파이널: 이미지는 대형 워드 뒤 저투명 배경으로 */
+.scene--final .reel-img{ z-index:1; opacity:.3; width:clamp(320px,42vw,640px); }
+.scene--final .word{ position:relative; z-index:3; }
+.scene--final .final-sub{ position:relative; z-index:3; }
+.scene--final .word{ font-size:clamp(38px,10vw,150px); }   /* 개인 실험실, 50% 축소 */
+.final-sub{ display:block; margin-top:26px; font-family:"Archivo",system-ui,sans-serif; font-weight:800;   /* S1과 동일 폰트 */
+  font-size:clamp(22px,3.4vw,48px); letter-spacing:-.01em; color:#fff; }   /* 서브카피 확대 */
+/* 파이널: 하트풍선 대량 뿅 + 중앙 선물상자 */
+.final-hearts{ position:absolute; inset:0; z-index:5; pointer-events:none; }
+.final-hearts .fh{ position:absolute; opacity:0; will-change:transform,opacity; transform-origin:center; }
+.final-hearts .fh img{ display:block; width:100%; height:auto; }
+.reel-decor{ position:absolute; inset:0; z-index:6; pointer-events:none; }
+.dec-gift{ position:absolute; left:50%; top:52%; transform:translate(-50%,-50%);
+  width:clamp(200px,26vw,380px); opacity:0; visibility:hidden;
+  filter:drop-shadow(0 22px 44px rgba(40,8,32,.45)); }
+.dec-gift img{ display:block; width:100%; height:auto; will-change:transform; }
+@media (max-width:859px){ .dec-gift{ width:clamp(150px,40vw,240px); } }
+/* HUD */
+.reel-hud{ position:absolute; inset:0; pointer-events:none; z-index:6;
+  font-family:"Space Mono",ui-monospace,monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:#fff; }
+.hud-label{ position:absolute; left:4vw; top:5vh; opacity:.6; }
+.hud-scroll{ position:absolute; left:4vw; bottom:5vh; opacity:.55; }
+.hud-index{ position:absolute; right:4vw; bottom:5vh; text-align:right; }
+.hud-index .cur{ font-family:"Archivo",sans-serif; font-weight:800; font-size:clamp(22px,3vw,40px); letter-spacing:0; line-height:1; }
+.hud-index .tot{ opacity:.5; }
+.hud-bar{ position:absolute; right:4vw; bottom:14vh; width:2px; height:22vh; background:rgba(255,255,255,.25); }
+.hud-bar i{ position:absolute; top:0; left:0; width:100%; height:0%; background:#fff; }
+@media (max-width:859px){
+  .word{ font-size:clamp(54px,18vw,120px); } .word.is-long{ font-size:clamp(30px,8vw,60px); }
+  .layer-bg{ font-size:clamp(90px,42vw,240px); } .hud-bar{ display:none; }
+}
+@media (prefers-reduced-motion:reduce){
+  .reel-track{ height:auto; } .reel-stick{ position:static; height:auto; }
+  .scene{ position:relative; opacity:1 !important; visibility:visible !important; min-height:76vh; }
+  .layer-bg{ display:none; }
+}
+
+/* ═══ S3(라이트핑크): 라인 리빌 카피 + 회전 디스코볼 조명 (핀 스크럽) ═══ */
+.s3{ position:relative; }
+.s3-track{ position:relative; height:340vh; }                 /* 리빌 + 더 긴 체류(가독 홀드) */
+.s3-stick{ position:sticky; top:0; height:100vh; overflow:hidden; display:flex; flex-direction:column;
+  align-items:center; justify-content:flex-end; padding:0 6vw clamp(5vh,8vh,11vh); }
+.s3-wrap{ width:min(1040px,92vw); position:relative; z-index:2; }
+.s3-copy{ display:flex; flex-direction:column; align-items:center; text-align:center; gap:clamp(6px,1vw,16px); }   /* 중앙 정렬 */
+.s3-ln{ margin:0; font-family:"Archivo"; font-weight:800;   /* S1 .ln과 동일 폰트 스택(한글 폴백까지 일치) */
+  line-height:1.15; letter-spacing:-.01em; color:#14100e; font-size:clamp(23px,3vw,39px); }
+/* S1식 페이드+상승 리빌(마스크·계단식 X, 스크럽 구동). 줄마다 크기 조금씩 다르게 */
+.s3-ln>span{ display:block; opacity:0; will-change:transform,opacity; }
+.s3-ln:nth-child(1){ font-size:clamp(22px,2.85vw,37px); }
+.s3-ln:nth-child(2){ font-size:clamp(24px,3.2vw,43px); }
+.s3-ln:nth-child(3){ font-size:clamp(21px,2.75vw,36px); }
+.s3-ln:nth-child(4){ font-size:clamp(25px,3.3vw,45px); }
+.s3-ln:nth-child(5){ font-size:clamp(23px,3.0vw,39px); }
+.s3-big{ font-weight:900; line-height:1.02; }
+.s3-ln:nth-child(6){ font-size:clamp(33px,4.8vw,62px); }
+.s3-ln:nth-child(7){ font-size:clamp(37px,5.5vw,70px); }
+.s3-big:first-of-type{ margin-top:clamp(12px,1.8vw,24px); }
+/* 상단 중앙: 천장에 매단 디스코볼 + 뒤 회전 5라이트 */
+.s3-right{ position:absolute; top:-7vh; left:50%; transform:translateX(-50%); z-index:1; pointer-events:none; }
+.s3-ball{ position:relative; z-index:2; width:clamp(210px,22.5vw,258px); transform-origin:50% 4%;   /* 150% 확대 */
+  animation:s3sway 6.5s ease-in-out infinite alternate;
+  filter:drop-shadow(0 24px 50px rgba(120,20,70,.34)); }
+.s3-ball img{ display:block; width:100%; height:auto; animation:s3squish 3.2s ease-in-out infinite; transform-origin:50% 72%; }
+/* A: 볼 실루엣으로 마스크한 광택 띠 좌↔우 순환 */
+.s3-sheen{ position:absolute; inset:0; pointer-events:none; z-index:3;
+  -webkit-mask:url(assets/s3/discoball.png) center/contain no-repeat; mask:url(assets/s3/discoball.png) center/contain no-repeat;
+  background:linear-gradient(100deg, transparent 32%, rgba(255,255,255,.35) 44%, rgba(255,255,255,.85) 50%, rgba(255,255,255,.35) 56%, transparent 68%);
+  background-size:240% 100%; mix-blend-mode:screen; opacity:.6; animation:s3sheen 3.2s linear infinite; }
+/* 볼 뒤 다크 패널: 볼 중심 방사형 다크 원 → 빔·스페클이 이 안에서 선명, 바깥은 핑크로 자연 페이드 */
+.s3-darkpanel{ position:absolute; left:50%; top:28%; width:150vmax; height:150vmax; transform:translate(-50%,-50%); z-index:0; pointer-events:none;
+  background:radial-gradient(circle at 50% 50%, #150912 0%, #1c0c17 26%, rgba(40,12,32,.55) 42%, rgba(251,150,186,0) 62%); }
+/* 방사형 갓레이(스타버스트): 볼 중심에서 사방으로 뻗는 얇은 광선, 천천히 회전 */
+.s3-godray{ position:absolute; left:50%; top:28%; width:220vmax; height:220vmax; transform:translate(-50%,-50%); z-index:1; pointer-events:none;
+  mix-blend-mode:screen; opacity:.55;
+  background:repeating-conic-gradient(from 0deg at 50% 50%, rgba(255,255,255,0) 0deg, rgba(255,255,255,.2) .55deg, rgba(255,255,255,0) 2.4deg);
+  -webkit-mask:radial-gradient(circle at 50% 50%, #000 0%, rgba(0,0,0,.55) 20%, transparent 50%);
+          mask:radial-gradient(circle at 50% 50%, #000 0%, rgba(0,0,0,.55) 20%, transparent 50%);
+  filter:blur(.4px); animation:s3ray 64s linear infinite; }
+@keyframes s3ray{ to{ transform:translate(-50%,-50%) rotate(360deg); } }
+/* 반사 스페클 점 필드(JS 생성) */
+.s3-speckle{ position:absolute; left:50%; top:28%; width:0; height:0; z-index:1; pointer-events:none;
+  animation:s3ray 120s linear infinite reverse; }
+.s3-speckle .sp{ position:absolute; border-radius:50%; will-change:opacity;
+  animation:s3twk var(--d,2s) ease-in-out var(--o,0s) infinite alternate; }
+@keyframes s3twk{ from{ opacity:.12; } to{ opacity:1; } }
+@keyframes s3sheen{ from{ background-position:135% 0 } to{ background-position:-135% 0 } }
+@keyframes s3squish{ 0%,100%{ transform:scaleX(1) } 50%{ transform:scaleX(.965) } }
+@keyframes s3sway{ from{ transform:rotate(-5deg) } to{ transform:rotate(5deg) } }
+@keyframes s3spin{ from{ transform:translate(-50%,-50%) rotate(0) } to{ transform:translate(-50%,-50%) rotate(360deg) } }
+/* 태블릿~소형 */
+@media (max-width:1000px){ .s3-ball{ width:clamp(180px,22vw,240px); } }
+@media (max-width:600px){ .s3-ball{ width:clamp(150px,40vw,210px); } .s3-stick{ padding-bottom:6vh; } }
+@media (prefers-reduced-motion:reduce){
+  .s3-track{ height:auto; } .s3-stick{ position:static; height:auto; padding:14vh 6vw; justify-content:flex-start; }
+  .s3-right{ position:static; transform:none; margin:0 auto 4vh; }
+  .s3-ln>span{ transform:none !important; opacity:1 !important; }
+  .s3-ball,.s3-sheen,.s3-godray,.s3-speckle{ animation:none; } .s3-godray,.s3-speckle{ display:none; }
+}
+</style>
+</head>
+<body>
+<div class="badge">방법1 배경전환 + S1 타이포 스크럽</div>
+
+<!-- 히어로(다크) -->
+<section class="sec s-hero" data-bg="#100e0d" data-fg="#fef7ec">
+  <div><span class="eyebrow">A 1-person dev lab</span><div class="mark">woo-hoo</div><p class="sub">스크롤 ↓ · 섹션마다 배경색이 바뀝니다</p></div>
+</section>
+
+<!-- S1(라이트핑크): 타이포 스크럽 -->
+<section class="s1" data-bg="#fb96ba" data-fg="#14100e">
+  <div class="s1-track">
+    <div class="s1-stick">
+      <canvas class="s1-dots" id="s1dots"></canvas>
+      <div class="s1-stage">
+        <div class="lines">
+          <span class="ln">답답한 개발 대화는 이제 그만.</span>
+          <span class="ln">밝은 에너지와 완벽한 소통으로</span>
+          <span class="ln">당신의 요구사항을 정확히 이해하고</span>
+          <span class="ln">결과물로 구현합니다.</span>
+        </div>
+        <img class="center-img" src="assets/card1.png" alt="파란 매직넷으로 데이터를 건져 올리는 페르시안 고양이 개발자" />
+        <h2 class="headline"><span class="h-left">말하면 바로</span><span class="h-right">통하는 파트너</span></h2>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S2(액센트핑크): 키네틱 타입 릴 (레퍼런스 배치) -->
+<section class="s2" data-bg="#f76b9f" data-fg="#ffffff">
+  <div class="reel-track">
+    <div class="reel-stick">
+      <div class="reel-noise" aria-hidden="true"></div>
+      <div class="reel-scenes">
+        <div class="scene">
+          <div class="layer-bg">PROCESS</div>
+          <div class="layer-main"><p class="word is-long">만드는 과정을.</p></div>
+        </div>
+        <div class="scene">
+          <div class="layer-bg">STUDIO</div>
+          <div class="layer-main"><p class="word is-long v-out">공유하는 1인 스튜디오.</p></div>
+        </div>
+        <div class="scene">
+          <div class="layer-bg">CRAFT</div>
+          <div class="layer-main"><p class="word is-long">기획 이해력과<br>감각적인 개발로</p></div>
+        </div>
+        <div class="scene">
+          <div class="layer-bg">SHIP</div>
+          <div class="layer-main"><p class="word is-long v-ink">움직이는 서비스만<br>올립니다.</p></div>
+        </div>
+        <div class="scene scene--final">
+          <div class="layer-bg">LAB</div>
+          <div class="layer-main"><h2 class="word">개인 실험실,</h2><span class="final-sub">유쾌하게 완성되는 프로젝트</span></div>
+        </div>
+      </div>
+      <!-- 파이널: 하트풍선 대량 뿅(JS 생성) + 중앙 선물상자 -->
+      <div class="final-hearts" id="finalHearts" aria-hidden="true"></div>
+      <div class="reel-decor" aria-hidden="true">
+        <span class="dec-gift"><img src="assets/s2/gift.png" alt="" onerror="this.parentNode.style.display='none'"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S3(라이트핑크): 라인 리빌 카피 + 회전 디스코볼 조명 -->
+<section class="s3" data-bg="#fb96ba" data-fg="#14100e">
+  <div class="s3-track"><div class="s3-stick">
+  <div class="s3-right" aria-hidden="true">
+    <div class="s3-ball"><img src="assets/s3/discoball.png" alt="회전하는 핑크·골드 디스코볼 조명" onerror="this.closest('.s3-ball').style.display='none'"><span class="s3-sheen"></span></div>
+  </div>
+  <div class="s3-wrap">
+    <div class="s3-left">
+      <div class="s3-copy">
+        <p class="s3-ln"><span>방치된 레거시 코드부터</span></p>
+        <p class="s3-ln"><span>고성능 시스템 구축까지</span></p>
+        <p class="s3-ln"><span>사용자의 진짜 니즈를 파악해</span></p>
+        <p class="s3-ln"><span>10년을 견디는</span></p>
+        <p class="s3-ln"><span>안정적인 백엔드를 만듭니다.</span></p>
+        <p class="s3-ln s3-big"><span>탄탄한 기술력</span></p>
+        <p class="s3-ln s3-big"><span>막힘없는 직통 소통</span></p>
+      </div>
+    </div>
+  </div>
+  <div class="s3-darkpanel" aria-hidden="true"></div>
+  <div class="s3-godray" aria-hidden="true"></div>
+  <div class="s3-speckle" id="s3speckle" aria-hidden="true"></div>
+  </div></div>
+</section>
+
+<!-- FAQ(서페이스) -->
+<section class="sec" data-bg="#f8ead7" data-fg="#14100e">
+  <div><span class="eyebrow">FAQ</span><h2 class="big">궁금한 것들,<br>먼저 답합니다.</h2><p class="sub">FAQ 섹션 · 서페이스 색.</p></div>
+</section>
+
+<!-- 풋터(다크) -->
+<footer class="sec" data-bg="#100e0d" data-fg="#fef7ec">
+  <div><span class="eyebrow">Talk to me</span><h2 class="big">함께 만들어요</h2><p class="sub">풋터 · 다크로 마무리.</p></div>
+</footer>
+
+<script>
+/* ── 방법1: 스크롤 배경 전환 (IntersectionObserver + transition) ── */
+(function(){
+  var root=document.documentElement;
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){
+      root.style.backgroundColor=e.target.dataset.bg;
+      root.style.setProperty('--fg', e.target.dataset.fg);
+    }});
+  }, { rootMargin:'-50% 0px -50% 0px' });
+  document.querySelectorAll('[data-bg]').forEach(function(s){ io.observe(s); });
+})();
+
+/* ── S1 타이포 스크럽 ── */
+(function(){
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var track=document.querySelector('.s1-track'); if(!track||reduce) return;
+  var lines=[].slice.call(document.querySelectorAll('.s1 .ln'));
+  var hL=document.querySelector('.s1 .h-left'), hR=document.querySelector('.s1 .h-right'), img=document.querySelector('.s1 .center-img');
+  function ss(a,b,x){ x=(x-a)/(b-a); x=x<0?0:x>1?1:x; return x*x*(3-2*x); }
+  var raf=null, mtx=0,mty=0,mmx=0,mmy=0,mraf=null;   // 마우스 시차용
+  function update(){ raf=null;
+    var vh=window.innerHeight, r=track.getBoundingClientRect(), total=track.offsetHeight-vh;
+    var p= total>0 ? Math.max(0,Math.min(1, -r.top/total)) : (r.top<=0?1:0);
+    var maxX=Math.min(300, window.innerWidth*0.24);
+    // 1~4 순차 등장, 헤드라인 오기 전 페이드아웃
+    var linesFade = 1 - ss(0.48,0.58,p);   /* 문구(특히 line4) 체류 늘림 */
+    for(var i=0;i<lines.length;i++){
+      var on=ss(0.03+i*0.085, 0.03+i*0.085+0.06, p);
+      var o=on*linesFade;
+      lines[i].style.opacity=o.toFixed(3);
+      lines[i].style.transform='translate('+(mmx*(14+i*4)).toFixed(1)+'px,'+(((1-on)*28)+mmy*(9+i*2)).toFixed(1)+'px)';
+    }
+    // 5. 헤드라인 등장
+    var hlOn=ss(0.52,0.64,p);
+    // 6. 갈라짐 + 중앙 이미지 작→큰
+    var part=ss(0.66,0.90,p);
+    var iOp=ss(0.66,0.78,p), iScale=0.15 + ss(0.66,0.96,p)*0.95;
+    if(hL){ hL.style.opacity=hlOn.toFixed(3); hL.style.transform='translate('+((-part*maxX*0.72)+mmx*24).toFixed(1)+'px,'+(mmy*14).toFixed(1)+'px)'; } /* '말하면 바로' 조금 더 벌림 + 시차 */
+    if(hR){ hR.style.opacity=hlOn.toFixed(3); hR.style.transform='translate('+(( part*maxX)+mmx*24).toFixed(1)+'px,'+(mmy*14).toFixed(1)+'px)'; }
+    if(img){ img.style.opacity=iOp.toFixed(3); img.style.transform='translate('+(mmx*30).toFixed(1)+'px,'+(mmy*18).toFixed(1)+'px) scale('+iScale.toFixed(3)+')'; }
+  }
+  // 마우스 이동 시 글자·이미지 미세 시차(EMA)
+  function mloop(){ mmx+=(mtx-mmx)*0.08; mmy+=(mty-mmy)*0.08; update();
+    if(Math.abs(mtx-mmx)>0.001||Math.abs(mty-mmy)>0.001){ mraf=requestAnimationFrame(mloop); } else { mraf=null; } }
+  window.addEventListener('mousemove', function(e){ mtx=e.clientX/innerWidth-0.5; mty=e.clientY/innerHeight-0.5; if(!mraf) mraf=requestAnimationFrame(mloop); });
+  function onScroll(){ if(!raf) raf=requestAnimationFrame(update); }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  window.addEventListener('resize', onScroll);
+  update();
+})();
+
+/* ── S2 키네틱 타입 릴 (씬 순환 + 커서 시차) ── */
+(function(){
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var track=document.querySelector('.reel-track'); if(!track||reduce) return;
+  var scenes=[].slice.call(document.querySelectorAll('.s2 .scene'));
+  var N=scenes.length;
+  var giftEl=document.querySelector('.s2 .dec-gift'), giftImg=giftEl&&giftEl.querySelector('img');
+  function ss(a,b,x){ x=(x-a)/(b-a); x=x<0?0:x>1?1:x; return x*x*(3-2*x); }
+  function eob(t){ if(t<=0)return 0; var c1=1.70158,c3=c1+1,x=t-1; return 1+c3*x*x*x+c1*x*x; }  // easeOutBack(뿅)
+  // 하트풍선 대량 생성(결정적 난수로 배치 고정)
+  var HEARTS=[], hostFH=document.getElementById('finalHearts');
+  (function(){ if(!hostFH) return; var srcs=['assets/s2/heart-holo.png','assets/s2/heart-glossy.png','assets/s2/heart3.png','assets/s2/heart4.png'];
+    var seed=20260918; function rnd(){ seed=(seed*1103515245+12345)&0x7fffffff; return seed/0x7fffffff; }
+    var CNT=26;
+    for(var k=0;k<CNT;k++){ var cx=24+rnd()*52, cy=22+rnd()*54, size=110+rnd()*185;  // 크게 + 중앙 밀집
+      var dx=cx-50, dy=cy-52, mag=Math.max(1,Math.hypot(dx,dy));
+      var el=document.createElement('span'); el.className='fh';
+      el.style.left=cx+'%'; el.style.top=cy+'%'; el.style.width=size+'px';
+      el.style.marginLeft=(-size/2)+'px'; el.style.marginTop=(-size/2)+'px';
+      var im=document.createElement('img'); im.src=srcs[k%4]; im.alt=''; el.appendChild(im); hostFH.appendChild(el);
+      HEARTS.push({el:el, nx:dx/mag, ny:dy/mag, ord:k, rot:(rnd()*40-20)}); }
+  })();
+  var raf=null, mtx=0,mty=0,mmx=0,mmy=0,mraf=null;
+  var pStart=(N-2)/(N-1);   // 파이널 스크럽 시작(마지막 구간)
+  function update(){ raf=null;
+    var vh=innerHeight, r=track.getBoundingClientRect(), total=track.offsetHeight-vh;
+    var p= total>0 ? Math.max(0,Math.min(1,-r.top/total)) : (r.top<=0?1:0);
+    var fp=Math.max(0,Math.min(1,(p-pStart)/(1-pStart)));   // 파이널 스크럽 진행도
+    var base=(Math.min(p,pStart)/pStart)*(N-2);              // statement(0~N-2) 크로스페이드용
+    var appear=ss(0,0.12,fp);                                // 파이널 텍스트 등장
+    var textOp=appear*(1-ss(0.56,0.74,fp));                  // 더 오래 체류(가독성) 후 풍선에 가려 사라짐
+    for(var i=0;i<N;i++){
+      var sc=scenes[i], main=sc.querySelector('.layer-main'), bg=sc.querySelector('.layer-bg'), op;
+      if(i<N-1){                                             // statement 씬
+        op=Math.max(0, 1-Math.abs(base-i)/0.62);
+        if(i===N-2) op*=(1-appear);                          // 마지막 statement는 파이널 등장 시 사라짐
+        if(main){ main.style.opacity=''; main.style.transform='translate('+(mmx*22).toFixed(1)+'px,'+(((1-op)*26)+mmy*13).toFixed(1)+'px) scale('+(0.9+0.1*op).toFixed(3)+')'; }
+      } else {                                               // 파이널 씬(개인 실험실)
+        op=appear;
+        if(main){ main.style.opacity=textOp.toFixed(3);
+          main.style.transform='translate('+(mmx*22).toFixed(1)+'px,'+(mmy*13).toFixed(1)+'px) scale('+(0.92+0.08*appear).toFixed(3)+')'; }
+      }
+      sc.style.opacity=op.toFixed(3); sc.style.visibility=op>0.02?'visible':'hidden';
+      if(bg) bg.style.transform='translate('+(((i-base)*70)+mmx*-34).toFixed(1)+'px,'+(mmy*-18).toFixed(1)+'px)';
+    }
+    // 파이널 스크럽: ①텍스트 → ②풍선 뿅 커버 → ③선물 중앙 뿅 → ④풍선 위로 흩어져 소멸
+    var cnt=HEARTS.length;
+    for(var h=0;h<HEARTS.length;h++){ var H=HEARTS[h]; var o=H.ord/(cnt-1);  // 0..1 순번
+      var st=0.38+o*0.30;                            // 텍스트 체류 후 순차(뿅뿅뿅) 등장
+      var popT=ss(st, st+0.10, fp);                  // 개별 뿅
+      var sst=0.72+o*0.10;                           // 순차 흩어짐(팝 이후)
+      var scT =ss(sst, Math.min(1,sst+0.13), fp);
+      var scl=Math.max(0,eob(popT))*(1-0.12*scT);
+      var px=H.nx*scT*innerWidth*0.58 + mmx*10;
+      var py=H.ny*scT*innerHeight*0.5 - scT*150 + mmy*8;   // 위로 떠오르며 흩어짐
+      H.el.style.opacity=(popT*(1-scT)).toFixed(3);
+      H.el.style.transform='translate('+px.toFixed(1)+'px,'+py.toFixed(1)+'px) scale('+scl.toFixed(3)+') rotate('+(H.rot*(1+scT*0.6)).toFixed(1)+'deg)'; }
+    // 선물: 풍선 커버 후 중앙에서 뿅, 이후 유지
+    if(giftEl){ var gOp=ss(0.62,0.78,fp), gSc=eob(ss(0.62,0.84,fp));   // 선물 일찍 등장→오래 체류
+      giftEl.style.opacity=gOp.toFixed(3); giftEl.style.visibility=gOp>0.02?'visible':'hidden';
+      if(giftImg) giftImg.style.transform='translate('+(mmx*14).toFixed(1)+'px,'+(mmy*10).toFixed(1)+'px) scale('+gSc.toFixed(3)+')'; }
+  }
+  function mloop(){ mmx+=(mtx-mmx)*0.08; mmy+=(mty-mmy)*0.08; update();
+    if(Math.abs(mtx-mmx)>0.001||Math.abs(mty-mmy)>0.001){ mraf=requestAnimationFrame(mloop); } else { mraf=null; } }
+  window.addEventListener('mousemove', function(e){ mtx=e.clientX/innerWidth-0.5; mty=e.clientY/innerHeight-0.5; if(!mraf) mraf=requestAnimationFrame(mloop); });
+  function onScroll(){ if(!raf) raf=requestAnimationFrame(update); }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  window.addEventListener('resize', onScroll);
+  update();
+})();
+
+/* ── S3 라인 리빌 (스크롤 스크럽: 진행도에 따라 줄이 순차 등장 → 마지막 줄 후 체류) ── */
+(function(){
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var track=document.querySelector('.s3-track'); if(!track) return;
+  var spans=[].slice.call(document.querySelectorAll('.s3 .s3-ln>span'));
+  if(reduce){ spans.forEach(function(s){ s.style.transform='none'; }); return; }
+  function ss(a,b,x){ x=(x-a)/(b-a); x=x<0?0:x>1?1:x; return x*x*(3-2*x); }
+  var raf=null, disp=0, target=0;
+  function measure(){ var vh=innerHeight, r=track.getBoundingClientRect(), total=track.offsetHeight-vh;
+    target = total>0 ? Math.max(0,Math.min(1,-r.top/total)) : (r.top<=0?1:0); }
+  function draw(){
+    for(var i=0;i<spans.length;i++){
+      var st=i*0.05;                         // 순차(마지막 줄 st=0.30)
+      var on=ss(st, st+0.14, disp);          // 넉넉한 구간+겹침 → 매끄럽게
+      spans[i].style.opacity=on.toFixed(3);
+      spans[i].style.transform='translateY('+((1-on)*24).toFixed(1)+'px)';
+    }
+  }
+  function loop(){ raf=null;
+    disp += (target-disp)*0.14;              // EMA 관성 → 스크롤 단위로 끊기지 않게
+    if(Math.abs(target-disp)<0.0004) disp=target;
+    draw();
+    if(disp!==target) raf=requestAnimationFrame(loop);
+  }
+  function onScroll(){ measure(); if(!raf) raf=requestAnimationFrame(loop); }
+  addEventListener('scroll', onScroll, {passive:true});
+  addEventListener('resize', onScroll);
+  measure(); disp=target; draw();
+  // 전 줄 등장 완료(disp≈0.44) 후 트랙 340vh의 나머지 긴 구간은 핀 상태로 체류(가독 홀드)
+})();
+
+/* ── S3 반사 스페클 점 필드 생성(볼 기준 방사 분포, 중심 촘촘·바깥 성김) ── */
+(function(){
+  var host=document.getElementById('s3speckle'); if(!host) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var COLORS=['rgba(255,255,255,.95)','rgba(255,225,242,.9)','rgba(255,240,200,.9)','rgba(190,230,255,.85)','rgba(210,180,255,.85)'];
+  var seed=20260918; function rnd(){ seed=(seed*1103515245+12345)&0x7fffffff; return seed/0x7fffffff; }
+  var N=160, maxR=Math.max(innerWidth,innerHeight)*0.98;
+  var frag=document.createDocumentFragment();
+  for(var i=0;i<N;i++){
+    var ang=rnd()*Math.PI*2, r=Math.pow(rnd(),0.6)*maxR;
+    var x=Math.cos(ang)*r, y=Math.sin(ang)*r;
+    var sz=1.2+rnd()*3.2, c=COLORS[(rnd()*COLORS.length)|0];
+    var sp=document.createElement('span'); sp.className='sp';
+    sp.style.left=x.toFixed(1)+'px'; sp.style.top=y.toFixed(1)+'px';
+    sp.style.width=sz.toFixed(1)+'px'; sp.style.height=sz.toFixed(1)+'px';
+    sp.style.background=c; sp.style.boxShadow='0 0 '+(sz*2).toFixed(0)+'px '+c;
+    sp.style.setProperty('--d',(1.1+rnd()*2.4).toFixed(2)+'s');
+    sp.style.setProperty('--o',(rnd()*2).toFixed(2)+'s');
+    frag.appendChild(sp);
+  }
+  host.appendChild(frag);
+})();
+
+/* ── S1 인터랙티브 도트 패턴 (커서 근접 시 확대·밝기↑·밀림) ── */
+(function(){
+  var cv=document.getElementById('s1dots'); if(!cv) return;
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var ctx=cv.getContext('2d'), dpr=Math.min(2,window.devicePixelRatio||1);
+  var SP=30, BR=1.7, BA=0.30, GROW=3.6, ADDA=0.55, R=150, PUSH=7;
+  var mx=-9999,my=-9999, tx=-9999,ty=-9999, raf=null, active=false;
+  function resize(){ var r=cv.getBoundingClientRect(); cv.width=(r.width*dpr)|0; cv.height=(r.height*dpr)|0;
+    cv.style.width=r.width+'px'; cv.style.height=r.height+'px'; ctx.setTransform(dpr,0,0,dpr,0,0); draw(); }
+  function draw(){
+    var w=cv.width/dpr, h=cv.height/dpr; ctx.clearRect(0,0,w,h);
+    for(var y=SP/2;y<h;y+=SP){ for(var x=SP/2;x<w;x+=SP){
+      var dx=x-mx, dy=y-my, d=Math.hypot(dx,dy), r=BR, a=BA, ox=0, oy=0;
+      if(d<R){ var t=1-d/R; t=t*t; r=BR+GROW*t; a=BA+ADDA*t; if(d>0){ ox=(dx/d)*PUSH*t; oy=(dy/d)*PUSH*t; } }
+      ctx.beginPath(); ctx.arc(x+ox,y+oy,r,0,6.283); ctx.fillStyle='rgba(255,255,255,'+a.toFixed(3)+')'; ctx.fill();
+    }}
+  }
+  function frame(){ mx+=(tx-mx)*0.2; my+=(ty-my)*0.2; draw();
+    if(active || Math.abs(tx-mx)>0.5 || Math.abs(ty-my)>0.5){ raf=requestAnimationFrame(frame); } else { raf=null; } }
+  function kick(){ if(!raf) raf=requestAnimationFrame(frame); }
+  if(!reduce){
+    window.addEventListener('mousemove', function(e){ var r=cv.getBoundingClientRect();
+      if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom){
+        tx=e.clientX-r.left; ty=e.clientY-r.top; active=true; kick();
+      } else { active=false; tx=-9999; ty=-9999; kick(); } });
+  }
+  window.addEventListener('resize', resize);
+  resize();
+})();
+</script>
+</body>
+</html>
