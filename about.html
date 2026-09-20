@@ -26,24 +26,46 @@
   gtag('js', new Date());
   gtag('config', 'G-XE4P3KQKED');
 </script>
+
+<style>
+/* v3 nav (index와 동일 메뉴·색). site.css v2 위에 얹으므로 변수 없이 실제값으로 self-contained */
+.nav3{ position:sticky; top:0; z-index:50; background:#100e0d; color:#fdf6ea; }
+.nav3__row{ max-width:1280px; margin:0 auto; padding:14px clamp(20px,5vw,72px);
+  display:flex; align-items:center; justify-content:space-between; gap:24px; position:relative; }
+.nav3__brand{ display:inline-flex; align-items:center; gap:10px; color:#fff;
+  font-family:"Poppins",system-ui,sans-serif; font-weight:700; font-size:20px; text-decoration:none; }
+.nav3__mark{ width:26px; height:26px; background:#f76b9f; color:#100e0d;
+  display:grid; place-items:center; font-weight:700; font-size:15px; }
+.nav3__menu{ display:flex; align-items:center; gap:32px; }
+.nav3__menu a{ color:#d8cfc4; font-size:13px; font-weight:600;
+  letter-spacing:.06em; text-transform:uppercase; text-decoration:none; }
+.nav3__menu a:hover{ color:#fff; }
+.nav3__cta{ background:#f76b9f; color:#100e0d!important;
+  font-weight:800; font-size:13px; padding:9px 18px; }
+.nav3__cta:hover{ background:#fb96ba; }
+.nav3__toggle{ display:none; background:none; border:0; color:#fff; font-size:22px; padding:4px 6px; cursor:pointer; }
+@media (max-width:760px){
+  .nav3__menu{ display:none; }
+  .nav3__toggle{ display:block; }
+  .nav3__menu.is-open{ display:flex; flex-direction:column; align-items:flex-start;
+    position:absolute; left:0; right:0; top:100%; background:#100e0d;
+    padding:16px clamp(20px,5vw,72px) 22px; gap:16px; box-shadow:0 12px 32px rgba(33,30,28,.22); }
+}
+</style>
 </head>
 <body>
 
-  <!-- ── 상단 내비 (메인 index 와 동일한 v2) ── -->
-  <nav class="nav">
-    <div class="nav__row">
-      <a href="./" class="nav__brand" aria-label="woo-hoo.kr 홈">
-        <span class="nav__brand-mark">w</span>
-        <span>woo-<i>hoo</i>.kr</span>
-      </a>
-      <button class="nav__toggle" aria-label="메뉴 열기" aria-expanded="false">☰</button>
-      <div class="nav__menu" id="navLinks">
+  <!-- ── 상단 내비 (index v3 nav3 와 동일 메뉴) ── -->
+  <nav class="nav3">
+    <div class="nav3__row">
+      <a href="./index.html" class="nav3__brand" aria-label="woo-hoo.kr 홈"><span class="nav3__mark">w</span>woo-hoo</a>
+      <button class="nav3__toggle" aria-label="메뉴 열기" aria-expanded="false">☰</button>
+      <div class="nav3__menu">
         <a href="./showroom.html">Showroom</a>
-        <a href="./#projects">Projects</a>
-        <a href="./devlog.html">Devlog</a>
-        <a href="./watch-notes.html">Watch</a>
-        <a href="./about.html">About</a>
-        <a href="./#subscribe" class="nav__cta">Subscribe →</a>
+        <a href="./projects.html">Projects</a>
+        <a href="./devlog.html">Dev-log</a>
+        <a href="./watch.html">Watch-notes</a>
+        <a href="mailto:dewbian1017@gmail.com" class="nav3__cta">Talk to me</a>
       </div>
     </div>
   </nav>
@@ -128,24 +150,20 @@
   </footer>
 
   <script>
-    /* 모바일 내비 토글 */
+    /* 모바일 내비 토글 (v3 nav3) */
     (function () {
-      var toggle = document.querySelector(".nav__toggle");
-      var links = document.getElementById("navLinks");
-      if (!toggle || !links) return;
-      toggle.addEventListener("click", function () {
-        var open = links.classList.toggle("open");
-        toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      var t = document.querySelector(".nav3__toggle"), m = document.querySelector(".nav3__menu");
+      if (!t || !m) return;
+      t.addEventListener("click", function () {
+        var o = m.classList.toggle("is-open");
+        t.setAttribute("aria-expanded", o ? "true" : "false");
       });
-    })();
-
-    /* nav 스크롤 그림자 */
-    (function () {
-      var nav = document.querySelector(".nav");
-      if (!nav) return;
-      function onScroll() { nav.classList.toggle("scrolled", window.scrollY > 8); }
-      onScroll();
-      window.addEventListener("scroll", onScroll, { passive: true });
+      m.querySelectorAll("a").forEach(function (a) {
+        a.addEventListener("click", function () {
+          m.classList.remove("is-open");
+          t.setAttribute("aria-expanded", "false");
+        });
+      });
     })();
   </script>
 </body>
