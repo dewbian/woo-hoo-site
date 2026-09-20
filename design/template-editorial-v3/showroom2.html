@@ -324,49 +324,38 @@ h1,h2,h3,h4{ font-family:var(--font-heading); font-weight:800; }
 .curr__label{ display:inline-block; font-size:12px; letter-spacing:.18em; text-transform:uppercase;
   color:var(--color-accent-700); font-weight:800; margin-bottom:18px;
   padding-bottom:8px; border-bottom:2px solid var(--color-accent-500); }
-.curr__grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:clamp(14px,1.6vw,20px); }
-@media (max-width:900px){ .curr__grid{ grid-template-columns:repeat(2,1fr); } }
-@media (max-width:520px){ .curr__grid{ grid-template-columns:1fr; } }
+/* 커리큘럼 = 색폴더 파일철 : 한 줄 탭 + 활성 색 패널 */
+.curr__grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:0; align-items:end; }
+@media (max-width:560px){ .curr__grid{ grid-template-columns:repeat(2,1fr); gap:5px; } }
 
-.course{ display:flex; flex-direction:column; align-items:stretch; text-align:left;
-  background:var(--color-surface); border:2px solid var(--ink-deep); border-radius:0;
-  padding:clamp(16px,1.6vw,22px); cursor:pointer; font:inherit; color:inherit;
-  transition:transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .18s, border-color .18s; }
-.course:hover{ transform:translateY(-4px); box-shadow:8px 8px 0 var(--color-accent-500); }
-.course.is-active{ box-shadow:8px 8px 0 var(--color-accent-600); border-color:var(--color-accent-700); }
-.course__tag{ align-self:flex-start; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
-  font-weight:800; color:var(--color-accent-700); background:color-mix(in srgb,var(--color-accent-500) 18%, transparent);
-  padding:4px 8px; border-radius:2px; margin-bottom:14px; }
-.course__title{ margin:0 0 8px; font-family:var(--font-heading); font-weight:800;
-  font-size:clamp(16px,1.5vw,19px); line-height:1.25; letter-spacing:-.01em; }
-.course__meta{ margin:0 0 16px; font-size:12.5px; color:color-mix(in srgb,var(--color-text) 55%, transparent); }
-.course__foot{ margin-top:auto; display:flex; align-items:center; justify-content:space-between; gap:8px; }
-.course__level{ font-size:11px; font-weight:700; color:color-mix(in srgb,var(--color-text) 60%, transparent); }
-.course__go{ display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:800;
-  color:var(--color-accent-700); }
-.course__go svg{ width:16px; height:7px; transition:transform .18s; }
-.course:hover .course__go svg{ transform:translateX(3px); }
+.course{ display:block; text-align:left; cursor:pointer; font:inherit; min-width:0;
+  background:var(--fc,#e04681); color:#fff; border:0; border-radius:14px 14px 0 0;
+  padding:13px clamp(14px,1.6vw,20px) 16px;
+  opacity:.6; transition:opacity .2s ease, transform .2s ease; }
+.course:hover{ opacity:.85; transform:translateY(-2px); }
+.course.is-active{ opacity:1; }
+.course__tag,.course__meta,.course__foot{ display:none; }
+.course__title{ margin:0; color:#fff; font-family:var(--font-heading); font-weight:800;
+  font-size:clamp(13px,1.4vw,17px); line-height:1.25; letter-spacing:-.01em; }
 
-/* 상세 패널 (아코디언) */
-.course-detail{ display:none; margin-top:clamp(18px,2.4vw,28px);
-  border:2px solid var(--ink-deep); background:#fff;
-  box-shadow:10px 10px 0 color-mix(in srgb,var(--color-accent-500) 30%, transparent);
-  padding:clamp(22px,3vw,40px); }
+/* 색 패널 (활성 코스 색) */
+.course-detail{ display:none; margin-top:0;
+  background:var(--fc,#e04681); color:#fff; border:0; border-radius:0 0 18px 18px;
+  box-shadow:var(--shadow-lg); padding:clamp(24px,3.4vw,48px); }
 .course-detail.is-open{ display:block; animation:cdIn .4s ease both; }
 @keyframes cdIn{ from{ opacity:0; transform:translateY(10px) } to{ opacity:1; transform:none } }
 .course-detail__tag{ display:block; font-size:12px; letter-spacing:.12em; text-transform:uppercase;
-  color:var(--color-accent-700); font-weight:800; margin-bottom:10px; }
-.course-detail__h{ margin:0 0 12px; font-family:var(--font-heading); font-weight:800;
+  color:rgba(255,255,255,.82); font-weight:800; margin-bottom:10px; }
+.course-detail__h{ margin:0 0 12px; font-family:var(--font-heading); font-weight:800; color:#fff;
   font-size:clamp(24px,3vw,38px); letter-spacing:-.02em; }
 .course-detail__copy{ margin:0 0 clamp(20px,3vw,30px); font-size:clamp(15px,1.5vw,18px);
-  line-height:1.7; color:color-mix(in srgb,var(--color-text) 76%, transparent); max-width:52ch; }
-.lessons{ list-style:none; margin:0; padding:0; display:grid; gap:0;
-  border-top:2px solid var(--color-divider); }
+  line-height:1.7; color:rgba(255,255,255,.9); max-width:52ch; }
+.lessons{ list-style:none; margin:0; padding:0; border-top:1px solid rgba(255,255,255,.28); }
 .lessons li{ display:grid; grid-template-columns:auto 1fr; gap:clamp(14px,2vw,24px); align-items:center;
-  padding:clamp(14px,1.8vw,20px) 0; border-bottom:2px solid var(--color-divider); }
+  padding:clamp(14px,1.8vw,20px) 0; border-bottom:1px solid rgba(255,255,255,.28); }
 .lessons .n{ font-family:var(--font-heading); font-weight:800; font-size:clamp(15px,1.6vw,20px);
-  color:var(--color-accent-500); font-feature-settings:"tnum" 1; }
-.lessons .t{ font-size:clamp(15px,1.5vw,18px); font-weight:600; }
+  color:rgba(255,255,255,.72); font-feature-settings:"tnum" 1; }
+.lessons .t{ font-size:clamp(15px,1.5vw,18px); font-weight:600; color:#fff; }
 
 /* ═══ 푸터 (크림, flush) ═══ */
 .foot3{ background:var(--color-bg); }
@@ -594,7 +583,7 @@ body{ background:var(--ink-deep); color:var(--color-neutral-100); }
     <span class="curr__label">Curriculum</span>
     <div class="curr__grid" role="tablist" aria-label="커리큘럼 코스">
 
-      <button class="course is-active" id="course-basic" data-course="basic" role="tab" aria-selected="true" aria-controls="detail-basic">
+      <button class="course is-active" id="course-basic" data-course="basic" role="tab" aria-selected="true" aria-controls="detail-basic" style="--fc:#5b3a2e">
         <span class="course__tag">Basic</span>
         <h3 class="course__title">컴퓨터 기초</h3>
         <p class="course__meta">4 lessons · 입문</p>
@@ -602,7 +591,7 @@ body{ background:var(--ink-deep); color:var(--color-neutral-100); }
           <span class="course__go">자세히 <svg viewBox="0 0 20 8" fill="none"><path d="M14 4H0M14 4c-2.46 0-4 3.5-4 3.5M14 4c-2.46 0-4-3.5-4-3.5" stroke="currentColor" stroke-miterlimit="10"/></svg></span></span>
       </button>
 
-      <button class="course" id="course-ai" data-course="ai" role="tab" aria-selected="false" aria-controls="detail-ai">
+      <button class="course" id="course-ai" data-course="ai" role="tab" aria-selected="false" aria-controls="detail-ai" style="--fc:#f76b9f">
         <span class="course__tag">AI</span>
         <h3 class="course__title">AI 활용</h3>
         <p class="course__meta">4 lessons · 실전</p>
@@ -610,7 +599,7 @@ body{ background:var(--ink-deep); color:var(--color-neutral-100); }
           <span class="course__go">자세히 <svg viewBox="0 0 20 8" fill="none"><path d="M14 4H0M14 4c-2.46 0-4 3.5-4 3.5M14 4c-2.46 0-4-3.5-4-3.5" stroke="currentColor" stroke-miterlimit="10"/></svg></span></span>
       </button>
 
-      <button class="course" id="course-work" data-course="work" role="tab" aria-selected="false" aria-controls="detail-work">
+      <button class="course" id="course-work" data-course="work" role="tab" aria-selected="false" aria-controls="detail-work" style="--fc:#c8324a">
         <span class="course__tag">Work</span>
         <h3 class="course__title">디지털 업무</h3>
         <p class="course__meta">4 lessons · 실무</p>
@@ -618,7 +607,7 @@ body{ background:var(--ink-deep); color:var(--color-neutral-100); }
           <span class="course__go">자세히 <svg viewBox="0 0 20 8" fill="none"><path d="M14 4H0M14 4c-2.46 0-4 3.5-4 3.5M14 4c-2.46 0-4-3.5-4-3.5" stroke="currentColor" stroke-miterlimit="10"/></svg></span></span>
       </button>
 
-      <button class="course" id="course-content" data-course="content" role="tab" aria-selected="false" aria-controls="detail-content">
+      <button class="course" id="course-content" data-course="content" role="tab" aria-selected="false" aria-controls="detail-content" style="--fc:#3f74a8">
         <span class="course__tag">Content</span>
         <h3 class="course__title">AI 콘텐츠 제작</h3>
         <p class="course__meta">4 lessons · 실전</p>
@@ -629,7 +618,7 @@ body{ background:var(--ink-deep); color:var(--color-neutral-100); }
     </div>
 
     <!-- 상세 패널 : 카드 클릭 시 노출 -->
-    <div class="course-detail is-open" id="detail-basic" role="tabpanel" aria-labelledby="course-basic">
+    <div class="course-detail is-open" id="detail-basic" role="tabpanel" aria-labelledby="course-basic" style="--fc:#5b3a2e">
       <span class="course-detail__tag">Basic</span>
       <h3 class="course-detail__h">컴퓨터 기초</h3>
       <p class="course-detail__copy">마우스·키보드부터 파일 정리와 인터넷까지 — 컴퓨터가 처음인 분도 천천히, 손에 익을 때까지.</p>
@@ -641,7 +630,7 @@ body{ background:var(--ink-deep); color:var(--color-neutral-100); }
       </ol>
     </div>
 
-    <div class="course-detail" id="detail-ai" role="tabpanel" aria-labelledby="course-ai" hidden>
+    <div class="course-detail" id="detail-ai" role="tabpanel" aria-labelledby="course-ai" hidden style="--fc:#f76b9f">
       <span class="course-detail__tag">AI</span>
       <h3 class="course-detail__h">AI 활용</h3>
       <p class="course-detail__copy">AI가 뭔지 설명하는 수업이 아니라, 직접 써보고 만들어보고 내 것으로 만드는 수업.</p>
@@ -653,7 +642,7 @@ body{ background:var(--ink-deep); color:var(--color-neutral-100); }
       </ol>
     </div>
 
-    <div class="course-detail" id="detail-work" role="tabpanel" aria-labelledby="course-work" hidden>
+    <div class="course-detail" id="detail-work" role="tabpanel" aria-labelledby="course-work" hidden style="--fc:#c8324a">
       <span class="course-detail__tag">Work</span>
       <h3 class="course-detail__h">디지털 업무</h3>
       <p class="course-detail__copy">엑셀·문서·협업 도구로 일을 빠르고 깔끔하게 — 반복 업무를 줄이는 실무 감각.</p>
@@ -665,7 +654,7 @@ body{ background:var(--ink-deep); color:var(--color-neutral-100); }
       </ol>
     </div>
 
-    <div class="course-detail" id="detail-content" role="tabpanel" aria-labelledby="course-content" hidden>
+    <div class="course-detail" id="detail-content" role="tabpanel" aria-labelledby="course-content" hidden style="--fc:#3f74a8">
       <span class="course-detail__tag">Content</span>
       <h3 class="course-detail__h">AI 콘텐츠 제작</h3>
       <p class="course-detail__copy">AI로 이미지·영상·글을 만들어 나만의 콘텐츠를 완성하는 실전 수업.</p>
