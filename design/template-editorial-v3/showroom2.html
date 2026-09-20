@@ -28,18 +28,9 @@
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1576424722880428"
      crossorigin="anonymous"></script>
 
-<!-- Google Analytics (GA4) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XE4P3KQKED"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-XE4P3KQKED');
-</script>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Archivo:wght@400;600;800&family=IBM+Plex+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Archivo:wght@400;600;800&family=IBM+Plex+Sans+KR:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
 /* ── Pink 디자인시스템 토큰(자체완결) ── */
@@ -366,6 +357,43 @@ h1,h2,h3,h4{ font-family:var(--font-heading); font-weight:800; }
 .foot3__contact a:hover{ color:var(--color-accent-800); }
 .foot3__copy{ margin-top:var(--space-4); font-size:12px; color:color-mix(in srgb,var(--color-text) 55%, transparent); }
 .icon-sm{ width:16px; height:16px; fill:currentColor; }
+
+/* ═══ [design] 전체 페이지 다크 통일(히어로 컬러) + 풀뷰포트 히어로(1280) ═══ */
+body{ background:var(--ink-deep); color:var(--color-neutral-100); }
+/* 히어로: 콘텐츠 1280폭, 높이 뷰포트 전체 */
+.sr-hero{ position:relative; z-index:1; min-height:100vh; display:grid; place-items:center; text-align:center; }
+.sr-hero .wrap{ max-width:1280px; width:100%; }
+.sr-hero .showroom__h{ margin-top:8px; }
+/* curr(강사인 나) 다크화 */
+.curr{ background:var(--ink-deep); color:var(--color-neutral-100); }
+.curr__eyebrow,.curr__label{ color:var(--color-accent-400); }
+.curr__label{ border-bottom-color:var(--color-accent-500); }
+.curr__lead{ color:color-mix(in srgb,#fff 72%, transparent); }
+.course{ background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.16); color:var(--color-neutral-100); }
+.course:hover{ box-shadow:8px 8px 0 var(--color-accent-500); }
+.course.is-active{ border-color:var(--color-accent-500); box-shadow:8px 8px 0 var(--color-accent-600); }
+.course__tag{ color:var(--color-accent-400); background:color-mix(in srgb,var(--color-accent-500) 22%, transparent); }
+.course__go{ color:var(--color-accent-400); }
+.course__meta,.course__level{ color:color-mix(in srgb,#fff 55%, transparent); }
+.course-detail{ background:#17110f; border-color:rgba(255,255,255,.18);
+  box-shadow:10px 10px 0 color-mix(in srgb,var(--color-accent-500) 30%, transparent); }
+.course-detail__tag{ color:var(--color-accent-400); }
+.course-detail__copy{ color:color-mix(in srgb,#fff 76%, transparent); }
+.lessons{ border-top-color:rgba(255,255,255,.18); }
+.lessons li{ border-bottom-color:rgba(255,255,255,.14); }
+.lessons .n{ color:var(--color-accent-400); }
+/* 푸터: index와 동일한 Connect 다크 푸터 */
+.foot{ background:#100e0d; color:#fef7ec; min-height:100vh; display:grid; place-items:center; padding:12vh 6vw; }
+.contact-inner{ width:min(1100px,92vw); }
+.foot .found{ font:700 13px/1 "Space Mono",ui-monospace,monospace; letter-spacing:.2em; text-transform:uppercase; color:#fb96ba; margin-bottom:clamp(20px,4vw,40px); }
+.foot h2{ font-family:"Archivo","IBM Plex Sans KR",system-ui,sans-serif; font-weight:800; letter-spacing:-.02em; line-height:1.12;
+  font-size:clamp(30px,5.2vw,72px); margin:0 0 clamp(32px,6vw,64px); word-break:keep-all; color:#fef7ec; }
+.ci-group{ display:flex; flex-wrap:wrap; gap:clamp(24px,5vw,72px); }
+.ci-group>div{ display:flex; flex-direction:column; gap:6px; }
+.ci-group b{ font-family:"Archivo",system-ui,sans-serif; font-weight:800; font-size:clamp(18px,2.4vw,30px); }
+.ci-group span{ font-size:12px; letter-spacing:.16em; text-transform:uppercase; opacity:.55; }
+.ci-group a{ color:inherit; text-decoration:none; }
+.ci-group a:hover{ color:#fb96ba; text-decoration:underline; text-underline-offset:4px; }
 </style>
 
 <!-- ─── 구조화 데이터 (SEO/GEO) ─── -->
@@ -635,14 +663,18 @@ h1,h2,h3,h4{ font-family:var(--font-heading); font-weight:800; }
   </div>
 </section>
 
-<!-- ═══ 푸터 ═══ -->
-<footer class="foot3">
-  <div class="wrap">
-    <div class="foot3__contact">
-      <h4>Contact</h4>
-      <p><svg class="icon-sm" viewBox="0 0 24 24"><path d="M2 5h20v14H2V5zm2 2v.4l8 5 8-5V7H4zm16 2.6-8 5-8-5V17h16V9.6z"/></svg> <a href="mailto:dewbian1017@gmail.com">dewbian1017@gmail.com</a></p>
+<!-- ═══ 푸터(다크 Connect — index와 동일) ═══ -->
+<footer class="foot" id="talk">
+  <div class="contact-inner">
+    <div class="found">Connect</div>
+    <h2>더 나은 아이디어, 더 나은 경험,<br>함께 고민하고 함께 만들어보세요.</h2>
+    <div class="contact-info">
+      <div class="ci-group">
+        <div><b><a href="tel:+821030541538">010 3054 1538</a></b><span>Tel</span></div>
+        <div><b><a href="mailto:dewbian1017@gmail.com">dewbian1017@gmail.com</a></b><span>E-mail</span></div>
+      </div>
     </div>
-    <p class="foot3__copy">© 2026 woo-hoo.kr</p>
+    <p class="foot3__copy" style="margin-top:clamp(40px,7vw,80px);opacity:.4;font-size:12px;">© 2026 woo-hoo.kr</p>
   </div>
 </footer>
 
