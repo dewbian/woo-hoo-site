@@ -15,19 +15,16 @@
 </head>
 <body>
 
-  <nav class="nav">
-    <div class="nav__row">
-      <a href="../" class="nav__brand" aria-label="woo-hoo.kr 홈">
-        <span class="nav__brand-mark">w</span>
-        <span>woo-<i>hoo</i>.kr</span>
-      </a>
-      <button class="nav__toggle" aria-label="메뉴 열기" aria-expanded="false">☰</button>
-      <div class="nav__menu" id="navLinks">
-        <a href="../#projects">Projects</a>
-        <a href="../devlog.html">Devlog</a>
-        <a href="../watch-notes.html">Watch</a>
-        <a href="../about.html">About</a>
-        <a href="../#subscribe" class="nav__cta">Subscribe →</a>
+  <nav class="nav3">
+    <div class="nav3__row">
+      <a href="../" class="nav3__brand" aria-label="woo-hoo.kr 홈"><span class="nav3__mark">w</span>woo-hoo</a>
+      <button class="nav3__toggle" aria-label="메뉴 열기" aria-expanded="false">☰</button>
+      <div class="nav3__menu">
+        <a href="../showroom.html">Showroom</a>
+        <a href="../projects.html">Projects</a>
+        <a href="../devlog.html">Dev-log</a>
+        <a href="../watch.html">Watch-notes</a>
+        <a href="mailto:dewbian1017@gmail.com" class="nav3__cta">Talk to me</a>
       </div>
     </div>
   </nav>
@@ -74,31 +71,28 @@
     </div>
   </main>
 
-  <footer>
-    <div class="wrap">
-      <div class="foot__bottom" style="border-top:none; padding-top:0;">
-        <span>© 2026 woo-hoo.kr · <a href="../privacy.html">개인정보처리방침</a></span>
-        <span><a href="../about.html">About</a> &nbsp; <a href="mailto:woohoo.dew1017@gmail.com">Email</a></span>
+  <footer class="foot">
+    <div class="contact-inner">
+      <div class="found">Connect</div>
+      <h2>더 나은 아이디어, 더 나은 경험,<br>함께 고민하고 함께 만들어보세요.</h2>
+      <div class="contact-info">
+        <div class="ci-group">
+          <div><b><a href="tel:+821030541538">010 3054 1538</a></b><span>Tel</span></div>
+          <div><b><a href="mailto:dewbian1017@gmail.com">dewbian1017@gmail.com</a></b><span>E-mail</span></div>
+        </div>
       </div>
     </div>
   </footer>
 
   <script>
     (function () {
-      var toggle = document.querySelector(".nav__toggle");
-      var links = document.getElementById("navLinks");
-      if (!toggle || !links) return;
-      toggle.addEventListener("click", function () {
-        var open = links.classList.toggle("open");
-        toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      var t = document.querySelector(".nav3__toggle"), m = document.querySelector(".nav3__menu");
+      if (!t || !m) return;
+      t.addEventListener("click", function () {
+        var o = m.classList.toggle("is-open");
+        t.setAttribute("aria-expanded", o ? "true" : "false");
       });
-    })();
-    (function () {
-      var nav = document.querySelector(".nav");
-      if (!nav) return;
-      function onScroll() { nav.classList.toggle("scrolled", window.scrollY > 8); }
-      onScroll();
-      window.addEventListener("scroll", onScroll, { passive: true });
+      m.querySelectorAll("a").forEach(function (a) { a.addEventListener("click", function () { m.classList.remove("is-open"); }); });
     })();
   </script>
 </body>
