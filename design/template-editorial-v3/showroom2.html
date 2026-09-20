@@ -71,7 +71,8 @@ h1,h2,h3,h4{ font-family:var(--font-heading); font-weight:800; }
 .nav3__menu{ display:flex; align-items:center; gap:var(--space-8); }
 .nav3__menu a{ color:var(--color-neutral-300); font-size:13px; font-weight:600;
   letter-spacing:.06em; text-transform:uppercase; text-decoration:none; }
-.nav3__menu a:hover,.nav3__menu a[aria-current]{ color:#fff; }
+.nav3__menu a:hover,.nav3__menu a[aria-current="page"]{ color:#fff; }
+.nav3__menu a[aria-current="page"]{ color:var(--color-accent-400); }
 .nav3__cta{ background:var(--color-accent-500); color:var(--ink-deep)!important;
   font-family:var(--font-heading); font-weight:800; font-size:13px; padding:9px 18px; }
 .nav3__cta:hover{ background:var(--color-accent-400); }

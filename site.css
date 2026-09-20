@@ -254,6 +254,7 @@ a.post-nav__item:hover { box-shadow: var(--shadow-3); transform: translateY(-2px
 .nav3__menu{ display:flex; align-items:center; gap:32px; }
 .nav3__menu a{ color:#d8cfc4; font-size:13px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; text-decoration:none; }
 .nav3__menu a:hover,.nav3__menu a[aria-current="page"]{ color:#fff; }
+.nav3__menu a[aria-current="page"]{ color:#fb96ba; }
 .nav3__cta{ background:#f76b9f; color:#100e0d!important; font-weight:800; font-size:13px; padding:9px 18px; }
 .nav3__cta:hover{ background:#fb96ba; }
 .nav3__toggle{ display:none; background:none; border:0; color:#fff; font-size:22px; padding:4px 6px; cursor:pointer; }
