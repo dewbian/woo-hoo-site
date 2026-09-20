@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # 목적: 봇(gatherThinks)이 발행한 watch-notes.html 허브 + watch-notes/*.html 상세글을 읽어
-#       v3 큐레이션 페이지(watch.html + design 소스 watch-notes2.html)를 재생성한다.
+#       v3 큐레이션 페이지(watch.html)를 재생성한다.
 # 전체요약(요약+내 생각)을 소제목째 모달에 인라인 → 원문 노트 링크 불필요. AI 색인용 DOM 포함 + VideoObject.description.
 # GitHub Actions(rebuild-watch.yml)가 봇 push 시 자동 실행. 로컬 수동 실행도 가능.
 import re, html, json, os
@@ -11,7 +11,6 @@ HUB = os.path.join(BASE, "watch-notes.html")
 DETAIL_DIR = os.path.join(BASE, "watch-notes")
 TEMPLATE = os.path.join(SCRIPT_DIR, "watch_template.html")
 OUT_ROOT = os.path.join(BASE, "watch.html")
-OUT_DESIGN = os.path.join(BASE, "design", "template-editorial-v3", "watch-notes2.html")
 
 def clean(s): return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", s))).strip()
 
@@ -112,7 +111,6 @@ count = len(items)
 
 tpl = open(TEMPLATE, encoding="utf-8").read()
 out = tpl.replace("__JSONLD__", jsonld).replace("__CARDS__", cards_html).replace("__COUNT__", str(count))
-for path in (OUT_ROOT, OUT_DESIGN):
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    open(path, "w", encoding="utf-8").write(out)
+os.makedirs(os.path.dirname(OUT_ROOT), exist_ok=True)
+open(OUT_ROOT, "w", encoding="utf-8").write(out)
 print(f"built watch.html: {len(out)} bytes | {count} notes | with content: {sum(1 for it in items if it['blocks'])}")
