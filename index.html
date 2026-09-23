@@ -742,7 +742,8 @@ body{ transition:background-color .6s ease; }
     var catImg = document.getElementById('catImg');
     var hero   = document.querySelector('.hero3');
     if(reduce || !canvas || !hero) return;
-    var gl = canvas.getContext('webgl', {alpha:true, premultipliedAlpha:false, antialias:true});
+    // Safari fix: premultipliedAlpha:true 로 합성해야 투명 배경이 검은 박스로 안 뜬다.
+    var gl = canvas.getContext('webgl', {alpha:true, premultipliedAlpha:true, antialias:true, preserveDrawingBuffer:false});
     if(!gl) return;
 
     var strength=0.12, smooth=0.90;
@@ -765,7 +766,8 @@ body{ transition:background-color .6s ease; }
       gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR); return t; }
     var texImg=mkTex(0), texDepth=mkTex(1);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true); gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,false);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
+    // 색 이미지는 premultiply, depth 는 원본 그대로 업로드 (아래 boot() 에서 개별 지정)
 
     function boxBlur(src,W,H,r){ var tmp=new Float32Array(W*H),o=new Float32Array(W*H),n=2*r+1,x,y,k,acc,ix;
       for(y=0;y<H;y++)for(x=0;x<W;x++){acc=0;for(k=-r;k<=r;k++){ix=x+k;if(ix<0)ix=0;else if(ix>=W)ix=W-1;acc+=src[y*W+ix];}tmp[y*W+x]=acc/n;}
@@ -788,7 +790,9 @@ body{ transition:background-color .6s ease; }
       imgEl=new Image(); imgEl.crossOrigin='anonymous';
       imgEl.onload=function(){ tryReal(function(realDepth){
         depthEl = realDepth || buildDepth(imgEl);
+        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,true);
         gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,texImg); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,imgEl);
+        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,false);
         gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D,texDepth); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,depthEl);
         ready=true; catImg.style.display='none'; canvas.hidden=false; kick();
       }); };
