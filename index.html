@@ -164,7 +164,8 @@ body{ margin:0; text-wrap:pretty; overflow-x:hidden; }
 .hero3__mascot-wrap{ display:block; position:relative; }
 .hero3__mascot{ display:block; width:100%; height:auto;
   filter:drop-shadow(0 22px 46px rgba(247,107,159,.42)); }
-.hero3__mascot-canvas{ aspect-ratio:1/1; }   /* WebGL 캔버스(540² 소스) 비율 유지 */
+/* WebGL 캔버스는 정적 img 위에 절대배치로 겹침 → 스왑 시 세로 스택/점프 방지 */
+.hero3__mascot-canvas{ position:absolute; inset:0; width:100%; height:100%; }
 /* ═══ 모바일: 고양이를 타이틀 바로 아래 흐름으로(바닥고정 해제) ═══ */
 @media (max-width:760px){
   .hero3{ min-height:auto; justify-content:flex-start;
@@ -576,7 +577,7 @@ body{ transition:background-color .6s ease; }
       <span class="star hpop star--flankR" style="--s:184px; --r:8deg; --d:.55s; --fd:6s;"><img src="assets/heart.png" alt="" onerror="this.style.display='none'" /></span>
       <h1 class="stage__title">
         <span class="hero3__title-wrap">
-          <img class="hero3__title" src="assets/hero-title.png" alt="Developer Persian — woo-hoo.kr" />
+          <img class="hero3__title" src="assets/hero-title.png" alt="Developer Persian — woo-hoo.kr" width="900" height="450" />
         </span>
       </h1>
     </div>
@@ -584,7 +585,7 @@ body{ transition:background-color .6s ease; }
   <!-- 고양이: 뷰포트(hero) 바닥에 고정 -->
   <span class="stage__cat">
     <span class="hero3__mascot-wrap">
-      <img class="hero3__mascot" id="catImg" src="assets/hero-cat.png" alt="핑크 후드를 입은 페르시안 고양이 개발자 마스코트" />
+      <img class="hero3__mascot" id="catImg" src="assets/hero-cat.png" alt="핑크 후드를 입은 페르시안 고양이 개발자 마스코트" width="540" height="540" />
       <canvas class="hero3__mascot hero3__mascot-canvas" id="catCanvas" width="540" height="540" hidden></canvas>
     </span>
   </span>
@@ -794,7 +795,8 @@ body{ transition:background-color .6s ease; }
         gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,texImg); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,imgEl);
         gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,false);
         gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D,texDepth); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,depthEl);
-        ready=true; catImg.style.display='none'; canvas.hidden=false; kick();
+        /* display:none 이면 img 가 흐름에서 빠져 wrap 높이 붕괴(canvas 는 absolute) → visibility 로 크기 유지 */
+        ready=true; catImg.style.visibility='hidden'; canvas.hidden=false; kick();
       }); };
       imgEl.onerror=function(){};
       imgEl.src='assets/hero-cat.png';
