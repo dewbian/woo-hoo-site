@@ -314,7 +314,7 @@ body{ transition:background-color .6s ease; }
 
 /* ═══ S1: 핀 스크럽 타이포 ═══ */
 .s1{ position:relative; }
-.s1-track{ height:340vh; position:relative; }
+.s1-track{ height:300vh; position:relative; }
 .s1-stick{ position:sticky; top:0; height:100vh; overflow:hidden; }
 .s1-dots{ position:absolute; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; }
 .s1-stage{ position:absolute; inset:0; display:grid; place-items:center; z-index:1; }
@@ -897,16 +897,17 @@ body{ transition:background-color .6s ease; }
       var vh=window.innerHeight, r=track.getBoundingClientRect(), total=track.offsetHeight-vh;
       var p= total>0 ? Math.max(0,Math.min(1, -r.top/total)) : (r.top<=0?1:0);
       var maxX=window.innerWidth*0.2;   /* 뷰포트 비례 분할(반응형) */
-      var linesFade = 1 - ss(0.48,0.58,p);
+      var linesFade = 1 - ss(0.40,0.50,p);
       for(var i=0;i<lines.length;i++){
-        var on=ss(0.03+i*0.085, 0.03+i*0.085+0.06, p);
+        var st=i*0.05;                       /* 진입 즉시 시작 + 빠른 스태거 */
+        var on=ss(st, st+0.09, p);
         var o=on*linesFade;
         lines[i].style.opacity=o.toFixed(3);
         lines[i].style.transform='translate('+(mmx*(14+i*4)).toFixed(1)+'px,'+(((1-on)*28)+mmy*(9+i*2)).toFixed(1)+'px)';
       }
-      var hlOn=ss(0.52,0.64,p);
-      var part=ss(0.66,0.90,p);
-      var iOp=ss(0.66,0.78,p), iScale=0.15 + ss(0.66,0.96,p)*0.95;
+      var hlOn=ss(0.44,0.56,p);
+      var part=ss(0.58,0.85,p);
+      var iOp=ss(0.58,0.70,p), iScale=0.15 + ss(0.58,0.90,p)*0.95;
       if(hL){ hL.style.opacity=hlOn.toFixed(3); hL.style.transform='translate('+((-part*maxX*0.72)+mmx*24).toFixed(1)+'px,'+(mmy*14).toFixed(1)+'px)'; }
       if(hR){ hR.style.opacity=hlOn.toFixed(3); hR.style.transform='translate('+(( part*maxX)+mmx*24).toFixed(1)+'px,'+(mmy*14).toFixed(1)+'px)'; }
       if(img){ img.style.opacity=iOp.toFixed(3); img.style.transform='translate('+(mmx*30).toFixed(1)+'px,'+(mmy*18).toFixed(1)+'px) scale('+iScale.toFixed(3)+')'; }
