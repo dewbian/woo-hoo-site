@@ -410,14 +410,14 @@ body{ transition:background-color .6s ease; }
   -webkit-mask:url(assets/s3/discoball.png) center/contain no-repeat; mask:url(assets/s3/discoball.png) center/contain no-repeat;
   background:linear-gradient(100deg, transparent 32%, rgba(255,255,255,.35) 44%, rgba(255,255,255,.85) 50%, rgba(255,255,255,.35) 56%, transparent 68%);
   background-size:240% 100%; mix-blend-mode:screen; opacity:.6; animation:s3sheen 3.2s linear infinite; }
-.s3-godray{ position:absolute; left:50%; top:28%; width:220vmax; height:220vmax; transform:translate(-50%,-50%); z-index:0; pointer-events:none;
+.s3-godray{ position:absolute; left:50%; top:50%; width:220vmax; height:220vmax; transform:translate(-50%,-50%); z-index:0; pointer-events:none;
   mix-blend-mode:screen; opacity:.7;
   background:repeating-conic-gradient(from 0deg at 50% 50%, rgba(255,255,255,0) 0deg, rgba(255,255,255,.6) 1.6deg, rgba(255,255,255,0) 22deg);
   -webkit-mask:radial-gradient(circle at 50% 50%, #000 0%, rgba(0,0,0,.55) 20%, transparent 52%);
           mask:radial-gradient(circle at 50% 50%, #000 0%, rgba(0,0,0,.55) 20%, transparent 52%);
   filter:blur(.4px); animation:s3ray 64s linear infinite; }
 @keyframes s3ray{ to{ transform:translate(-50%,-50%) rotate(360deg); } }
-.s3-speckle{ position:absolute; left:50%; top:28%; width:0; height:0; z-index:0; pointer-events:none;
+.s3-speckle{ position:absolute; left:50%; top:50%; width:0; height:0; z-index:0; pointer-events:none;
   animation:s3ray 120s linear infinite reverse; }
 .s3-speckle .sp{ position:absolute; border-radius:50%; will-change:opacity;
   animation:s3twk var(--d,2s) ease-in-out var(--o,0s) infinite alternate; }
@@ -649,6 +649,8 @@ body{ transition:background-color .6s ease; }
 <section class="s3" data-bg="#fb96ba" data-fg="#14100e">
   <div class="s3-track"><div class="s3-stick">
   <div class="s3-right" aria-hidden="true">
+    <div class="s3-godray"></div>
+    <div class="s3-speckle" id="s3speckle"></div>
     <div class="s3-ball"><img src="assets/s3/discoball.png" alt="회전하는 핑크·골드 디스코볼 조명" onerror="this.closest('.s3-ball').style.display='none'"><span class="s3-sheen"></span></div>
   </div>
   <div class="s3-wrap">
@@ -664,8 +666,6 @@ body{ transition:background-color .6s ease; }
       </div>
     </div>
   </div>
-  <div class="s3-godray" aria-hidden="true"></div>
-  <div class="s3-speckle" id="s3speckle" aria-hidden="true"></div>
   </div></div>
 </section>
 
