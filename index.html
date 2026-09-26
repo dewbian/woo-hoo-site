@@ -342,7 +342,7 @@ body{ transition:background-color .6s ease; }
 
 /* ═══ S2: 키네틱 타입 릴 ═══ */
 .s2{ position:relative; }
-.reel-track{ position:relative; height:780vh; }
+.reel-track{ position:relative; height:1160vh; }
 .reel-stick{ position:sticky; top:0; height:100vh; overflow:hidden; }
 .reel-noise{ position:absolute; inset:0; pointer-events:none; opacity:.5; z-index:0;
   background-image:radial-gradient(rgba(255,255,255,.14) 1px, transparent 1px); background-size:16px 16px; }
@@ -947,7 +947,9 @@ body{ transition:background-color .6s ease; }
         HEARTS.push({el:el, nx:dx/mag, ny:dy/mag, ord:k, rot:(rnd()*40-20)}); }
     })();
     var raf=null, mtx=0,mty=0,mmx=0,mmy=0,mraf=null;
-    var pStart=(N-2)/(N-1);
+    /* 피날레(풍선 버스트→선물)는 스크롤 스크럽. fp가 곧 재생 진행도라 사용자가 스크롤로 직접 굴림(잠금 없음).
+       천천히 전개되도록 최종 씬에 넉넉한 스크롤 구간 배정 = 낮춘 pStart(최종 씬 트랙 비중↑) + .reel-track height↑. */
+    var pStart=0.58;                                   // 최종 씬이 트랙의 42% 차지 → 피날레 스크롤 여유
     function update(){ raf=null;
       var vh=innerHeight, r=track.getBoundingClientRect(), total=track.offsetHeight-vh;
       var p= total>0 ? Math.max(0,Math.min(1,-r.top/total)) : (r.top<=0?1:0);
