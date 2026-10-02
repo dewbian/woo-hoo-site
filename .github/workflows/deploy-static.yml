@@ -16,7 +16,8 @@ on:
 
 concurrency:
   group: deploy-static
-  cancel-in-progress: true
+  # rsync 배포는 중간 취소 시 임시파일 레이스(--delete 간섭)로 깨짐 → 취소 대신 순차 큐잉.
+  cancel-in-progress: false
 
 jobs:
   deploy:
