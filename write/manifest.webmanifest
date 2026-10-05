@@ -1,0 +1,13 @@
+{
+  "name": "woo-hoo.kr Journal 입력",
+  "short_name": "Journal",
+  "description": "woo-hoo.kr 기록을 사진과 몇 줄로 올리는 입력 도구",
+  "start_url": "/write/",
+  "scope": "/write/",
+  "display": "standalone",
+  "background_color": "#fef7ec",
+  "theme_color": "#f76b9f",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

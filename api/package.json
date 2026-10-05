@@ -1,0 +1,18 @@
+{
+  "name": "woohoo-journal-api",
+  "version": "1.0.0",
+  "description": "HTTP endpoint that turns PWA form posts into woo-hoo.kr journal entries",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "multer": "^1.4.5-lts.1",
+    "sharp": "^0.33.5"
+  }
+}

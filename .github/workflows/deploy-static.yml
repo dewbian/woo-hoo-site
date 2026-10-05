@@ -12,11 +12,13 @@ on:
       - "docs/**"
       - "design/**"
       - ".claude/**"
+      - "api/**"
   workflow_dispatch: {}
 
 concurrency:
   group: deploy-static
-  cancel-in-progress: true
+  # rsync 배포는 중간 취소 시 임시파일 레이스(--delete 간섭)로 깨짐 → 취소 대신 순차 큐잉.
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -41,4 +43,5 @@ jobs:
             --exclude '.git' --exclude '.github' --exclude '.claude' --exclude '.gstack' \
             --exclude '.superpowers' --exclude '.design-kit' --exclude 'server' \
             --exclude 'docs' --exclude 'design' --exclude 'jobkorea' --exclude '.gitignore' \
+            --exclude 'api' \
             ./ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/www/woo-hoo.kr/html/"
