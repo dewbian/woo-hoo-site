@@ -1,0 +1,17 @@
+[Unit]
+Description=woo-hoo.kr journal input API (PWA -> git)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# api/ 는 repo clone 안에 있음. WorkingDirectory=clone/api, REPO_DIR=clone (api/.env 에 지정)
+WorkingDirectory=/home/www/woo-hoo.kr/journal-api/api
+EnvironmentFile=/home/www/woo-hoo.kr/journal-api/api/.env
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+RestartSec=5
+User=root
+
+[Install]
+WantedBy=multi-user.target

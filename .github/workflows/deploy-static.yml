@@ -12,6 +12,7 @@ on:
       - "docs/**"
       - "design/**"
       - ".claude/**"
+      - "api/**"
   workflow_dispatch: {}
 
 concurrency:
@@ -42,4 +43,5 @@ jobs:
             --exclude '.git' --exclude '.github' --exclude '.claude' --exclude '.gstack' \
             --exclude '.superpowers' --exclude '.design-kit' --exclude 'server' \
             --exclude 'docs' --exclude 'design' --exclude 'jobkorea' --exclude '.gitignore' \
+            --exclude 'api' \
             ./ "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/www/woo-hoo.kr/html/"
