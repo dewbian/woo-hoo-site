@@ -243,7 +243,9 @@ h1,h2,h3,h4{ font-family:var(--font-heading); font-weight:800; }
   .sr-item__more{ opacity:1; transform:none; pointer-events:auto; }
   .sr-video--stage{ display:none; }          /* 모바일: 스크롤 구동 stage 숨김 */
   .sr-video[data-inline-for]{ display:block; margin-top:22px; }  /* 인라인 영상 노출 */
-  .sr-pane{ position:relative; opacity:1; }
+  /* position은 absolute 유지(.sr-video 의 aspect-ratio 박스를 inset:0 으로 채움) — relative로 바꾸면
+     absolute로 배치되는 .sr-panels__grid 가 부모 높이에 기여하지 못해 높이 0으로 붕괴해 영상이 안 보였음 */
+  .sr-pane{ opacity:1; }
 }
 @media (prefers-reduced-motion:reduce){
   .sr-item,.sr-pane,.sr-item__copy,.sr-item__more{ transition:none; }
