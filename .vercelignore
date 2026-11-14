@@ -1,0 +1,28 @@
+# Legacy VPS journal API: stays in the repo (the VPS unit runs api/server.js until cutover)
+# but must not be deployed, or Vercel would turn api/server.js into a function.
+api/server.js
+api/package.json
+api/package-lock.json
+api/README.md
+api/*.service
+api/.env*
+api/.gitignore
+# Not public: tooling, sources, docs, private files (defense in depth for CLI deploys)
+.github
+.claude
+.gstack
+.superpowers
+.design-kit
+.playwright-mcp
+server
+docs
+design
+jobkorea
+legacy
+scripts
+lib/**/*.test.js
+README.md
+CNAME
+CLAUDE.md
+인터랙션요청.txt
+*.py

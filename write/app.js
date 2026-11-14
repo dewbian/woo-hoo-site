@@ -33,7 +33,11 @@ async function toWebp(file) {
   canvas.width = w; canvas.height = h;
   canvas.getContext('2d').drawImage(bmp, 0, 0, w, h);
   bmp.close?.();
-  const blob = await new Promise((res) => canvas.toBlob(res, 'image/webp', 0.8));
+  let blob = await new Promise((res) => canvas.toBlob(res, 'image/webp', 0.8));
+  // iOS Safari has no WebP encoder and silently returns PNG (too large for the 4.5MB upload limit)
+  if (blob && blob.type !== 'image/webp') {
+    blob = await new Promise((res) => canvas.toBlob(res, 'image/jpeg', 0.8));
+  }
   if (!blob) throw new Error('encode failed');
   return blob;
 }
@@ -72,7 +76,7 @@ $('#f').addEventListener('submit', async (ev) => {
   fd.append('title', title);
   fd.append('body', body);
   fd.append('kind', kind);
-  picked.forEach((p, i) => fd.append('images', p.blob, `img-${i + 1}.webp`));
+  picked.forEach((p, i) => fd.append('images', p.blob, `img-${i + 1}.${p.blob.type === 'image/webp' ? 'webp' : 'jpg'}`));
 
   submitBtn.disabled = true;
   setStatus('ok', '올리는 중…');

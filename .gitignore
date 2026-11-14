@@ -20,3 +20,6 @@ design/피그마디자인/
 # 개인 파일(사이트와 무관 — 레포에 커밋 금지)
 jobkorea/
 인터랙션요청.txt
+
+node_modules/
+.vercel/
