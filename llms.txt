@@ -21,6 +21,3 @@
 - [영상노트](https://woo-hoo.kr/watch.html): 유튜브 영상을 AI로 요약해 정리한 아카이브(gatherThinks 발행물)
 - [소개](https://woo-hoo.kr/about.html): 운영자·운영 철학·연락처
 - [개인정보처리방침](https://woo-hoo.kr/privacy.html): self-check-study 앱 개인정보 처리방침
-
-## 관련 사이트
-- [세상만사 구경만사 블로그](https://blog.woo-hoo.kr): 별도 운영하는 주식 소식 블로그(동적 SSR)
