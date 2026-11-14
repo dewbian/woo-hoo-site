@@ -48,9 +48,9 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      # deploy-static.yml 과 동일한 SSH Secrets 재사용. 변경이 있을 때만 배포.
+      # VPS rsync only for rollback (repo variable DEPLOY_VPS=true). Normally Vercel deploys this push.
       - name: Setup SSH
-        if: steps.commit.outputs.changed == 'true'
+        if: steps.commit.outputs.changed == 'true' && vars.DEPLOY_VPS == 'true'
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_deploy
@@ -58,7 +58,7 @@ jobs:
           ssh-keyscan -p "${{ secrets.SSH_PORT || '22' }}" -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
 
       - name: Rsync static site to docroot
-        if: steps.commit.outputs.changed == 'true'
+        if: steps.commit.outputs.changed == 'true' && vars.DEPLOY_VPS == 'true'
         run: |
           rsync -az --delete \
             -e "ssh -i ~/.ssh/id_deploy -p ${{ secrets.SSH_PORT || '22' }}" \

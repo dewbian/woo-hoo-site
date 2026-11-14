@@ -3,16 +3,8 @@
 # 서비스 재시작은 하지 않는다. docroot = /home/www/woo-hoo.kr/html (nginx 가 직접 서빙).
 name: Deploy static site
 
+# Disabled 2026-11-15: woo-hoo.kr is served by Vercel (git push = deploy). Manual run = rollback to the VPS (static site).
 on:
-  push:
-    branches: [main]
-    # server/ 등 비정적 경로만 바뀐 경우엔 정적 재배포 불필요.
-    paths-ignore:
-      - "server/**"
-      - "docs/**"
-      - "design/**"
-      - ".claude/**"
-      - "api/**"
   workflow_dispatch: {}
 
 concurrency:

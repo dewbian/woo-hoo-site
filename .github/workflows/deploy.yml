@@ -1,12 +1,8 @@
 # 파일 목적: server/ push 시 준비된 웹서버(SSH)로 코드 동기화 + 의존성 설치 + systemd 재시작
 name: Deploy blog server
 
+# Disabled 2026-11-15: woo-hoo.kr is served by Vercel (git push = deploy). Manual run = rollback to the VPS (blog server (retired)).
 on:
-  push:
-    branches: [main]
-    paths:
-      - "server/**"
-      - ".github/workflows/deploy.yml"
   workflow_dispatch: {}
 
 # 동시 배포 방지(직전 실행 취소)
