@@ -20,7 +20,7 @@ design
 jobkorea
 legacy
 scripts
-lib/**/*.test.js
+
 README.md
 CNAME
 CLAUDE.md

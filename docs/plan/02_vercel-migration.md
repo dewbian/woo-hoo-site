@@ -1,6 +1,7 @@
 # 02 — woo-hoo.kr 자체 서버(cafe24 VPS nginx) → Vercel 이전
 
 - 작성: 2026-11-14 (KST) · 상태: 검토 2차 반영(r2) · 승인 전
+- **변경(2026-11-14, 사용자 결정): 저널 입력 기능 폐기.** `/write` PWA·`/api/journal`·`lib/journal`·package.json 삭제, journal.html은 기존 글 그대로 정적 유지. 아래 3.2·3.3 및 저널 관련 DoD·env·`journal-preview` 브랜치는 무효. 남은 범위 = 정적 사이트 이전 + 헤더 + 도메인 + 워크플로 정리.
 - 기준 사례: account-book(2026-11-10), googsky(2026-11-14) 이전. 공통 절차는 `account-book/doc/plan/03_vercel_migration_playbook.md`.
 
 ## 1. 목표 · 범위
