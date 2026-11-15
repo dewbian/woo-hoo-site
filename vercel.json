@@ -30,5 +30,17 @@
         }
       ]
     }
+  ],
+  "redirects": [
+    {
+      "source": "/journal.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/write/:path*",
+      "destination": "/",
+      "permanent": true
+    }
   ]
 }
